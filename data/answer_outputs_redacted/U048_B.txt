@@ -1,0 +1,116 @@
+For your Kong/Postgres readiness check in 2017, here's what's happening and how to fix it:
+
+## The psql authentication issue
+
+The error `fe_sendauth: no password supplied` occurs because PostgreSQL's default authentication method (in `pg_hba.conf`) requires a password for TCP connections, even if the user has an empty password. The official postgres Docker image configures `pg_hba.conf` with `md5` or `scram-sha-256` authentication for all non-local connections.
+
+**Solutions:**
+
+1. **Set a password for the polling user** (recommended):
+   ```bash
+   # When creating the user in postgres container
+   CREATE USER polling WITH PASSWORD 'polling';
+   
+   # Then connect with
+   psql -h postgres -U polling -w -c '\l'
+   # Set PGPASSWORD environment variable
+   export PGPASSWORD='[REDACTED]'
+   ```
+
+2. **Use trust authentication** by mounting a custom `pg_hba.conf`:
+   ```yaml
+   # docker-compose.yml
+   postgres:
+     image: postgres:9.6
+     volumes:
+       - ./pg_hba.conf:/etc/postgresql/pg_hba.conf
+   ```
+   
+   In `pg_hba.conf`, add:
+   ```
+   host all polling 0.0.0.0/0 trust
+   ```
+
+## Installing pg_isready
+
+The `pg_isready` utility is part of the `postgresql` package on CentOS 7, but it's not included in the base package. You need to install the `postgresql-contrib` package:
+
+```dockerfile
+FROM kong:latest
+
+# Install PostgreSQL client utilities including pg_isready
+RUN yum install -y postgresql-contrib && yum clean all
+```
+
+However, note that `postgresql-contrib` might pull in additional dependencies. If you want to avoid that, you can:
+
+1. **Use a simpler check with bash** (no additional packages needed):
+   ```bash
+   #!/bin/bash
+   # wait-for-postgres.sh
+   
+   until nc -z postgres 5432; do
+     echo "Waiting for postgres..."
+     sleep 2
+   done
+   
+   echo "PostgreSQL is ready"
+   ```
+   
+   This requires `nc` (netcat), which you can install with:
+   ```dockerfile
+   RUN yum install -y nc && yum clean all
+   ```
+
+2. **Use a TCP check with bash's built-in** (no additional packages):
+   ```bash
+   #!/bin/bash
+   # wait-for-postgres.sh
+   
+   until (echo > /dev/tcp/postgres/5432) >/dev/null 2>&1; do
+     echo "Waiting for postgres..."
+     sleep 2
+   done
+   
+   echo "PostgreSQL is ready"
+   ```
+
+## Recommended approach for Kong
+
+Since Kong needs to run migrations before starting, create a custom entrypoint script:
+
+```dockerfile
+FROM kong:latest
+
+# Install netcat for the health check
+RUN yum install -y nc && yum clean all
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+```
+
+```bash
+#!/bin/bash
+# docker-entrypoint.sh
+
+# Wait for postgres to be ready
+echo "Waiting for PostgreSQL..."
+until nc -z postgres 5432; do
+  sleep 2
+done
+echo "PostgreSQL is ready"
+
+# Run migrations
+kong migrations up
+
+# Start Kong
+exec "$@"
+```
+
+This approach:
+- Avoids the authentication complexity
+- Uses minimal dependencies (just netcat)
+- Properly waits for the database to accept connections
+- Runs migrations before starting Kong

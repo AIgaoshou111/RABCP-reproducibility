@@ -1,0 +1,15 @@
+﻿regime,contrast,n_test_seeds,mean_MAE_difference,bootstrap_95_low,bootstrap_95_high
+no_flags,rabcp - raw,30,-0.210050,-0.211838,-0.208220
+no_flags,rabcp - cumulative_mean,30,-0.082523,-0.083677,-0.081382
+no_flags,rabcp - sliding_mean,30,-0.007824,-0.008384,-0.007230
+no_flags,rabcp - ewma,30,-0.000299,-0.000981,0.000407
+no_flags,rabcp - kalman,30,0.004780,0.004236,0.005342
+no_flags,rabcp - hmm,30,-0.004359,-0.004978,-0.003787
+no_flags,rabcp - power_update,30,-0.006677,-0.007229,-0.006139
+matched_imperfect_flags,rabcp - raw,30,-0.236822,-0.238725,-0.234940
+matched_imperfect_flags,rabcp - cumulative_mean,30,-0.081734,-0.083245,-0.080299
+matched_imperfect_flags,rabcp - sliding_mean,30,-0.011159,-0.011953,-0.010380
+matched_imperfect_flags,rabcp - ewma,30,0.004784,0.003686,0.005931
+matched_imperfect_flags,rabcp - kalman,30,0.011161,0.010322,0.012031
+matched_imperfect_flags,rabcp - hmm,30,0.000976,0.000215,0.001751
+matched_imperfect_flags,rabcp - power_update,30,0.000030,-0.000785,0.000876

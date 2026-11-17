@@ -1,0 +1,209 @@
+Yes. The standard way is to mount the host `tests/` directory into the container as a volume, while the application code remains baked into the image under `/code`.
+
+For example:
+
+```bash
+docker run --rm \
+  -v "$(pwd)/tests:/tests" \
+  -w /code \
+  your-image \
+  pytest /tests
+```
+
+This keeps `tests/` out of the image and runs the host test files against the container’s installed/code environment.
+
+---
+
+## Recommended layout and commands
+
+Given your structure:
+
+```text
+project/
+├── code/
+│   ├── file1.py
+│   └── file2.py
+└── tests/
+    ├── test_file1.py
+    └── test_file2.py
+Dockerfile
+```
+
+A typical Dockerfile might copy only `code/` into the image:
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /code
+
+COPY code/ /code/
+
+RUN pip install pytest
+```
+
+Then run tests from the `project/` directory on the host:
+
+```bash
+docker build -t myapp-test .
+docker run --rm \
+  -v "$(pwd)/tests:/tests" \
+  -w /code \
+  myapp-test \
+  pytest /tests
+```
+
+Important points:
+
+- `-v "$(pwd)/tests:/tests"` mounts the host `tests/` directory at `/tests` inside the container.
+- `-w /code` sets the working directory to `/code`, so imports like `import file1` work if your tests import the code as top-level modules.
+- `pytest /tests` tells pytest to collect tests from the mounted directory.
+
+---
+
+## If your tests import the code as a package
+
+If your tests do:
+
+```python
+from code.file1 import something
+```
+
+then mount the whole project or set `PYTHONPATH` appropriately.
+
+Option A: mount the project root read-only:
+
+```bash
+docker run --rm \
+  -v "$(pwd):/project" \
+  -w /project \
+  myapp-test \
+  pytest tests
+```
+
+But this also mounts the host `code/` over the image’s `/project/code`, which may be fine for development but means the container is not testing the exact copied image code.
+
+Option B: keep only `tests/` mounted and set `PYTHONPATH=/code`:
+
+```bash
+docker run --rm \
+  -v "$(pwd)/tests:/tests" \
+  -w /code \
+  -e PYTHONPATH=/code \
+  myapp-test \
+  pytest /tests
+```
+
+Then imports such as `from file1 import ...` or `from code.file1 import ...` depend on how `/code` is structured.
+
+---
+
+## Using Docker Compose
+
+A `docker-compose.yml` equivalent:
+
+```yaml
+services:
+  test:
+    build: .
+    working_dir: /code
+    volumes:
+      - ./tests:/tests
+    command: pytest /tests
+```
+
+Run with:
+
+```bash
+docker compose run --rm test
+```
+
+---
+
+## Best practices for this separation
+
+1. **Do not put `tests/` in the Docker image.**  
+   Only copy application code and install dependencies in the image.
+
+2. **Mount `tests/` as a read-only volume** unless tests need to write artifacts:
+
+   ```bash
+   -v "$(pwd)/tests:/tests:ro"
+   ```
+
+3. **Use a separate test target or compose service** if you also need a production image. For example:
+
+   ```dockerfile
+   FROM python:3.11-slim AS base
+   WORKDIR /code
+   COPY code/ /code/
+   RUN pip install -r requirements.txt
+
+   FROM base AS test
+   RUN pip install pytest
+   ```
+
+   Then:
+
+   ```bash
+   docker build --target test -t myapp-test .
+   ```
+
+4. **Keep test dependencies separate from runtime dependencies.**  
+   Install `pytest` only in the test stage or test service, not in the final production image.
+
+5. **Be explicit about the test path inside the container.**  
+   Use `pytest /tests` rather than relying on the current directory.
+
+---
+
+## If you are using Poetry
+
+Since your earlier questions mention Poetry, the same principle applies:
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /code
+
+COPY pyproject.toml poetry.lock ./
+COPY code/ /code/
+
+RUN pip install poetry && poetry install --no-root
+```
+
+Run:
+
+```bash
+docker run --rm \
+  -v "$(pwd)/tests:/tests" \
+  -w /code \
+  myapp-test \
+  poetry run pytest /tests
+```
+
+Do not copy `tests/` into the image. Mount it at runtime.
+
+---
+
+## Quick checklist
+
+- Is `tests/` excluded from the Docker build context? Use `.dockerignore`:
+
+  ```text
+  tests/
+  docs/
+  .venv/
+  __pycache__/
+  .pytest_cache/
+  ```
+
+- Is the mount path correct?  
+  Host `$(pwd)/tests` → container `/tests`.
+
+- Is the working directory correct for imports?  
+  Usually `/code`.
+
+- Are test dependencies installed in the image?  
+  At least `pytest`, plus any plugins such as `pytest-cov`.
+
+This setup gives you host-editable test files while running them against the containerized application code.

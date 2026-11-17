@@ -1,0 +1,35 @@
+The error message is misleading. The actual problem is that your `docker-compose.yml` file is missing the top-level `version` key and, more importantly, the indentation is wrong.
+
+In your file, `services:` is at the top level, but `db:` and `app:` are indented with only one space. Docker Compose expects consistent indentation (typically 2 or 4 spaces) to determine the structure.
+
+Here's the corrected `docker-compose.yml`:
+
+```yaml
+version: '3'
+
+services:
+  db:
+    container_name: djangy-db
+    image: postgres
+
+  app:
+    container_name: djangy-app
+    build:
+      context: ./
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    links:
+      - db
+```
+
+Key fixes:
+1. Added `version: '3'` at the top (optional but recommended)
+2. Fixed indentation to use consistent 2 spaces for each level
+3. `db` and `app` are now properly indented under `services:`
+
+The error "Unsupported config option for services: 'app'" occurred because Docker Compose couldn't parse the structure correctly due to the inconsistent indentation. It interpreted `app` as being at the wrong level in the YAML hierarchy.
+
+After fixing the indentation, run `docker-compose up` again and it should work.

@@ -1,0 +1,58 @@
+The problem is that you're sending form-encoded data instead of raw JSON. The Docker Remote API expects a JSON body, but your Java code is sending `application/x-www-form-urlencoded` data (via `UrlEncodedFormEntity`), which produces something like `Image=registry%3A2` instead of `{"Image":"registry:2"}`.
+
+The error `invalid character 'I' looking for beginning of value` occurs because Docker tries to parse the body as JSON, but finds the literal character `I` (from `Image=...`) instead of `{`.
+
+## Fix
+
+Send a raw JSON string as the entity:
+
+```java
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.HttpResponse;
+
+String containerName = "test_remote_reg";
+String imageName = "registry:2";
+String url = DockerConfig.getValue("baseURL") + "/containers/create?name=" + containerName;
+
+HttpPost post = new HttpPost(url);
+post.setHeader("Content-Type", "application/json");
+
+// Raw JSON body
+String json = "{\"Image\":\"" + imageName + "\"}";
+StringEntity entity = new StringEntity(json, "UTF-8");
+post.setEntity(entity);
+
+HttpClient client = new DefaultHttpClient();
+HttpResponse response = client.execute(post);
+
+// Optional: read response
+System.out.println(response.getStatusLine().getStatusCode());
+```
+
+## Key differences from your code
+
+1. **Entity type**: Use `StringEntity` with a raw JSON string, not `UrlEncodedFormEntity`.
+2. **Content-Type**: You had a leading space in `" application/json"` — remove it (though this wasn't the main issue).
+3. **JSON structure**: The body must be valid JSON: `{"Image":"registry:2"}`.
+
+## Alternative: Use a JSON library
+
+For more complex payloads, use a library like Jackson or Gson:
+
+```java
+import com.google.gson.Gson;
+import java.util.HashMap;
+import java.util.Map;
+
+Map<String, Object> payload = new HashMap<>();
+payload.put("Image", imageName);
+// Add other options like ExposedPorts, HostConfig, etc.
+
+String json = new Gson().toJson(payload);
+StringEntity entity = new StringEntity(json, "UTF-8");
+post.setEntity(entity);
+```
+
+This is cleaner and less error-prone than manual string concatenation.

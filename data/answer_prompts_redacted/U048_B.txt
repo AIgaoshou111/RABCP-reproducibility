@@ -1,0 +1,239 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-10-01 20:26:56
+Title: Docker - check if postgres is ready
+Tags: <postgresql><docker><centos><kong>
+Body:
+I have a Kong API Gateway [链接：https://hub.docker.com/_/kong/] container and a postgres [链接：https://hub.docker.com/_/postgres/] container and I need to check whether postgres has started up and ready from the Kong container before running the migrations. I was thinking of installing the postgres client utilities into a custom image based on the official Kong image using RUN yum install postgresql -y && yum clean all in my Dockerfile and using either psql or pg_isready to achieve this. I've created a postgres user called polling with an empty password specifically for checking the status of the server by these two utilities. Neither of them work. 
+
+I tried to execute these commands from the custom Kong image:
+
+psql. The command psql -h postgres -U polling -w -c '\l' fails with the error psql: fe_sendauth: no password supplied. But the user has no password. What am I doing wrong? The full shell script checking whether the server is ready using psql is described here [链接：https://docs.docker.com/compose/startup-order/].
+
+pg_isready. I don't get how to install this utility separately into a custom image based on the official Kong image which in turn based on the centos:7 image, the postgresql package doesn't include pg_isready. Only these utilities are installed and can be found in /usr/bin: pg_config, pg_dump, pg_dumpall, pg_restore, psql. How to install pg_isready? I don't want to have the full server installation in the Kong image.
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2017-08-10 13:13:32
+Title: Docker - deliver the code to nginx and php-fpm
+Tags: <php><docker><nginx><docker-compose><dockerfile>
+Body:
+How do I deliver the code of a containerized PHP application, whose image is based on busybox and contains only the code, between separate NGINX and PHP-FPM containers? I use the 3rd version of docker compose.
+
+The Dockerfile of the image containing the code would be:
+
+FROM busybox
+
+#the app's code
+RUN mkdir /app
+
+VOLUME /app
+
+#copy the app's code from the context into the image
+COPY code /app
+
+The docker-compose.yml file would be:
+
+version: "3"
+services:
+  #the application's code
+  #the volume is currently mounted from the host machine, but the code will be copied over into the image statically for production
+  app:
+   image: app
+   volumes:
+    - ../../code/cms/storage:/storage
+   networks:
+    - backend
+
+  #webserver
+  web:
+   image: web
+   depends_on:
+    - app
+    - php
+   networks:
+    - frontend
+    - backend
+   ports:
+    - '8080:80'
+    - '8081:443'
+
+  #php
+  php:
+   image: php:7-fpm
+   depends_on:
+    - app
+   networks:
+    - backend
+
+networks:
+ cms-frontend:
+   driver: "bridge"
+ cms-backend:
+   driver: "bridge"
+
+The solutions I thought of, neither appropriate:
+
+1) Use the volume from the app's container in the PHP and NGINX containers, but compose v3 doesn't allow it (the volumes_from directive). Can't use it.
+
+2) Place the code in a named volume and connect it to the containers. Going this way I can't containerize the code. Can't use. (I'll also have to manually create this volume on every node in a swarm?)
+
+3) Copy the code twice directly into images based on NGINX and PHP-FPM. Bad idea, I'll have to maintain them to be in concert.
+
+Got stuck with this. Any other options? I might have misunderstood something, only beginning with Docker.
+
+[H2]
+Date: 2017-09-17 20:39:49
+Title: Nginx rewrite to subfolder under root
+Tags: <php><symfony><docker><nginx><docker-compose>
+Body:
+I have a few microservices manged by docker running in a backend private network and want to set up a dynamic routing managed by nginx so that it would choose the microservice based on the URI. I've got three questions:
+
+I need nginx to take the domain name for the fastcgi_pass directive from the first segment of the path in the URI, so "app" from the statement fastcgi_pass app:9000; should come from here: https://example.com/app/foo/bar. If the URI was  https://example.com/another-app/foo/bar in the URI, the directive would look like fastcgi_pass another-app:9000; Is it possible this way dynamically, or I'll have to create a separate location for every FastCGI server?
+
+I also need it to rewrite to a folder under the root depending on the same first URI path's segment. I wrote a config but getting 404 errors. I'm a newbie to nginx and just noticed that the paths in the nginx and php-fpm containers don't match. Can the 404 errors be related to this fact?
+
+Is this kind of routing possible at all (see the config below for more details)? Another option is to create a separate location for every microservice, but I don't want to change this config every time I add or remove a microservices.
+
+Here is my config:
+
+server {
+    server_name _;
+    root /services;
+
+    #rewrite to the subfolder under root depending on the first section in the path
+    rewrite ^/(\w+)(/|$) /$1/app_dev.php$is_args$args last;
+
+    location / {
+        # try to serve file directly, fallback to app.php
+         try_files $uri /app_dev.php$is_args$args;
+    }
+
+    location ~ ^/(\w+)/(app_dev|config)\.php(/|$) {
+    #further rewrite to the /web subfolder with the front controller
+        rewrite ^/(\w+)/(app_dev|config)\.php(/|$) /$1/web/$2.php$is_args$args break;
+
+        fastcgi_pass media:9000;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+    }
+
+    location ~ \.php$ {
+        return 404;
+    }
+
+    error_log  /var/log/nginx/error.log notice;
+    access_log /var/log/nginx/access.log;
+    rewrite_log on;
+}
+
+Here is the log:
+
+backend_1   | 2017/09/17 20:03:54 [error] 8#8: *1 open() "/usr/share/nginx/html/media" failed (2: No such file or directory), client: 172.25.0.1, server: localhost, request: "GET /media HTTP/1.1", host: "localhost:8082"
+backend_1   | 172.25.0.1 - - [17/Sep/2017:20:03:54 +0000] "GET /media HTTP/1.1" 404 571 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36" "-"
+
+One more issue is that I don't see any rewrite logs, guessing it might have been related to the fact that neither of the locations match.
+
+[H3]
+Date: 2017-09-26 17:44:11
+Title: Docker - extend the parent's ENTRYPOINT
+Tags: <postgresql><docker>
+Body:
+I've got a custom image based on the official postgres image and I want to extend the entrypoint of the parent image so that it would create new users and databases if they don't exist yet every time a container starts up. Is it possible? Like my image would execute all the commands from the standard entrypoint plus my own shell script. 
+
+I know about putting my own scripts into the /docker-entrypoint-initdb.d directory, but it seems that they get executed only when the volume is created the first time.
+
+[H4]
+Date: 2017-09-29 08:02:37
+Title: Docker is reusing the same volume for different containers
+Tags: <postgresql><docker>
+Body:
+I've created two different custom images based on the same official postgres image. The Dockerfile for both looks like:
+
+FROM postgres:latest
+
+LABEL vendor="***" \
+      vendor.website="***" \
+      description="The postgres database"
+
+COPY init.sh /docker-entrypoint-initdb.d/
+
+These images are used in different docker-compose.yml files. The problem is that the containers based on these images mount the same volume and I end up having the same database for different applications. I thought docker would created separate volumes for different containers. What am I doing wrong? 
+
+The docker inspect info:
+
+Container 1:
+
+"Id": "b6ce892e88e08b410af2603041789641cdfe9648e5c36d66d0cff8c495de2720",
+"Image": "sha256:4c6ac32f355cdc93251256cc8e8171fc02bb85d719f4efb9ac6bb999ad66b3ab",
+...
+"Mounts": [
+    {
+        "Type": "volume",
+                "Name": "5bb91515eb853e0c18e396b041058d4a03424dfb45c3eb2d2b9890e0b044b461",
+                "Source": "/var/lib/docker/volumes/5bb91515eb853e0c18e396b041058d4a03424dfb45c3eb2d2b9890e0b044b461/_data",
+                "Destination": "/var/lib/postgresql/data",
+                "Driver": "local",
+                "Mode": "rw",
+                "RW": true,
+                "Propagation": ""
+    }
+],
+
+Container 2
+
+"Id": "8c1c9891c462d8520ab107901c39b62fbef389e4501979065a6edb218a25c16a",
+"Image": "sha256:4c6ac32f355cdc93251256cc8e8171fc02bb85d719f4efb9ac6bb999ad66b3ab",
+...
+"Mounts": [
+{
+"Type": "volume",
+"Name": "5bb91515eb853e0c18e396b041058d4a03424dfb45c3eb2d2b9890e0b044b461",
+"Source": "/var/lib/docker/volumes/5bb91515eb853e0c18e396b041058d4a03424dfb45c3eb2d2b9890e0b044b461/_data",
+"Destination": "/var/lib/postgresql/data",
+"Driver": "local",
+"Mode": "rw",
+"RW": true,
+"Propagation": ""
+}
+],
+
+So as you can see the containers based on different images (4c6ac32f355cdc93251256cc8e8171fc02bb85d719f4efb9ac6bb999ad66b3ab and 4c6ac32f355cdc93251256cc8e8171fc02bb85d719f4efb9ac6bb999ad66b3ab) use the same volume 5bb91515eb853e0c18e396b041058d4a03424dfb45c3eb2d2b9890e0b044b461. I obviously need them to use separate volumes.
+
+UPDATE 1
+
+I made the following things:
+
+Added different labels to the images so that their hashes would differ
+
+Removed the "shared" volume. I mean that one which both containers picked up
+
+Started docker-compose up for both apps in turn (without docker-compose down). They shared the volume again.
+
+UPDATE 2
+
+I removed all the volumes and images on my machine and rebuilt the images for both apps
+
+Executed docker-compose down
+
+Executed docker-compose up for both in turn (with docker-compose down when switching over the apps)
+
+They don't share a volume anymore. Both custom postgres containers use their own volumes. 
+
+I'm confused. When different containers share a volume and and how to avoid it?
+
+[H5]
+Date: 2017-09-29 12:44:09
+Title: Specify docker network scope in the compose file
+Tags: <docker><docker-compose><docker-swarm>
+Body:
+What do I put into my compose file used by the docker stack deploy command to replicate the creation of a network using the command docker network create test --scope swarm? So I need to change the scope to swarm for the bridge driver. I've been googling a log but can't find anything.

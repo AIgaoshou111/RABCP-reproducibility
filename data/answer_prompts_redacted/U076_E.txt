@@ -1,0 +1,29 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-05-23 12:57:41
+Title: Cannot login to docker container registry which is inside docker container
+Tags: <docker><gitlab>
+Body:
+I've got gitlab running on my localhost inside docker container. I've set up container registry for listening localhost:4567 in file /etc/gitlab/gitlab.rb and now I can not log in. When I write docker login localhost:7073(I've set mapping 7073->4567), enter my username and password, I receive:
+
+Error response from daemon: Get http://localhost:7073/v1/users/: EOF
+
+Selected earlier-question evidence:
+[E1; H4; 2017-05-19 11:30:18] Exact excerpt from the earlier question:
+Unable to access gitlab repository in docker
+I've runned gitlab container [链接：https://hub.docker.com/r/gitlab/gitlab-ce/] and created new repo. When I try to clone that repo using http or ssh, I receive:
+
+fatal: unable to access 'http://root@3908eec185ce/root/my-awesome-project.git/': Could not resolve host: 3908eec185ce
+
+there is how I clone:
+
+git clone http://root@3908eec185ce/root/my-awesome-project.git
+
+[E2; H5; 2017-05-22 11:44:49] Exact excerpt from the earlier question:
+How to setup gitlab container registry inside docker?
+I have got gitlab [链接：https://hub.docker.com/r/gitlab/gitlab-ce/] running inside the docker container on my localhost. I want to test gitlab container registry also in my localhost. But I don't know how to setup container registry inside docker container. I am using this instruction:

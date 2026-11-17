@@ -1,0 +1,58 @@
+The error means Docker is trying to pull a Windows container image, but the `hello-world` image you're pulling doesn't have a manifest for your specific Windows version (Windows Server 2016, build 10.0.14393).
+
+This is not an experimental mode issue. It's a compatibility issue between the image and your Windows version.
+
+## What's happening
+
+- `hello-world` is primarily a Linux image. The Docker Hub `hello-world` image does have Windows manifests, but only for newer Windows versions (Windows Server 2019 / 1809+).
+- Windows Server 2016 (build 14393) is an older Windows container base image version. Many images on Docker Hub no longer publish manifests for it.
+
+## How to fix it
+
+### Option 1: Pull a Windows Server 2016-compatible image
+
+Use an image that explicitly supports Windows Server 2016. For example:
+
+```powershell
+docker pull microsoft/nanoserver:sac2016
+docker run microsoft/nanoserver:sac2016 cmd /c echo Hello World
+```
+
+Or use the `microsoft/windowsservercore` image with the `ltsc2016` tag:
+
+```powershell
+docker pull microsoft/windowsservercore:ltsc2016
+docker run microsoft/windowsservercore:ltsc2016 cmd /c echo Hello World
+```
+
+### Option 2: Check your Docker daemon is running Windows containers
+
+Verify you're in Windows container mode (not Linux container mode):
+
+```powershell
+docker info | Select-String "OSType"
+```
+
+It should say `OSType: windows`. If it says `linux`, you need to switch to Windows containers.
+
+### Option 3: Use a different test image
+
+For Windows Server 2016, try:
+
+```powershell
+docker run microsoft/dotnet-samples:dotnetapp-nanoserver-sac2016
+```
+
+Or simply run a basic command in a Windows Server Core container:
+
+```powershell
+docker run -it microsoft/windowsservercore:ltsc2016 powershell
+```
+
+## Why `dockerd --experimental` hangs
+
+Running `dockerd --experimental` manually is not the right approach. The Docker daemon is already running as a Windows service. Starting a second instance causes it to hang because it can't bind to the same ports/sockets. Experimental mode is not needed for this issue anyway.
+
+## Summary
+
+The core problem is that `hello-world` doesn't support Windows Server 2016. Use a Windows Server 2016-compatible base image instead.

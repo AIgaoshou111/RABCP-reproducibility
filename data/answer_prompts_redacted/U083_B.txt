@@ -1,0 +1,423 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2022-03-01 10:58:35
+Title: How to deploy django app using bitbucket pipelines
+Tags: <python><django><docker><amazon-ec2><bitbucket-pipelines>
+Body:
+I want to deploy my Django app which is dockerized using BitBucket pipelines to AWS EC2 instance. How can I deploy to EC2 using BitBucket pipelines?
+
+docker-compose.yml
+
+version: "3.8"
+   
+services:
+  db:
+    container_name: db
+    image: "postgres"
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - dev.env
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=POSTGRES_DB
+      - POSTGRES_USER=POSTGRES_USER
+      - POSTGRES_PASSWORD=[REDACTED]
+
+  app:
+    container_name: app
+    build: 
+      context: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./core:/app
+      - ./data/web:/vol/web
+    env_file:
+      - dev.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+
+Dockerfile
+
+FROM python:3
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# COPY ./core /app
+
+WORKDIR /app
+EXPOSE 8000
+
+COPY ./core/ /app/
+COPY ./scripts /scripts
+
+RUN pip install --upgrade pip
+COPY requirements.txt /app/
+RUN pip install -r requirements.txt && \
+    adduser --disabled-password --no-create-home app && \
+    mkdir -p /vol/web/static && \
+    mkdir -p /vol/web/media && \
+    chown -R app:app /vol && \
+    chmod -R 755 /vol && \
+    chmod -R +x /scripts
+
+USER app
+
+CMD ["/scripts/run.sh"]
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2021-12-11 15:17:03
+Title: Unable to run Django with PostgreSQL in Docker
+Tags: <python><django><postgresql><docker><docker-compose>
+Body:
+I wanted to set up a Django app with PostgresDb inside docker containers so that's why I wanted to setup docker-compose but when I execute my code docker, django and db all are working fine and I also developed some API's and they were also working fine as expected but unfortunately, suddenly I'm blocked with these errors:
+
+[图片1（人工查看原图后整理）：PostgreSQL 日志报用户 postgres 密码认证失败，同时提示该角色不存在；Django 连接数据库抛出 OperationalError。]
+
+pgdb_1    | 
+pgdb_1    | 2021-12-11 15:05:38.674 UTC [1] LOG:  starting PostgreSQL 14.1 (Debian 14.1-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit
+pgdb_1    | 2021-12-11 15:05:38.674 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+pgdb_1    | 2021-12-11 15:05:38.674 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+pgdb_1    | 2021-12-11 15:05:38.697 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+pgdb_1    | 2021-12-11 15:05:38.729 UTC [27] LOG:  database system was shut down at 2021-12-11 15:03:09 UTC
+pgdb_1    | 2021-12-11 15:05:38.761 UTC [1] LOG:  database system is ready to accept connections
+django_1  | Watching for file changes with StatReloader
+django_1  | Performing system checks...
+django_1  | 
+django_1  | System check identified no issues (0 silenced).
+pgdb_1    | 2021-12-11 15:05:41.390 UTC [34] FATAL:  password authentication failed for user "postgres"
+pgdb_1    | 2021-12-11 15:05:41.390 UTC [34] DETAIL:  Role "postgres" does not exist.
+pgdb_1    |     Connection matched pg_hba.conf line 100: "host all all all scram-sha-256"
+django_1  | Exception in thread django-main-thread:
+django_1  | Traceback (most recent call last):
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/backends/base/base.py", line 219, in ensure_connection
+django_1  |     self.connect()
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/utils/asyncio.py", line 33, in inner
+django_1  |     return func(*args, **kwargs)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/backends/base/base.py", line 200, in connect
+django_1  |     self.connection = self.get_new_connection(conn_params)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/utils/asyncio.py", line 33, in inner
+django_1  |     return func(*args, **kwargs)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/backends/postgresql/base.py", line 187, in get_new_connection
+django_1  |     connection = Database.connect(**conn_params)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+django_1  |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+django_1  | psycopg2.OperationalError: FATAL:  password authentication failed for user "postgres"
+django_1  | 
+django_1  | 
+django_1  | The above exception was the direct cause of the following exception:
+django_1  | 
+django_1  | Traceback (most recent call last):
+django_1  |   File "/usr/local/lib/python3.10/threading.py", line 1009, in _bootstrap_inner
+django_1  |     self.run()
+django_1  |   File "/usr/local/lib/python3.10/threading.py", line 946, in run
+django_1  |     self._target(*self._args, **self._kwargs)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/utils/autoreload.py", line 64, in wrapper
+django_1  |     fn(*args, **kwargs)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/core/management/commands/runserver.py", line 121, in inner_run
+django_1  |     self.check_migrations()
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/core/management/base.py", line 486, in check_migrations
+django_1  |     executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/migrations/executor.py", line 18, in __init__
+django_1  |     self.loader = MigrationLoader(self.connection)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/migrations/loader.py", line 53, in __init__
+django_1  |     self.build_graph()
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/migrations/loader.py", line 220, in build_graph
+django_1  |     self.applied_migrations = recorder.applied_migrations()
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/migrations/recorder.py", line 77, in applied_migrations
+django_1  |     if self.has_table():
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/migrations/recorder.py", line 55, in has_table
+django_1  |     with self.connection.cursor() as cursor:
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/utils/asyncio.py", line 33, in inner
+django_1  |     return func(*args, **kwargs)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/backends/base/base.py", line 259, in cursor
+django_1  |     return self._cursor()
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/backends/base/base.py", line 235, in _cursor
+django_1  |     self.ensure_connection()
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/utils/asyncio.py", line 33, in inner
+django_1  |     return func(*args, **kwargs)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/backends/base/base.py", line 218, in ensure_connection
+django_1  |     with self.wrap_database_errors:
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/utils.py", line 90, in __exit__
+django_1  |     raise dj_exc_value.with_traceback(traceback) from exc_value
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/backends/base/base.py", line 219, in ensure_connection
+django_1  |     self.connect()
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/utils/asyncio.py", line 33, in inner
+django_1  |     return func(*args, **kwargs)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/backends/base/base.py", line 200, in connect
+django_1  |     self.connection = self.get_new_connection(conn_params)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/utils/asyncio.py", line 33, in inner
+django_1  |     return func(*args, **kwargs)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/django/db/backends/postgresql/base.py", line 187, in get_new_connection
+django_1  |     connection = Database.connect(**conn_params)
+django_1  |   File "/usr/local/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+django_1  |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+django_1  | django.db.utils.OperationalError: FATAL:  password authentication failed for user "postgres"
+
+My Dockerfile
+
+FROM python:3
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+WORKDIR /code
+
+RUN pip install --upgrade pip
+COPY requirements.txt /code/
+RUN pip install -r requirements.txt
+COPY . /code/
+
+docker-compose.yml
+
+version: "3.8"
+   
+services:
+  pgdb:
+    image: "postgres"
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=digipm
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=[REDACTED]
+
+  django:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - pgdb
+
+Database config settings.py
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'digipm',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'pgdb',
+        'PORT': 5432,
+    }
+}
+
+[H2]
+Date: 2021-12-23 12:55:24
+Title: Access sql dump inside docker container django postgres
+Tags: <django><postgresql><docker><docker-compose>
+Body:
+I'm using Django with Postgres database so I've created separate docker containers for Django and Postgres, now I want to share the dump file with my team but I'm unable to access the dump file, please let me know how can I access the dump file and after accessing it how can we import it using the container?
+
+docker-compose.yml
+
+version: "3.8"
+   
+services:
+  pgdb:
+    image: "postgres"
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+location inside db docker container
+
+[图片1（人工查看原图后整理）：进入 PostgreSQL 容器后，ls 列出 database_dump.sql、exported_data.sql 等 SQL 备份文件。]
+
+[H3]
+Date: 2022-01-25 14:46:07
+Title: Permission Denied When Installing Packages Using Pip In Docker Container Django
+Tags: <python><django><docker><ubuntu><pip>
+Body:
+I'm unable to install the package inside my docker container, please let me know how can I solve this.
+
+Warning:
+
+WARNING: The directory '/home/USER_REDACTED/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+
+error:
+
+ERROR: Could not install packages due to an OSError: [Errno 13] Permission denied: '/home/USER_REDACTED'
+Check the permissions.
+
+Dockerfile:
+
+FROM python:3
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+EXPOSE 8000
+
+COPY ./core/ /app/
+COPY ./scripts /scripts
+
+RUN pip install --upgrade pip
+COPY requirements.txt /app/
+RUN pip install -r requirements.txt && \
+    adduser --disabled-password --no-create-home app && \
+    mkdir -p /vol/web/static && \
+    mkdir -p /vol/web/media && \
+    chown -R app:app /vol && \
+    chmod -R 755 /vol && \
+    chmod -R +x /scripts
+
+USER app
+
+CMD ["/scripts/run.sh"]
+
+command inside container:
+
+pip install django-storages
+
+[H4]
+Date: 2022-01-28 23:53:26
+Title: Handle Django MIgrations
+Tags: <python><django><docker>
+Body:
+I'm working on a Django project with Postgres database using Docker. We are facing some issues in with our migrations, I did not add Django migrations inside .gitignore because I want everyone to have the same database fields and same migrations as well, but every time when someone changes the models or add a new model and push the code with migrations so migrations re not applying in our database as it should be, every time we faced this issue that sometimes ABC key doesn't exist or ABC table doesn't exist, so how can I overcome from it.
+
+Dockerfile:
+
+EXPOSE 8000
+
+COPY ./core/ /app/
+COPY ./scripts /scripts
+
+RUN pip install --upgrade pip
+COPY requirements.txt /app/
+RUN pip install -r requirements.txt && \
+    adduser --disabled-password --no-create-home app && \
+    mkdir -p /vol/web/static && \
+    mkdir -p /vol/web/media && \
+    chown -R app:app /vol && \
+    chmod -R 755 /vol && \
+    chmod -R +x /scripts
+
+USER app
+
+CMD ["/scripts/run.sh"]
+
+run.sh
+
+#!/bin/sh
+
+set -e
+
+ls -la /vol/
+ls -la /vol/web
+
+whoami
+
+python manage.py collectstatic --noinput
+python manage.py makemigrations
+python manage.py migrate
+
+uwsgi --socket :9000 --workers 4 --master --enable-threads --module myApp.wsgi
+
+docker-compose.yml
+
+version: "3.8"
+   
+services:
+  db:
+    container_name: db
+    image: "postgres"
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - dev.env
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=POSTGRES_DB
+      - POSTGRES_USER=POSTGRES_USER
+      - POSTGRES_PASSWORD=[REDACTED]
+
+  app:
+    container_name: app
+    build: 
+      context: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./core:/app
+      - ./data/web:/vol/web
+    env_file:
+      - dev.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+
+[H5]
+Date: 2022-02-03 13:02:03
+Title: selenium.common.exceptions.WebDriverException: Message: Error forwarding the new session Empty pool of VM for setup Capabilities error within Docker
+Tags: <docker><selenium><google-chrome><selenium-webdriver><selenium-chromedriver>
+Body:
+I m running the acceptance tests and facing the following errors in my system only, this is working fine inside my other team systems. I'm using a selenium webdriver inside my docker container, it was working fine on my PC as well but don't know why suddenly it started throwing these errors.
+
+Error stacktrace:
+
+E       selenium.common.exceptions.WebDriverException: Message: Error forwarding the new session Empty pool of VM for setup Capabilities {browserName: chrome, goog:chromeOptions: {args: [--headless, --no-sandbox, --disable-dev-shm-usage], extensions: [], prefs: {intl.accept_languages: en}}, javascriptEnabled: true, version: }
+E       Stacktrace:
+E           at org.openqa.grid.web.servlet.handler.RequestHandler.process (RequestHandler.java:118)
+E           at org.openqa.grid.web.servlet.DriverServlet.process (DriverServlet.java:85)
+E           at org.openqa.grid.web.servlet.DriverServlet.doPost (DriverServlet.java:69)
+E           at javax.servlet.http.HttpServlet.service (HttpServlet.java:707)
+E           at javax.servlet.http.HttpServlet.service (HttpServlet.java:790)
+E           at org.seleniumhq.jetty9.servlet.ServletHolder.handle (ServletHolder.java:865)
+E           at org.seleniumhq.jetty9.servlet.ServletHandler.doHandle (ServletHandler.java:535)
+E           at org.seleniumhq.jetty9.server.handler.ScopedHandler.handle (ScopedHandler.java:146)
+E           at org.seleniumhq.jetty9.security.SecurityHandler.handle (SecurityHandler.java:548)
+E           at org.seleniumhq.jetty9.server.handler.HandlerWrapper.handle (HandlerWrapper.java:132)
+E           at org.seleniumhq.jetty9.server.handler.ScopedHandler.nextHandle (ScopedHandler.java:257)
+E           at org.seleniumhq.jetty9.server.session.SessionHandler.doHandle (SessionHandler.java:1595)
+E           at org.seleniumhq.jetty9.server.handler.ScopedHandler.nextHandle (ScopedHandler.java:255)
+E           at org.seleniumhq.jetty9.server.handler.ContextHandler.doHandle (ContextHandler.java:1340)
+E           at org.seleniumhq.jetty9.server.handler.ScopedHandler.nextScope (ScopedHandler.java:203)
+E           at org.seleniumhq.jetty9.servlet.ServletHandler.doScope (ServletHandler.java:473)
+E           at org.seleniumhq.jetty9.server.session.SessionHandler.doScope (SessionHandler.java:1564)
+E           at org.seleniumhq.jetty9.server.handler.ScopedHandler.nextScope (ScopedHandler.java:201)
+E           at org.seleniumhq.jetty9.server.handler.ContextHandler.doScope (ContextHandler.java:1242)
+E           at org.seleniumhq.jetty9.server.handler.ScopedHandler.handle (ScopedHandler.java:144)
+E           at org.seleniumhq.jetty9.server.handler.HandlerWrapper.handle (HandlerWrapper.java:132)
+E           at org.seleniumhq.jetty9.server.Server.handle (Server.java:503)
+E           at org.seleniumhq.jetty9.server.HttpChannel.handle (HttpChannel.java:364)
+E           at org.seleniumhq.jetty9.server.HttpConnection.onFillable (HttpConnection.java:260)
+E           at org.seleniumhq.jetty9.io.AbstractConnection$ReadCallback.succeeded (AbstractConnection.java:305)
+E           at org.seleniumhq.jetty9.io.FillInterest.fillable (FillInterest.java:103)
+E           at org.seleniumhq.jetty9.io.ChannelEndPoint$2.run (ChannelEndPoint.java:118)
+E           at org.seleniumhq.jetty9.util.thread.strategy.EatWhatYouKill.runTask (EatWhatYouKill.java:333)
+E           at org.seleniumhq.jetty9.util.thread.strategy.EatWhatYouKill.doProduce (EatWhatYouKill.java:310)
+E           at org.seleniumhq.jetty9.util.thread.strategy.EatWhatYouKill.tryProduce (EatWhatYouKill.java:168)
+E           at org.seleniumhq.jetty9.util.thread.strategy.EatWhatYouKill.run (EatWhatYouKill.java:126)
+E           at org.seleniumhq.jetty9.util.thread.ReservedThreadExecutor$ReservedThread.run (ReservedThreadExecutor.java:366)
+E           at org.seleniumhq.jetty9.util.thread.QueuedThreadPool.runJob (QueuedThreadPool.java:765)
+E           at org.seleniumhq.jetty9.util.thread.QueuedThreadPool$2.run (QueuedThreadPool.java:683)
+E           at java.lang.Thread.run (Thread.java:748)
+
+/usr/lib/python3.8/site-packages/selenium/webdriver/remote/errorhandler.py:242: WebDriverException

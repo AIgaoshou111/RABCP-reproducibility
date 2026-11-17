@@ -1,0 +1,7 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+results_verified/
+code/data/合成数据集.json
+code/data/合成数据集_元信息.json

@@ -1,0 +1,42 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2016-06-08 00:19:40
+Title: How to prevent zombie services with consul and gliderlabs/registrator?
+Tags: <docker><load-balancing><service-discovery><consul>
+Body:
+I am using consul with the gliderlabs/registrator container to show my active containers in consul.  When I delete containers too quickly the service is not deleted from consul, leaving "zombie" services that no longer exist. I have heard that there are extra options you can use with the gliderlabs/registrator container to prevent this such as -cleanup. However I have not been able to run any registrator's sucessfully with this option. This is my current docker run command for my registrators:
+
+docker run -d -h $(hostname -i) --name registrator1 \
+-v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator \
+consul://$(hostname -i):8500
+
+What do I have to add to this run command to have registrator remove any containers from consul that no longer exist or have gone down?
+
+Update: I have found the problem
+
+So I am running swarm using my consul cluster along with registrator's. To provide failover for swarm I placed a load balancer in front of my consul cluster and attached my swarm and registrator containers to the IP address of the load balancer.  This allowed any consul node to go down without loosing swarm.  
+
+However swarm does not register itself as a service.  It registers each node as a key value and is not bound to any node in the consul cluster.  Containers registered into consul with the registrator are created as services and bound to a single consul server.  
+
+I think whats happening is that when I delete a container the registrator goes to delete the service from consul but it only has a 33% chance of hitting the right consul server, and deleting the service, since my LB is just doing round robin. 
+
+All of my swarm masters, load balancer, consul servers and swarm workers are running on different machines.  My registrators are running on my swarm worker machines. Everything is running in containers.
+
+Enabling sticky load balancing is a temporary fix that solves my issue. However I think attempting to run some type of consul workers on my swarm workers and having registrator bind itself to the consul running on the local hosts may be the solution. I believe this might be the "bench-worker" described in consuls github https://github.com/hashicorp/consul/tree/master/bench [链接：https://github.com/hashicorp/consul/tree/master/bench].  I am still fairly new to consul so I'm still trying to figure it all out.
+
+Selected earlier-question evidence:
+[E1; H4; 2016-05-31 22:15:42] Exact excerpt from the earlier question:
+How to enable faster container rescheduling with Docker Swarm and Consul?
+For some background on my environment:
+
+[E2; H5; 2016-06-02 20:23:49] Exact excerpt from the earlier question:
+How to connect Docker Swarm to multiple consul servers for failover?
+I am running docker swarm with consul.  I have a consul cluster made with 3 nodes connected to each other for failover.  The issue is that I can only connect my swarm workers and masters to a single node and if that node goes down then swarm stops working.  So how can I connect swarm workers and masters to all my nodes? The following commands if run from the master will set up
+
+History-derived overall profile (uncertain estimate, not certified ability):
+Domain: Docker; prior questions: 5; mean level: 3.069 / 5; distribution: level 1: 0.000, level 2: 0.064, level 3: 0.802, level 4: 0.133, level 5: 0.000. Use this only to calibrate explanation depth when useful; specific evidence and the current question take priority.

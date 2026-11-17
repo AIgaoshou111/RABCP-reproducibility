@@ -1,0 +1,60 @@
+The Docker SDK for Python does have a `remove()` method on network objects, but it's not directly on the `client.networks` collection like `prune()` is. Here's how to properly remove a network:
+
+## Method 1: Get the network object, then remove it
+
+```python
+def remove_docker_network(network_name: str, client: docker.client.DockerClient):
+    try:
+        network = client.networks.get(network_name)
+        network.remove()
+        print(f"Successfully removed network: '{network_name}'")
+    except docker.errors.NotFound:
+        print(f"Network '{network_name}' does not exist")
+    except docker.errors.APIError as ex:
+        print(f"Error removing network '{network_name}': {ex}")
+```
+
+## Method 2: Using the low-level API
+
+If you're using the low-level API client (`docker.APIClient`), you can use:
+
+```python
+def remove_docker_network(network_name: str, client: docker.APIClient):
+    try:
+        client.remove_network(network_name)
+        print(f"Successfully removed network: '{network_name}'")
+    except docker.errors.NotFound:
+        print(f"Network '{network_name}' does not exist")
+    except docker.errors.APIError as ex:
+        print(f"Error removing network '{network_name}': {ex}")
+```
+
+## Why your current approach doesn't work
+
+The `prune()` method is designed to remove **unused** networks (networks not connected to any containers). If your network is still in use or if the filter isn't matching correctly, it won't be removed. The `prune()` method also returns a dictionary with information about what was removed, which you're not checking.
+
+## Complete example
+
+```python
+import docker
+
+def remove_docker_network(network_name: str, client: docker.client.DockerClient):
+    try:
+        # Get the network object
+        network = client.networks.get(network_name)
+        
+        # Remove it
+        network.remove()
+        print(f"Successfully removed network: '{network_name}'")
+        
+    except docker.errors.NotFound:
+        print(f"Network '{network_name}' does not exist")
+    except docker.errors.APIError as ex:
+        print(f"Error removing network '{network_name}': {ex}")
+
+# Usage
+client = docker.from_env()
+remove_docker_network("my_network", client)
+```
+
+The `remove()` method on the network object is the correct way to delete a specific network by name in the Docker SDK for Python.

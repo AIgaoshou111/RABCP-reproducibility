@@ -1,0 +1,39 @@
+﻿regime,varied_parameter,value,other_parameters,development_MAE,is_anchor
+no_flags,window,1,"{""gamma"": 0.0, ""sigma"": 0.8}",0.400114,0
+no_flags,window,3,"{""gamma"": 0.0, ""sigma"": 0.8}",0.399688,0
+no_flags,window,5,"{""gamma"": 0.0, ""sigma"": 0.8}",0.406367,1
+no_flags,window,7,"{""gamma"": 0.0, ""sigma"": 0.8}",0.412719,0
+no_flags,window,10,"{""gamma"": 0.0, ""sigma"": 0.8}",0.420945,0
+no_flags,sigma,0.4,"{""gamma"": 0.0, ""window"": 5}",0.446099,0
+no_flags,sigma,0.6,"{""gamma"": 0.0, ""window"": 5}",0.422328,0
+no_flags,sigma,0.8,"{""gamma"": 0.0, ""window"": 5}",0.406367,1
+no_flags,sigma,1,"{""gamma"": 0.0, ""window"": 5}",0.395100,0
+no_flags,sigma,1.2,"{""gamma"": 0.0, ""window"": 5}",0.385991,0
+no_flags,gamma,0,"{""sigma"": 0.8, ""window"": 5}",0.406367,1
+no_flags,gamma,0.01,"{""sigma"": 0.8, ""window"": 5}",0.343672,0
+no_flags,gamma,0.02,"{""sigma"": 0.8, ""window"": 5}",0.330306,0
+no_flags,gamma,0.05,"{""sigma"": 0.8, ""window"": 5}",0.308275,0
+no_flags,gamma,0.1,"{""sigma"": 0.8, ""window"": 5}",0.289504,0
+no_flags,gamma,0.2,"{""sigma"": 0.8, ""window"": 5}",0.273801,0
+matched_imperfect_flags,window,1,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8}",0.381884,0
+matched_imperfect_flags,window,3,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8}",0.386904,0
+matched_imperfect_flags,window,5,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8}",0.395327,1
+matched_imperfect_flags,window,7,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8}",0.402391,0
+matched_imperfect_flags,window,10,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8}",0.411221,0
+matched_imperfect_flags,sigma,0.4,"{""gamma"": 0.0, ""low_weight"": 0.35, ""window"": 5}",0.437460,0
+matched_imperfect_flags,sigma,0.6,"{""gamma"": 0.0, ""low_weight"": 0.35, ""window"": 5}",0.412595,0
+matched_imperfect_flags,sigma,0.8,"{""gamma"": 0.0, ""low_weight"": 0.35, ""window"": 5}",0.395327,1
+matched_imperfect_flags,sigma,1,"{""gamma"": 0.0, ""low_weight"": 0.35, ""window"": 5}",0.383043,0
+matched_imperfect_flags,sigma,1.2,"{""gamma"": 0.0, ""low_weight"": 0.35, ""window"": 5}",0.373378,0
+matched_imperfect_flags,gamma,0,"{""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.395327,1
+matched_imperfect_flags,gamma,0.01,"{""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.331484,0
+matched_imperfect_flags,gamma,0.02,"{""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.317420,0
+matched_imperfect_flags,gamma,0.05,"{""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.294590,0
+matched_imperfect_flags,gamma,0.1,"{""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.275766,0
+matched_imperfect_flags,gamma,0.2,"{""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.261107,0
+matched_imperfect_flags,low_weight,0.1,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.391146,0
+matched_imperfect_flags,low_weight,0.25,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.393534,0
+matched_imperfect_flags,low_weight,0.35,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.395327,1
+matched_imperfect_flags,low_weight,0.5,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.397978,0
+matched_imperfect_flags,low_weight,0.75,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.402268,0
+matched_imperfect_flags,low_weight,1,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.406367,0

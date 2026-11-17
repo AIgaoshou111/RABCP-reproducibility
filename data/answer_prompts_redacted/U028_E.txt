@@ -1,0 +1,59 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2023-06-21 19:17:14
+Title: Designing Docker Environment with Test Files on Host Machine Python
+Tags: <python><docker><unit-testing><dockerfile><pytest>
+Body:
+I am working on a project within a Docker environment, and I want to separate my PyTest test files from the Docker image. Specifically, I would like to have the test files stored in a separate directory (tests/) on the host machine. Is there a way to run the PyTest tests for the Python files within the Docker container while keeping the test files on the host machine?
+
+Details:
+
+Host Machine:
+├── project/
+│ ├── code/
+│ │ ├── file1.py
+│ │ ├── file2.py
+│ │ └── ...
+│ └── tests/
+│ ├── test_file1.py
+│ ├── test_file2.py
+│ └── ...
+└── Dockerfile
+
+Docker Machine:
+└── code/
+├── file1.py
+├── file2.py
+└── ...
+
+Objective:
+
+I want to execute PyTest tests for the Python files within the Docker container.
+
+The test files are located in the tests/ directory on the host machine.
+
+I want to avoid including the test files directly in the Docker image.
+
+Questions:
+
+How can I configure my Docker setup to run PyTest tests for the Python files within the Docker container while keeping the test files on the host machine?
+
+Are there any specific volume mappings or configurations needed to make the test files accessible within the Docker container?
+
+What would be the recommended approach or best practices for achieving this separation between the test files on the host machine and the Docker environment?
+
+Any insights or guidance on how to accomplish this setup and run PyTest tests within the Docker container while keeping the test files on the host machine would be greatly appreciated.
+
+Selected earlier-question evidence:
+[E1; H3; 2023-06-20 23:07:21] Exact excerpt from the earlier question:
+Determining Volumes for Poetry and Sphinx files in Python from Dockerfile
+I'm working on containerizing my project using Docker, and I want to create volumes for certain files to ensure they are persistent and can be easily accessed. Specifically, I need to determine which files should be created as volumes in my Dockerfile.
+
+[E2; H5; 2023-06-21 16:51:08] Exact excerpt from the earlier question:
+Separating PyTest Tests and Sphinx Documentation in Docker with Poetry for Development
+I want to create a design for utilizing Poetry within a Docker environment. During development, I want to have separate directories for PyTest test files (tests/) and Sphinx documentation (docs/) on the host machine, rather than including them directly in the Docker image. Is there a way I could run tests for the Python files within the Docker image and create auto-updating

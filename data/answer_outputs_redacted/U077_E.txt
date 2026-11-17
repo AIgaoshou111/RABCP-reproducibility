@@ -1,0 +1,86 @@
+The error `Failed to run command 'up'. null` from minimesos 0.13.0 is a known issue where the CLI wrapper fails silently. The most common causes in 2017 were:
+
+1. **Docker socket permissions** — the minimesos CLI container needs access to `/var/run/docker.sock`
+2. **Missing `~/.minimesos` directory or incorrect permissions**
+3. **The CLI container failing to mount the current directory**
+
+## Quick checks to run
+
+### 1. Check if the minimesos CLI container can actually run
+
+```bash
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock containersol/minimesos-cli:0.13.0 --version
+```
+
+If this fails, you have a Docker socket or mount issue.
+
+### 2. Check Docker socket permissions
+
+```bash
+ls -la /var/run/docker.sock
+```
+
+You should see something like `srw-rw---- 1 root docker`. If your user is not in the `docker` group, either:
+
+```bash
+sudo usermod -aG docker $USER
+# log out and back in
+```
+
+Or run minimesos with `sudo` (though this creates its own issues with the `~/.minimesos` directory).
+
+### 3. Check if `~/.minimesos` exists and is writable
+
+```bash
+ls -la ~/.minimesos
+```
+
+The installer should have created this. If it's missing:
+
+```bash
+mkdir -p ~/.minimesos/bin
+```
+
+### 4. Run with debug output
+
+```bash
+export MINIMESOS_DEBUG=true
+minimesos up
+```
+
+Or try running the CLI container directly to see the actual error:
+
+```bash
+docker run --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v ~/.minimesos:/root/.minimesos \
+  -v $(pwd):/minimesos \
+  containersol/minimesos-cli:0.13.0 up
+```
+
+## Most likely fix for your case
+
+Since you're running as `root` on both VMs, the issue is probably that the minimesos wrapper script is looking for the CLI at `/home/USER_REDACTED/.minimesos/bin` (from your `export PATH`), but the actual installation went to `/root/.minimesos/bin` because you ran the installer as root.
+
+Check:
+
+```bash
+ls -la /root/.minimesos/bin/
+ls -la /home/USER_REDACTED/.minimesos/bin/
+```
+
+If the binary is in `/root/.minimesos/bin`, fix your PATH:
+
+```bash
+export PATH=$PATH:/root/.minimesos/bin
+```
+
+Then try `minimesos up` again.
+
+## Alternative: use an older version
+
+Version 0.13.0 had several reported issues. You could try 0.12.0:
+
+```bash
+curl -sSL https://minimesos.org/install | sh -s 0.12.0
+```

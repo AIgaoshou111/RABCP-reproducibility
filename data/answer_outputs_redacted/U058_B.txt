@@ -1,0 +1,99 @@
+The error you're seeing is:
+
+```
+selenium.common.exceptions.WebDriverException: Message: unknown error: Chrome failed to start: crashed
+```
+
+This is a common issue when running Chrome in Docker containers, especially with older versions of Chrome and ChromeDriver. The crash typically happens because Chrome is missing required dependencies or is trying to run with default settings that don't work in a container environment.
+
+## The Fix
+
+You need to add the `--no-sandbox` flag to your Chrome options. This is the most common solution for running Chrome in Docker:
+
+```python
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+
+path_to_chromedriver = '/usr/local/bin/chromedriver'
+browser = webdriver.Chrome(path_to_chromedriver, chrome_options=chrome_options)
+```
+
+## Why This Happens
+
+Chrome's sandbox requires specific kernel features and permissions that aren't available in a typical Docker container. The `--no-sandbox` flag disables this sandbox, allowing Chrome to run in the container environment.
+
+The `--disable-dev-shm-usage` flag is also important because Docker containers often have limited `/dev/shm` (shared memory) space, which Chrome uses heavily. This flag makes Chrome use `/tmp` instead.
+
+## Complete Dockerfile Example
+
+Based on your setup, here's what your Dockerfile should include:
+
+```dockerfile
+FROM ubuntu:xenial
+
+# Install Chrome dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxi6 \
+    libxtst6 \
+    libxrandr2 \
+    libasound2 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libgbm1 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libxss1 \
+    fonts-liberation \
+    libappindicator3-1 \
+    xdg-utils
+
+# Install Chrome
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install && \
+    rm google-chrome-stable_current_amd64.deb
+
+# Install ChromeDriver
+RUN wget https://chromedriver.storage.googleapis.com/2.31/chromedriver_linux64.zip && \
+    unzip chromedriver_linux64.zip && \
+    mv chromedriver /usr/local/bin/ && \
+    rm chromedriver_linux64.zip
+
+# Install Python and Selenium
+RUN apt-get install -y python-pip && \
+    pip install selenium
+```
+
+## Additional Checks If It Still Fails
+
+1. **Check Chrome version compatibility**: ChromeDriver 2.31 works with Chrome 58-60. Make sure your Chrome version is compatible.
+
+2. **Run Chrome manually to see the error**:
+   ```bash
+   google-chrome --headless --no-sandbox --disable-gpu
+   ```
+
+3. **Check available memory**: Chrome needs sufficient memory. You might need to increase Docker's memory limit.
+
+4. **Add more Chrome flags if needed**:
+   ```python
+   chrome_options.add_argument("--disable-gpu")
+   chrome_options.add_argument("--disable-extensions")
+   chrome_options.add_argument("--disable-setuid-sandbox")
+   chrome_options.add_argument("--remote-debugging-port=9222")
+   ```
+
+The `--no-sandbox` flag is the key fix for your issue. This is a well-known requirement for running Chrome in Docker containers.

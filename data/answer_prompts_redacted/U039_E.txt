@@ -1,0 +1,28 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-11-13 19:02:16
+Title: How to install bcmath on a debian:jessie php5.6?
+Tags: <docker><php-5.6><debian-jessie><bcmath>
+Body:
+I am running a linux instance on a docker container [链接：https://github.com/docker-library/php/blob/bfe27759103fa6050601060165409b5b3be06395/5.6/jessie/apache/Dockerfile]. It is a debian:jessie with a php 5.6.
+
+I want to install bcmath module, but I have no success.
+
+Does someone know how o do that?
+
+root@1419c032c35f:/etc/php5/fpm# apt install php5.6-bcmath
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+E: Unable to locate package php5.6-bcmath
+E: Couldn't find any package by regex 'php5.6-bcmath'
+
+Selected earlier-question evidence:
+[E1; H4; 2017-09-20 18:54:51] Exact excerpt from the earlier question:
+How to enable php5-redis using cli?
+I have a docker container where I see all php modules:

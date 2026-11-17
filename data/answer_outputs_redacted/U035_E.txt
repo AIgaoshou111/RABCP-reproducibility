@@ -1,0 +1,39 @@
+The error `-sh: boot2docker not found` means you are running the command **inside the Boot2Docker VM shell**, not from the Windows command prompt.
+
+When you double-click the “Boot2Docker Start” icon, it opens a terminal that connects you to the Linux VM running Docker. Inside that VM, there is no `boot2docker` command because `boot2docker` is a Windows-side utility.
+
+To get the IP address, do one of the following:
+
+**Option 1 — Run it from Windows Command Prompt or PowerShell**
+
+Open a new `cmd.exe` or PowerShell window on Windows and run:
+
+```bat
+boot2docker ip
+```
+
+**Option 2 — Get the IP from inside the Boot2Docker VM shell**
+
+If you are already inside the VM shell, run:
+
+```sh
+ifconfig eth1
+```
+
+or:
+
+```sh
+ip addr show eth1
+```
+
+The IP is usually the `inet` address on `eth1`, commonly `192.168.59.103` or similar.
+
+**Option 3 — Use `docker-machine` if you installed a newer Toolbox version**
+
+If you are using Docker Toolbox rather than the older standalone Boot2Docker installer, use:
+
+```bat
+docker-machine ip default
+```
+
+The key point is: `boot2docker ip` is a Windows command, not a command to run inside the VM shell.

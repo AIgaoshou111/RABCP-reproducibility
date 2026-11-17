@@ -1,0 +1,111 @@
+The error `Failed to run command 'up'. null` from minimesos 0.13.0 is a known issue that occurs when the minimesos CLI container cannot properly communicate with the Docker daemon or when there's a mismatch in how the CLI container is being run.
+
+Here are the most useful checks and fixes:
+
+## 1. Check if Docker daemon is accessible from the minimesos CLI container
+
+The minimesos CLI runs inside a Docker container and needs to access the Docker daemon. Run this diagnostic:
+
+```bash
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock containersol/minimesos-cli:0.13.0 --version
+```
+
+If this fails with a similar error, the issue is with Docker socket access.
+
+## 2. Check Docker socket permissions
+
+Ensure your user can access the Docker socket:
+
+```bash
+ls -la /var/run/docker.sock
+```
+
+You should see something like:
+```
+srw-rw---- 1 root docker 0 May 25 08:42 /var/run/docker.sock
+```
+
+If you're not in the `docker` group, add yourself:
+
+```bash
+sudo usermod -aG docker $USER
+# Log out and back in, or run:
+newgrp docker
+```
+
+## 3. Try running minimesos with explicit Docker socket mounting
+
+The minimesos CLI script might not be mounting the Docker socket correctly. Try running the CLI container manually:
+
+```bash
+docker run --rm -it \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v ~/.minimesos:/root/.minimesos \
+  containersol/minimesos-cli:0.13.0 up
+```
+
+## 4. Check if SELinux is blocking (CentOS specific)
+
+On CentOS 7.3, SELinux might be blocking Docker socket access:
+
+```bash
+# Check SELinux status
+getenforce
+
+# Temporarily disable to test
+sudo setenforce 0
+# Try minimesos up again
+minimesos up
+
+# If it works, you need to configure SELinux properly
+sudo setenforce 1
+```
+
+## 5. Check Docker storage driver
+
+Minimesos 0.13.0 had issues with certain Docker storage drivers. Check your storage driver:
+
+```bash
+docker info | grep "Storage Driver"
+```
+
+If you're using `devicemapper`, try switching to `overlay2` or `overlay`.
+
+## 6. Use verbose/debug mode
+
+Run minimesos with debug output:
+
+```bash
+minimesos up --verbose
+# or
+minimesos up --debug
+```
+
+This might give you more information about what's failing.
+
+## 7. Check network connectivity
+
+Minimesos needs to pull several Docker images (Mesos master, agent, ZooKeeper, etc.). Ensure your VM can reach Docker Hub:
+
+```bash
+docker pull mesos/mesos:1.2.0
+docker pull zookeeper:3.4.10
+```
+
+## 8. Try an older version of minimesos
+
+If none of the above works, try version 0.12.0 which was more stable:
+
+```bash
+curl -sSL https://minimesos.org/install | sh -s 0.12.0
+```
+
+## Most likely cause
+
+Given that both CentOS and Ubuntu show the same error, and the CLI image pulls successfully, the most likely cause is:
+
+1. **Docker socket access issue** - The minimesos CLI container can't access the Docker daemon
+2. **SELinux on CentOS** - Blocking Docker socket access
+3. **A bug in minimesos 0.13.0** - This version had known issues with Docker 1.12+ and 17.x
+
+Start with checking Docker socket access and running the CLI container manually with explicit socket mounting.

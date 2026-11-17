@@ -1,0 +1,59 @@
+The error message tells you exactly what’s wrong:
+
+```
+Got a packet bigger than 'max_allowed_packet' bytes
+```
+
+Even though you passed `--max_allowed_packet=1500M` on the command line, the **server** still has its own `max_allowed_packet` setting that is too small. The client-side flag doesn’t override the server’s limit for incoming packets.
+
+## Fix: Increase `max_allowed_packet` on the MySQL server itself
+
+### Option 1: Set it at runtime (quick test)
+
+Connect to the running container and set it globally:
+
+```bash
+sudo docker exec -i a2bdd4db352a /usr/bin/mysql -u root -p -e "SET GLOBAL max_allowed_packet=1073741824;"
+```
+
+Then retry your import. Note: this only lasts until the container restarts.
+
+### Option 2: Pass it as a command-line flag to the MySQL server (persistent across container restarts)
+
+If you started the container with `docker run`, you can add it as a command argument:
+
+```bash
+docker run ... mysql --max_allowed_packet=1G
+```
+
+But if the container is already running, you’ll need to recreate it with the flag.
+
+### Option 3: Use a custom MySQL config file (recommended for Docker)
+
+Create a custom config file on your host, e.g. `/path/to/my.cnf`:
+
+```ini
+[mysqld]
+max_allowed_packet=1G
+```
+
+Then mount it into the container when you run it:
+
+```bash
+docker run -v /path/to/my.cnf:/etc/mysql/conf.d/my.cnf ... mysql
+```
+
+If the container is already running, you’ll need to stop it, recreate it with the volume mount, and start it again.
+
+## Additional checks
+
+1. **Verify the server-side value** after setting it:
+   ```bash
+   sudo docker exec -i a2bdd4db352a /usr/bin/mysql -u root -p -e "SHOW VARIABLES LIKE 'max_allowed_packet';"
+   ```
+
+2. **Check your dump file** – a 16 GB dump might contain a single `INSERT` statement larger than 1 GB. If so, even 1 GB may not be enough. Consider splitting the dump or using `mysqldump` with `--extended-insert=FALSE` (if you can regenerate it) to create smaller statements.
+
+3. **The `connection reset by peer`** is likely a secondary symptom of the MySQL connection being aborted due to the packet size issue, not a separate Docker problem.
+
+Start with Option 1 to confirm the fix works, then make it persistent with Option 3.

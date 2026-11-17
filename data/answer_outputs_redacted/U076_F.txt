@@ -1,0 +1,66 @@
+The error `Get http://localhost:7073/v1/users/: EOF` indicates Docker is trying to use the **v1 registry API** over **plain HTTP**, but the connection is being cut off. GitLab's container registry (based on Docker Distribution) only supports the **v2 API**, and Docker requires HTTPS unless you explicitly configure the registry as an insecure registry.
+
+Here's what's happening and how to fix it:
+
+## 1. Configure Docker to allow insecure registries
+
+Since you're running the registry on `localhost:7073` over HTTP, you need to tell the Docker daemon this is an insecure registry.
+
+**On Linux** (edit `/etc/docker/daemon.json`):
+```json
+{
+  "insecure-registries": ["localhost:7073"]
+}
+```
+
+**On macOS/Windows** (Docker Desktop):  
+Go to **Settings → Docker Engine** and add the same JSON configuration.
+
+Then restart Docker:
+```bash
+sudo systemctl restart docker    # Linux
+# or restart Docker Desktop on macOS/Windows
+```
+
+## 2. Verify the registry is actually reachable
+
+Before trying `docker login`, check if the registry responds:
+```bash
+curl -v http://localhost:7073/v2/
+```
+
+You should get a `200 OK` or `401 Unauthorized` response (both mean the registry is reachable). If you get a connection refused or empty reply, the port mapping isn't working.
+
+## 3. Check your GitLab registry configuration
+
+In your `/etc/gitlab/gitlab.rb`, make sure you have:
+```ruby
+registry_external_url 'http://localhost:4567'
+```
+
+Then reconfigure GitLab:
+```bash
+gitlab-ctl reconfigure
+```
+
+## 4. Verify the port mapping
+
+Check that your Docker container actually maps port 7073 to 4567:
+```bash
+docker ps
+```
+
+Look for something like `0.0.0.0:7073->4567/tcp` in the PORTS column.
+
+## 5. Try the login again
+
+After configuring the insecure registry and restarting Docker:
+```bash
+docker login localhost:7073
+```
+
+Enter your GitLab username and password (or a personal access token if you have 2FA enabled).
+
+---
+
+**Most likely issue:** You haven't configured `localhost:7073` as an insecure registry in the Docker daemon. The `EOF` error is Docker's way of failing when it tries to use HTTPS or v1 API against a registry that only speaks v2 over HTTP.

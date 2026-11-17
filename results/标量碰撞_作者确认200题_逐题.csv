@@ -1,0 +1,201 @@
+﻿blind_id,user_pseudonym,history_position,title,L,C,G,scalar_score,score_quarters,collision_group
+H001,U056,1,pull image from remote registry - docker,1,2,1,3.25,13,是
+H002,U060,1,Docker container that depends on file in other container,1,1,2,4.50,18,是
+H003,U062,5,"Does docker stores all its files as ""memory image"", as part of image, not disk file?",1,1,1,3.00,12,否
+H004,U033,2,Load Template outside Django Project Directory,2,2,1,3.50,14,否
+H005,U068,1,"ERROR Invalid config, exiting abnormally in Kafka cluster",2,2,1,3.50,14,否
+H006,U001,5,Getting 502 Bad Gateway Error While Deploying WordPress On Dockerized Lemp?,2,2,1,3.50,14,否
+H007,U043,5,How to upgrade docker-compose to 2.0?,1,2,1,3.25,13,是
+H008,U050,3,Docker how to run mongodb in dockerfile,1,1,1,3.00,12,否
+H009,U050,5,"Why does ""docker run"" error with ""no such file or directory""?",1,2,1,3.25,13,是
+H010,U038,2,Add existing Docker container to Kubernetes cluster in Rancher,1,2,1,3.25,13,是
+H011,U029,4,Docker command inside docker container,2,2,1,3.50,14,否
+H012,U082,1,How to link two containers for a Jenkins Job?,1,1,1,3.00,12,否
+H013,U004,1,Docker Compose + Postgres: Expose port,1,2,1,3.25,13,是
+H014,U055,5,how to restart container instead of deleting pod and recreate?,1,2,1,3.25,13,是
+H015,U028,3,Determining Volumes for Poetry and Sphinx files in Python from Dockerfile,1,2,1,3.25,13,是
+H016,U048,2,Nginx rewrite to subfolder under root,2,2,1,3.50,14,否
+H017,U077,4,Can't install Kubernetes on Vagrant,2,2,1,3.50,14,否
+H018,U028,5,Separating PyTest Tests and Sphinx Documentation in Docker with Poetry for Development,1,2,2,4.75,19,是
+H019,U022,2,`curl` command returns nothing in Dockerfile whilst it works in every other linux system,1,2,1,3.25,13,是
+H020,U038,5,GitLab HA with Kubernetes and Gluster,2,2,2,5.00,20,否
+H021,U068,3,Core dumped in running Mesos cluster on docker,2,2,1,3.50,14,否
+H022,U019,1,List of docker containers in repository,1,2,0,1.75,7,否
+H023,U058,4,What is pip's `--no-cache-dir` good for?,1,1,0,1.50,6,否
+H024,U058,1,"Is there a difference between ""docker ps"" and ""docker container ls""?",1,1,0,1.50,6,否
+H025,U076,4,Unable to access gitlab repository in docker,1,1,1,3.00,12,否
+H026,U024,4,why docker image management create date is stale,1,2,2,4.75,19,是
+H027,U020,1,"How to deploy a full (web) application using Docker, if each process must be a container?",1,1,2,4.50,18,是
+H028,U084,3,Tomcat manager app: not authorized to view page,1,2,1,3.25,13,是
+H029,U019,5,Find and get image from hub,1,1,1,3.00,12,否
+H030,U077,1,How to run built Docker image made by docker-compose?,1,1,1,3.00,12,否
+H031,U068,4,Error in running Spark on Mesos in docker,2,2,1,3.50,14,否
+H032,U056,5,Change Default Docker Image Download Location in Fedora 23,1,2,1,3.25,13,是
+H033,U051,3,how do I expose an http traffic of a docker container to the outside world,1,1,1,3.00,12,否
+H034,U062,4,"docker restart container failed: ""already in use"", but there's no more docker image",1,2,1,3.25,13,是
+H035,U033,4,Dockerfile hide output of RUN command,1,0,1,2.75,11,否
+H036,U074,1,Do I need Vagrant to use a Docker Linux image if I'm on a Windows host?,1,1,2,4.50,18,是
+H037,U060,4,504 error with nginx and flask docker containers,2,2,1,3.50,14,否
+H038,U086,4,Docker best practices: single process for a container,1,1,2,4.50,18,是
+H039,U055,1,What advantage and disadvantages using shared volume between pod vs. each pod having own pvc volume(in case of statefulset)?,2,0,2,4.50,18,是
+H040,U062,1,"I just installed docker, but running ""hello world"" failed, it doesn't download image?",1,2,1,3.25,13,是
+H041,U085,1,How to ping/ssh to a running docker by name?,1,2,1,3.25,13,是
+H042,U012,2,Docker committed image doesn't retain the changes I make,1,2,1,3.25,13,是
+H043,U019,2,Create new image based on standard one,1,2,1,3.25,13,是
+H044,U033,1,Docker Compose Could not open file build: No such file or directory,1,2,1,3.25,13,是
+H045,U056,4,handle docker container data while developing wep application,1,2,1,3.25,13,是
+H046,U058,5,Why can't my container find a pip installed package (via git)?,2,2,1,3.50,14,否
+H047,U051,1,is it possible to wrap an entire ubuntu 14 os in a docker image,1,1,0,1.50,6,否
+H048,U023,4,docker: npm install on docker start,2,2,2,5.00,20,否
+H049,U070,2,Where mongoimport store the document in a Docker container,1,1,1,3.00,12,否
+H050,U056,3,handle local software package in docker,1,1,1,3.00,12,否
+H051,U070,1,'/bin/sh -c bash $METEORD_DIR/on_build.sh' returned a non-zero code: 1,1,2,1,3.25,13,是
+H052,U078,4,How to connect multiple docker container using link?,1,2,1,3.25,13,是
+H053,U050,2,Docker maven build fails to download JARs,1,1,1,3.00,12,否
+H054,U085,3,Authentication token manipulation error when trying to change use password in dockerfile,1,2,1,3.25,13,是
+H055,U046,1,Magento setup in docker container with alpine nginx and php-fpm showing blank screen,1,2,1,3.25,13,是
+H056,U074,3,Does the filesize of my Docker apps' image going to be more than the base image?,1,2,0,1.75,7,否
+H057,U083,3,Permission Denied When Installing Packages Using Pip In Docker Container Django,1,2,1,3.25,13,是
+H058,U085,4,Unable to install python3.7 on ubuntu 16.04,1,2,1,3.25,13,是
+H059,U001,2,Why Docker Nginx Container Still Showing Defualt Page Instead Of Provided Index File?,1,2,1,3.25,13,是
+H060,U078,2,"Can't run mysql inside container, which use dockerFile to build image",1,2,1,3.25,13,是
+H061,U036,4,How to enable docker remote api rest in mac OS X with boot2docker?,1,2,1,3.25,13,是
+H062,U046,4,How to write a docker file when we have to get a values from a running container and make a link,1,2,1,3.25,13,是
+H063,U078,3,How to connect mysql and php inside different container?,2,2,1,3.50,14,否
+H064,U052,5,How to connect Docker Swarm to multiple consul servers for failover?,2,2,2,5.00,20,否
+H065,U048,3,Docker - extend the parent's ENTRYPOINT,2,1,1,3.25,13,是
+H066,U029,3,Docker not mapping folders,1,1,1,3.00,12,否
+H067,U026,2,Why my Docker Certboot container stopped? Exit status 1,1,2,1,3.25,13,是
+H068,U082,3,How can I specify a startscript for my dockercontainer in Jenkins(Pipeline)?,1,1,1,3.00,12,否
+H069,U004,3,Dockerfile needed when compose?,1,1,0,1.50,6,否
+H070,U035,3,Boot2Docker start up fails in windows,1,2,1,3.25,13,是
+H071,U024,2,docker git and pull setup,1,2,1,3.25,13,是
+H072,U046,2,Not able to find the magento2 database config file,1,1,1,3.00,12,否
+H073,U028,1,Error Installing Python 3 in Docker Container along with Mongo DB,1,2,1,3.25,13,是
+H074,U012,3,How can I get a container (NOT an image) to restart on system startup,1,1,1,3.00,12,否
+H075,U020,3,How can I copy a config file within a Dockerfile?,1,1,1,3.00,12,否
+H076,U038,3,GitLab setup using official PostgreSQL and GitLab docker container not working,1,2,1,3.25,13,是
+H077,U062,2,"docker daemon doesn't start in my ubuntu vm, ""service start"" ok by ""ps"" gives no result",1,2,1,3.25,13,是
+H078,U077,3,How to get Rancher scripts code when add agent to nodes hosts?,1,1,1,3.00,12,否
+H079,U035,1,Boot2Docker Start up fails,1,2,1,3.25,13,是
+H080,U003,5,Why would i want to docker build from a repo URL?,1,1,2,4.50,18,是
+H081,U048,4,Docker is reusing the same volume for different containers,2,2,1,3.50,14,否
+H082,U004,4,Netlify deployment of Jekyll fails on using Docker Compose,1,2,1,3.25,13,是
+H083,U077,2,Rancher agent can't run on master server?,1,2,1,3.25,13,是
+H084,U026,1,"Why docker-compose failed ? starting container process caused: exec: \""pg_isready -U user",1,2,1,3.25,13,是
+H085,U074,5,Docker MariaDB volume not found in container?,1,2,1,3.25,13,是
+H086,U078,1,Get errors when I try to build image from dockFile,1,2,1,3.25,13,是
+H087,U046,5,Dockerfile passing wrong mysql host ip address,2,2,1,3.50,14,否
+H088,U026,5,Why does Docker container keeps restarting? ERROR: getaddrinfo EAI_AGAIN,1,2,1,3.25,13,是
+H089,U001,4,"Why Command Runs Effectively Via 'EXEC' directive on a running container, but not through docker-compose?",2,2,1,3.50,14,否
+H090,U070,4,How to get all containers using Dockerode and Javascript,1,2,1,3.25,13,是
+H091,U020,4,Problems when executing services within cron in a Docker container?,1,2,1,3.25,13,是
+H092,U035,2,What does Go Version means?,1,1,0,1.50,6,否
+H093,U068,2,"Error in running ""docker-compose up"" : Invalid config, exiting abnormally",2,2,1,3.50,14,否
+H094,U019,3,Attach to container,1,2,1,3.25,13,是
+H095,U012,4,Docker Windows Local Registry: received unexpected HTTP status: 500 Internal Server Error,1,1,1,3.00,12,否
+H096,U018,4,What is naming convention for hub.docker.com builds,1,1,0,1.50,6,否
+H097,U028,2,Unable to delete Docker images associated with stopped containers using Python script,1,2,1,3.25,13,是
+H098,U026,3,Why error Cannot create container for service : Conflict?,1,2,1,3.25,13,是
+H099,U003,3,what is the docker run -g switch actually doing?,1,0,0,1.25,5,否
+H100,U052,2,"Ubuntu docker swarm error ""docker: Cannot connect to the Docker daemon. Is the docker daemon running on this host?.""",2,2,1,3.50,14,否
+H101,U051,2,how to package a docker image in a single file,1,1,1,3.00,12,否
+H102,U084,1,Docker add no such file or directory,1,2,1,3.25,13,是
+H103,U036,1,How to connect docker container via ssh?,1,2,1,3.25,13,是
+H104,U043,2,Can't install docker - Permission denied?,1,2,1,3.25,13,是
+H105,U055,4,snipeit on kubernetes not running,2,2,1,3.50,14,否
+H106,U039,1,"How to solve ""invoke-rc.d: policy-rc.d denied execution of start."" when building a container Ubuntu 14.04 and installing apache2?",1,2,1,3.25,13,是
+H107,U004,5,Docker / Django: pipenv x requirements,1,2,1,3.25,13,是
+H108,U035,4,What does -c mean as an argument to bash?,1,2,0,1.75,7,否
+H109,U086,3,Monitoring node processes within docker containers,1,1,2,4.50,18,是
+H110,U022,3,saving docker log files with volumes produces permission denied,1,2,1,3.25,13,是
+H111,U076,2,Can't access flask app which is inside docker container,1,2,1,3.25,13,是
+H112,U086,5,Source controlling (git) docker-compose.yml,1,1,2,4.50,18,是
+H113,U052,3,Docker swarm: How to manually set node names?,1,2,1,3.25,13,是
+H114,U028,4,Pass Arguments to pyproject.toml and conf.py files from Docker Compose File,1,2,1,3.25,13,是
+H115,U050,1,Docker log in command does not work,1,2,1,3.25,13,是
+H116,U060,2,Gunicorn is stuck on docker run command with a Flask Application,1,2,1,3.25,13,是
+H117,U012,1,How to persist state of a Jetbrains Teamcity server instance in a docker image to deploy to others without my local directory volume,1,2,1,3.25,13,是
+H118,U084,4,docker-compose-maven-plugin Failed to execute goal up,1,2,1,3.25,13,是
+H119,U083,2,Access sql dump inside docker container django postgres,1,2,1,3.25,13,是
+H120,U023,3,Cannot start mosquitto as service on docker container,1,2,1,3.25,13,是
+H121,U018,2,Do Docker Containers work equally well on Windows/Mac/linux,1,0,0,1.25,5,否
+H122,U055,3,Moodle docker installation issue mysql_full_unicode_support#File_format and mysql_full_unicode_support#Large_prefix,1,1,1,3.00,12,否
+H123,U033,5,Node serve command returns empty response,1,2,1,3.25,13,是
+H124,U048,1,Docker - deliver the code to nginx and php-fpm,2,2,2,5.00,20,否
+H125,U038,1,Unable to pull Docker images from private registry using Rancher,1,2,1,3.25,13,是
+H126,U012,5,"TeamCity server in a Linux container, but Build Agent in a Windows container",1,1,0,1.50,6,否
+H127,U083,1,Unable to run Django with PostgreSQL in Docker,1,2,1,3.25,13,是
+H128,U022,5,NotImplementedError while installing jython in dockerfile,1,2,1,3.25,13,是
+H129,U084,5,One Docker-container runned instead of other. Docker-compose,1,2,1,3.25,13,是
+H130,U035,5,Stop recently started container in docker?,1,2,1,3.25,13,是
+H131,U074,4,Map Docker instance on Windows hosts file (where Docker lives inside a Vagrant VM),1,2,1,3.25,13,是
+H132,U020,5,How to use setfacl within a Docker container?,2,1,1,3.25,13,是
+H133,U033,3,Separate processes for Dockerfile for dev and prod?,2,2,2,5.00,20,否
+H134,U003,1,Where are images stored for Docker EE on Windows Server 2016 and how do I change its location?,1,1,1,3.00,12,否
+H135,U001,1,Building MySQL image from base image with docker build?,1,1,1,3.00,12,否
+H136,U039,5,"How to DEBUG REDIS, APACHE issues a Docker container?",1,2,1,3.25,13,是
+H137,U029,5,""" are replaced with ' with ansible",2,2,1,3.50,14,否
+H138,U036,5,How to use docker remote api to create container?,1,1,1,3.00,12,否
+H139,U076,5,How to setup gitlab container registry inside docker?,1,1,1,3.00,12,否
+H140,U019,4,Search old distribution Linux container,1,2,1,3.25,13,是
+H141,U029,1,Use explicitly alias in shell with docker command,1,2,1,3.25,13,是
+H142,U020,2,How to run the latest docker container I created?,1,2,1,3.25,13,是
+H143,U060,3,Nginx docker container not accepting and serving flask from container,1,2,1,3.25,13,是
+H144,U039,4,How to enable php5-redis using cli?,1,2,1,3.25,13,是
+H145,U051,5,How to push a docker image to a private repository,1,1,1,3.00,12,否
+H146,U051,4,how to configure docker container to run /usr/sbin/sshd upon startup,1,1,1,3.00,12,否
+H147,U068,5,Installing Marathon on apache mesos,1,2,1,3.25,13,是
+H148,U048,5,Specify docker network scope in the compose file,2,1,1,3.25,13,是
+H149,U003,4,Can't build ASP.Net container,1,2,1,3.25,13,是
+H150,U083,5,selenium.common.exceptions.WebDriverException: Message: Error forwarding the new session Empty pool of VM for setup Capabilities error within Docker,1,2,1,3.25,13,是
+H151,U026,4,Why is my app not installed? File not found,1,2,1,3.25,13,是
+H152,U018,3,How do I create default tag for my automated DockerFile build,1,2,1,3.25,13,是
+H153,U076,3,How to allocate more memory for docker container?,1,1,1,3.00,12,否
+H154,U046,3,Successfully installed magento2 but the admin page throwing not found error,1,2,1,3.25,13,是
+H155,U085,2,gdb exits immediately `Process finished with exit code 1` or lldb `'A packet returned error 8'` on docker. Also: How to allow c++ debugging in docker,2,2,1,3.50,14,否
+H156,U070,3,How to manage Docker container with dockerode,1,2,1,3.25,13,是
+H157,U038,4,Passing Docker container's run parameters in Kubernetes,2,2,1,3.50,14,否
+H158,U036,2,How to use docker-java API to connect docker?,1,2,1,3.25,13,是
+H159,U062,3,Ubuntu docker image doesn't contain any /dev/sdX block devices?,1,2,2,4.75,19,是
+H160,U043,3,Docker + nginx + PHP - nginx does not point to the root directory?,2,2,1,3.50,14,否
+H161,U001,3,Why can't I push local Docker image to Docker Hub repo?,1,2,1,3.25,13,是
+H162,U050,4,Docker supervisor - unable to find supervisor.conf file,1,2,1,3.25,13,是
+H163,U074,2,Volumes in docker-compose not working on Windows 7,1,2,1,3.25,13,是
+H164,U086,1,"RESTful API 2x nodejs apps on same server, with fallback",2,1,2,4.75,19,是
+H165,U082,2,How to Install mysql-server via dockerfile,1,2,1,3.25,13,是
+H166,U023,5,Docker using separate lib/bin,1,1,1,3.00,12,否
+H167,U084,2,upload Docker-image to Plesk,1,1,1,3.00,12,否
+H168,U085,5,How to install python specific version on docker?,1,1,1,3.00,12,否
+H169,U052,4,How to enable faster container rescheduling with Docker Swarm and Consul?,2,2,1,3.50,14,否
+H170,U043,4,Docker - how to set up Apache + PHP in docker-compose.yml,1,2,1,3.25,13,是
+H171,U022,1,Mounting Maven Repository to Docker,2,2,1,3.50,14,否
+H172,U039,3,Docker message: Automatically disabled Acquire::http::Pipeline-Depth due to incorrect response from server/proxy,1,2,0,1.75,7,否
+H173,U039,2,"AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.24.0.2. Set the 'ServerName' directive globally",1,2,1,3.25,13,是
+H174,U058,2,How can I create a shared volume with non-root access rights and docker-compose?,2,2,1,3.50,14,否
+H175,U023,1,where are apps installed using apt-get within Dockerfile?,1,2,2,4.75,19,是
+H176,U056,2,How to make sure commands are not repeated in docker,1,2,2,4.75,19,是
+H177,U060,5,How do you register a Postgres container host on docker-compose up?,1,1,1,3.00,12,否
+H178,U018,1,Can I install Docker on arm8 based Synology Nas,1,1,0,1.50,6,否
+H179,U022,4,docker add command fails to add the path passed as argument to it,1,2,1,3.25,13,是
+H180,U024,3,docker elevate user priviledges,1,2,1,3.25,13,是
+H181,U078,5,How to answer install question in dockerfile?,1,2,1,3.25,13,是
+H182,U058,3,Can I use py.test to test the Docker container?,1,1,2,4.50,18,是
+H183,U029,2,sh 'alias' is not giving any output in Jenkinsfile,1,2,1,3.25,13,是
+H184,U004,2,Set up Docker for gulp,1,2,1,3.25,13,是
+H185,U018,5,How do I make Synology Diskstation port visible to computer for Docker app,1,2,1,3.25,13,是
+H186,U024,5,docker does not run on windows error,1,2,1,3.25,13,是
+H187,U076,1,How to run docker daemon?,1,1,1,3.00,12,否
+H188,U052,1,"CoreOS member node will not start when using ""etcdctl member add""",1,2,1,3.25,13,是
+H189,U086,2,Git repo structure with multiple docker files,1,1,2,4.50,18,是
+H190,U082,4,How can I run ENTRYPOINT as root user?,1,2,1,3.25,13,是
+H191,U024,1,docker java7 install fail,1,2,1,3.25,13,是
+H192,U043,1,Docker + PHP - ERROR: Couldn't connect to Docker daemon?,1,2,1,3.25,13,是
+H193,U023,2,build docker image from local (unpublished) image,1,2,1,3.25,13,是
+H194,U070,5,Why my array suddenly lose all its content,1,2,1,3.25,13,是
+H195,U077,5,Got only one node after install Kubernetes cluster,1,2,1,3.25,13,是
+H196,U083,4,Handle Django MIgrations,2,2,2,5.00,20,否
+H197,U082,5,When will a startscript of a parent image being executed in Dockerfile?,1,1,0,1.50,6,否
+H198,U055,2,On Bitnami's Jenkins Run Docker Commands in Jenkins shell ubuntu,1,2,1,3.25,13,是
+H199,U003,2,wouldn't specifying -t with -i be redundant for docker run?,2,1,2,4.75,19,是
+H200,U036,3,How to enable docker remote api in mac OS X?,1,2,1,3.25,13,是

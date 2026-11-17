@@ -1,0 +1,72 @@
+In Docker Swarm mode, you should not reference a specific container IP because containers can be scheduled on any node and IPs change. Instead, use **service discovery via the service name**.
+
+## Solution
+
+If your Logstash service is named `logstash` in your Swarm stack, you can reference it directly by its service name:
+
+```yaml
+output.logstash:
+  hosts: ["logstash:5044"]
+```
+
+This works because:
+
+1. **Swarm creates an overlay network** for your stack (if you define one)
+2. **Service names are resolvable** via Docker's embedded DNS
+3. **The VIP (Virtual IP)** for the service load-balances across all replicas
+
+## Complete Example
+
+Here's a minimal `docker-compose.yml` for Swarm:
+
+```yaml
+version: '3.3'
+
+services:
+  logstash:
+    image: docker.elastic.co/logstash/logstash:6.0.0
+    ports:
+      - "5044:5044"
+    networks:
+      - elk
+    deploy:
+      replicas: 1
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:6.0.0
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    networks:
+      - elk
+    deploy:
+      mode: global  # or replicated
+    depends_on:
+      - logstash
+
+networks:
+  elk:
+    driver: overlay
+```
+
+Then in your `filebeat.yml`:
+
+```yaml
+output.logstash:
+  hosts: ["logstash:5044"]
+```
+
+## Important Notes
+
+1. **Both services must be on the same overlay network** - this is crucial for service discovery to work
+2. **The service name must match** exactly what you named it in your compose file
+3. **Port 5044** must be exposed by Logstash (either in the Dockerfile or via `expose` in compose)
+4. If you're using a templated config (as in your example), make `in_filebeat_dict.filebeat.output.logstash` resolve to `logstash` instead of an IP
+
+## If Filebeat is Outside the Swarm
+
+If Filebeat runs outside the Swarm (e.g., on the host or a different machine), then you would need to:
+
+- Use the **published port** on any Swarm node: `hosts: ["<any-swarm-node-ip>:5044"]`
+- Or use a load balancer in front of the Swarm
+
+But since you're deploying both in Swarm, the service name approach is correct.

@@ -1,0 +1,105 @@
+You can do this by booting the qcow2 image once, installing Docker inside it, then shutting it down cleanly. The modified qcow2 file then becomes your new base image.
+
+Here is a practical workflow for Ubuntu 14.04 on KVM/OpenStack:
+
+## 1. Boot the image
+
+If you are using plain KVM/libvirt on Fedora 20:
+
+```bash
+sudo virt-install \
+  --name ubuntu-docker-base \
+  --ram 2048 \
+  --disk path=/var/lib/libvirt/images/ubuntu-14.04.qcow2,format=qcow2 \
+  --import \
+  --os-variant ubuntu14.04 \
+  --network network=default \
+  --graphics vnc
+```
+
+Or if you already have a libvirt domain using the image, just start it.
+
+If you are using OpenStack, boot an instance from the image:
+
+```bash
+nova boot --image ubuntu-14.04 --flavor m1.small --key-name your-key docker-base-instance
+```
+
+## 2. Connect to the instance
+
+For KVM/libvirt, use SSH or the VNC console. For OpenStack:
+
+```bash
+nova ssh docker-base-instance
+```
+
+or use `ssh ubuntu@<instance-ip>`.
+
+## 3. Install Docker inside the guest
+
+Ubuntu 14.04 uses the `docker.io` package:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y docker.io
+```
+
+Optionally verify it works:
+
+```bash
+sudo docker version
+```
+
+If you want Docker to start automatically on boot:
+
+```bash
+sudo systemctl enable docker.io
+```
+
+On Ubuntu 14.04, the service may be called `docker` or `docker.io` depending on the package version. Check with:
+
+```bash
+sudo service docker status
+```
+
+## 4. Clean up and shut down
+
+Remove temporary files and SSH host keys so the image is clean for cloning:
+
+```bash
+sudo apt-get clean
+sudo rm -f /etc/ssh/ssh_host_*
+sudo rm -f /var/lib/dhcp/*
+sudo shutdown -h now
+```
+
+## 5. Use the modified qcow2 as a new base image
+
+For KVM/libvirt, the qcow2 file is already updated in place. You can now clone it or use it directly as a backing file for new VMs.
+
+For OpenStack, create a new image from the instance:
+
+```bash
+nova image-create docker-base-instance ubuntu-14.04-docker
+```
+
+Wait for the image to become active:
+
+```bash
+nova image-list
+```
+
+Then boot new instances from `ubuntu-14.04-docker`.
+
+## Important notes
+
+- The Ubuntu cloud image uses `cloud-init`. When you boot it, cloud-init may regenerate SSH host keys and set up networking. That is fine for this purpose.
+- If you want Docker to be usable by a non-root user, add that user to the `docker` group inside the image before shutting down:
+
+```bash
+sudo usermod -aG docker ubuntu
+```
+
+- If you are using OpenStack with Ceph or another backend, the image creation process is the same; OpenStack handles the snapshot internally.
+
+This method works because you are modifying the actual filesystem inside the qcow2 image, not trying to install Docker from outside the guest.

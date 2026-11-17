@@ -1,0 +1,97 @@
+You can't use `RUN` in a Dockerfile to execute commands that depend on environment variables passed at `docker run` time. `RUN` commands execute during the **build** phase, while `-e` flags are only available when the container **starts**.
+
+## The Solution
+
+Move the Magento setup commands from `RUN` to an **entrypoint script** that executes when the container starts.
+
+### 1. Create an entrypoint script (e.g., `docker-entrypoint.sh`)
+
+```bash
+#!/bin/sh
+set -e
+
+# Run Magento setup commands using environment variables
+cd /usr/html/bin
+
+./magento setup:config:set \
+  --db-host="$DB_HOST" \
+  --db-name="$DB_NAME" \
+  --db-user="$DB_USER" \
+  --db-password="[REDACTED]"
+
+./magento setup:install \
+  --admin-user="$ADMIN_USER" \
+  --admin-password="[REDACTED]" \
+  --admin-firstname="$ADMIN_FIRSTNAME" \
+  --admin-lastname="$ADMIN_LASTNAME" \
+  --admin-email="$ADMIN_EMAIL" \
+  --use-rewrites=1
+
+# Execute the original command
+exec "$@"
+```
+
+### 2. Update your Dockerfile
+
+```dockerfile
+FROM docker-php:0.2
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Set default values (optional - can be overridden at runtime)
+ENV DB_HOST=172.17.0.2 \
+    DB_NAME=mydb \
+    DB_USER=admin \
+    DB_PASSWORD=[REDACTED] \
+    ADMIN_USER=tara \
+    ADMIN_PASSWORD=[REDACTED] \
+    ADMIN_FIRSTNAME=tara \
+    ADMIN_LASTNAME=gurung \
+    ADMIN_EMAIL=[EMAIL_REDACTED]
+
+ADD ./magento2 /usr/html/
+WORKDIR /usr/html/
+
+# Keep these RUN commands (they don't depend on runtime env vars)
+RUN find var vendor pub/static pub/media app/etc -type f -exec chmod g+w {} \;
+RUN find var vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} \;
+RUN chown -R :docker .
+RUN chmod u+x bin/magento
+RUN composer install
+
+# Set entrypoint
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["/home/USER_REDACTED/run.sh"]
+```
+
+### 3. Run the container with your environment variables
+
+```bash
+docker run \
+  -e DB_HOST="172.17.0.2" \
+  -e DB_NAME="mydb" \
+  -e DB_USER="prakash" \
+  -e DB_PASSWORD="[REDACTED]" \
+  -e ADMIN_USER="admin" \
+  -e ADMIN_PASSWORD="[REDACTED]" \
+  -e ADMIN_FIRSTNAME="John" \
+  -e ADMIN_LASTNAME="Doe" \
+  -e ADMIN_EMAIL="[EMAIL_REDACTED]" \
+  your-image-id
+```
+
+## Important Considerations
+
+1. **Idempotency**: The Magento setup commands will run every time the container starts. You may want to add a check to skip setup if already configured:
+
+```bash
+if [ ! -f /usr/html/app/etc/env.php ]; then
+    # Run setup commands
+fi
+```
+
+2. **Database availability**: Ensure your MySQL container is running and accessible before the Magento container starts. Consider using Docker Compose for better orchestration.
+
+3. **Alternative approach**: Use Docker Compose to manage both containers and their dependencies more cleanly.

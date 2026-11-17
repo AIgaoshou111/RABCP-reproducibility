@@ -1,0 +1,86 @@
+The docs wording you quoted is misleading/outdated. In a **Dockerfile**, the valid instruction is:
+
+```dockerfile
+EXPOSE 8080
+```
+
+There is **no `PUBLISH` instruction in a Dockerfile**. You cannot write `PUBLISH 8080` in a Dockerfile and have Docker build accept it as a port-publishing directive.
+
+What the docs meant is the conceptual difference between:
+
+- **Expose** a port: make the container’s port available to other containers/networks.
+- **Publish** a port: map a container port to a host port.
+
+In practice:
+
+- `EXPOSE` is a Dockerfile instruction.
+- Publishing is done at runtime with `docker run -p` or `docker run -P`, or in Compose with `ports:`.
+
+### What `EXPOSE` actually does
+
+```dockerfile
+EXPOSE 8080
+```
+
+This is mostly documentation/metadata. It tells Docker and other users that the container process listens on port `8080`. It does **not** publish the port to the host.
+
+It also affects `docker run -P`:
+
+```bash
+docker run -P myimage
+```
+
+`-P` publishes all ports declared with `EXPOSE` to random high-numbered host ports.
+
+For example, if the Dockerfile has:
+
+```dockerfile
+EXPOSE 8080
+```
+
+then:
+
+```bash
+docker run -P myimage
+```
+
+might map host port `32768` to container port `8080`.
+
+### Publishing with `-p`
+
+To explicitly publish a port:
+
+```bash
+docker run -p 8080:8080 myimage
+```
+
+This maps host port `8080` to container port `8080`.
+
+You can also use:
+
+```bash
+docker run -p 127.0.0.1:8080:8080 myimage
+```
+
+to bind only to localhost.
+
+### Is `EXPOSE` a bad idea?
+
+No, it is not bad. It is useful documentation and enables `-P`. But it is not required for `-p` to work. Even without `EXPOSE`, this works:
+
+```bash
+docker run -p 8080:8080 myimage
+```
+
+because `-p` explicitly publishes the port.
+
+### Summary
+
+- Dockerfile: use `EXPOSE 8080`
+- Runtime: use `docker run -p 8080:8080` or `docker run -P`
+- There is no Dockerfile `PUBLISH` directive
+- `EXPOSE` does not publish to the host by itself
+- `-P` publishes all `EXPOSE`d ports to random host ports
+- `-p` publishes a specific host:container port mapping
+
+So the correct answer to “Is this a bad idea?” is: the docs are wrong to call it `PUBLISH` in the Dockerfile. Use `EXPOSE` in the Dockerfile and `-p`/`-P` with `docker run`.

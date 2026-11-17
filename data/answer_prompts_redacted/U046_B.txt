@@ -1,0 +1,444 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-11-27 10:14:35
+Title: how to get the env values declared inline in dockerfile from run env parameter instead in docker
+Tags: <docker><automation><dockerfile><magento2>
+Body:
+I have successfully setup docker container for magento2 and this is how I am passing the database setup value to the magento2 cli command by setting the env value inline as bellow.
+
+FROM docker-php
+#mysqql setup
+ENV DB_HOST 172.17.0.2
+ENV DB_NAME mydb1
+ENV DB_USER prakash 
+ENV DB_PASSWORD password
+
+#start running the magento commands to install
+RUN cd /usr/html/bin  && \
+     ./magento setup:config:set  --db-host=$DB_HOST --db-name=$DB_NAME --db-user=$DB_USER --db-password=[REDACTED]
+
+How do I make this such that these value can be received  successfully  by passing it via on run like bellow 
+docker  run -e DB_HOST="" -e DB_NAME="" -e  DB_USER="" -e DB_PASSWORD=[REDACTED] <build-image-id>
+
+Saw few post describing how these can be achieved but not able to figure out  the proper way
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2017-11-23 04:19:22
+Title: Magento setup in docker container with alpine nginx and php-fpm showing blank screen
+Tags: <php><magento><docker><nginx><alpine-linux>
+Body:
+I am creating a docker file with this following docker file found on docker hub
+https://github.com/lcsbaroni/magento/blob/master/2.1/Dockerfile [链接：https://github.com/lcsbaroni/magento/blob/master/2.1/Dockerfile]
+
+I have done some tweak added alpine:3.6 instead of alpine:3.5 which it is using.
+
+After successful build I installed magento and here is the docker file command bellow.
+
+user php1.1 which has the alpine + nginx + php 7.1
+
+FROM php:7.1
+ADD ./magento2 /usr/html/
+WORKDIR /usr/html/
+
+RUN find var vendor pub/static pub/media app/etc -type f -exec chmod g+w {} \;
+RUN find var vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} \;
+RUN chown -R :docker .
+RUN chmod u+x bin/magento
+RUN composer install
+CMD echo "Success"
+ENTRYPOINT ["/home/USER_REDACTED/run.sh"]
+
+The build is succesfull and installed magento2 but now when I browse
+it the magento2 setup page loads with blank and some gray color
+background some where and the system gets totally hand. May be some
+resource problem.
+
+Is it the issue with php-version or  memory allocations. Stuck in this problem for 1 week ,expert advice required.
+
+[H2]
+Date: 2017-11-24 10:20:02
+Title: Not able to find the magento2 database config file
+Tags: <docker><dockerfile><magento2>
+Body:
+I have setup magento2 in docker container build using the docker file. Now I want to automate the database setup process so looking for the config file where I can set the database configuration like database name,username and password. 
+
+Reading few blog post says it is available at /app/etc/env.php but I cannot find the env.php file inside these location under my magento2 setup directory.
+
+Those who are docker container for magento2, how do you automate the magento setup process (setting up database & Creating admin account) after magento2 installation.
+
+Why is the env.php missing or does it comes only after initial database  set up is done once.
+
+[H3]
+Date: 2017-11-25 11:30:03
+Title: Successfully installed magento2 but the admin page throwing not found error
+Tags: <docker><dockerfile><magento2>
+Body:
+I created a docker container for magento2 and successfully created the container. 
+
+Installed the magento2 successfully following these steps in CLI:
+
+ 1. ./magento setup:config:set --db-host=172.17.0.3  --db-name=mydb --db-user=admin --db-password=[REDACTED] 
+
+Database details from another linked mysql container
+
+ 2. ./magento setup:install --admin-user='new-admin' --admin-password=[REDACTED] --admin-email='[EMAIL_REDACTED]' --admin-firstn
+ame='Jon' --admin-lastname='Doe' --use-rewrites=1
+
+Initially I missed --use-rewrites but added than
+
+This successfully installs the magento2 and displays the success message too. Than Opening the page in browser I had the following error which I fixed by changing the permission.
+
+Warning: file_put_contents(/usr/html/var/cache//mage-tags/mage---196_CONFIG): failed to open stream: Permission denied in /usr/html/vendor/colinmollenhour/cache-backend-file/File.php on line 663
+
+Now when I open the admin url the link automatically gets changed and the error message appears.
+
+[图片1（人工查看原图后整理）：Magento 管理后台地址返回 404 error: Page not found。]
+
+This is the error log from docker logs containername.
+
+nginx: [emerg] "location" directive is not allowed here in /etc/nginx/sites-enabled/magento.conf:191
+
+So must be the nginx setup error
+/etc/nginx/sites-enabled/magento.conf
+
+upstream fastcgi_backend {
+   server   unix:/run/php7-fpm.sock;
+}
+
+server {
+        listen 80;
+        server_name localhost;
+        set $MAGE_ROOT /usr/html;
+
+    root $MAGE_ROOT/pub;
+
+    index index.php index.html;
+    autoindex off;
+    charset UTF-8;
+    error_page 404 403 = /errors/404.php;
+    #add_header "X-UA-Compatible" "IE=Edge";
+
+    # PHP entry point for setup application
+    location ~* ^/setup($|/) {
+        root $MAGE_ROOT;
+
+        location ~ ^/setup/index.php {
+        fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+
+        fastcgi_pass   fastcgi_backend;
+
+        fastcgi_param  PHP_FLAG  "session.auto_start=off \n suhosin.session.cryptua=off";
+        fastcgi_param  PHP_VALUE "memory_limit=756M \n max_execution_time=600";
+        fastcgi_read_timeout 600s;
+        fastcgi_connect_timeout 600s;
+
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+        }
+
+        location ~ ^/setup/(?!pub/). {
+        deny all;
+        }
+
+        location ~ ^/setup/pub/ {
+        add_header X-Frame-Options "SAMEORIGIN";
+        }
+    }
+
+    # PHP entry point for update application
+    location ~* ^/update($|/) {
+        root $MAGE_ROOT;
+
+        location ~ ^/update/index.php {
+        fastcgi_split_path_info ^(/update/index.php)(/.+)$;
+        fastcgi_pass   fastcgi_backend;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        fastcgi_param  PATH_INFO        $fastcgi_path_info;
+        include        fastcgi_params;
+        }
+
+        # Deny everything but index.php
+        location ~ ^/update/(?!pub/). {
+        deny all;
+        }
+
+        location ~ ^/update/pub/ {
+        add_header X-Frame-Options "SAMEORIGIN";
+        }
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php$is_args$args;
+    }
+
+    location /pub/ {
+        location ~ ^/pub/media/(downloadable|customer|import|theme_customization/.*\.xml) {
+        deny all;
+        }
+        alias $MAGE_ROOT/pub/;
+        add_header X-Frame-Options "SAMEORIGIN";
+    }
+
+    location /static/ {
+        # Uncomment the following line in production mode
+        # expires max;
+
+        # Remove signature of the static files that is used to overcome the browser cache
+        location ~ ^/static/version {
+        rewrite ^/static/(version\d*/)?(.*)$ /static/$2 last;
+        }
+
+        location ~* \.(ico|jpg|jpeg|png|gif|svg|js|css|swf|eot|ttf|otf|woff|woff2)$ {
+        add_header Cache-Control "public";
+        add_header X-Frame-Options "SAMEORIGIN";
+        expires +1y;
+
+        if (!-f $request_filename) {
+            rewrite ^/static/?(.*)$ /static.php?resource=$1 last;
+        }
+        }
+        location ~* \.(zip|gz|gzip|bz2|csv|xml)$ {
+        add_header Cache-Control "no-store";
+        add_header X-Frame-Options "SAMEORIGIN";
+        expires    off;
+
+        if (!-f $request_filename) {
+           rewrite ^/static/?(.*)$ /static.php?resource=$1 last;
+        }
+        }
+        if (!-f $request_filename) {
+        rewrite ^/static/?(.*)$ /static.php?resource=$1 last;
+        }
+        add_header X-Frame-Options "SAMEORIGIN";
+    }
+
+    location /media/ {
+        try_files $uri $uri/ /get.php$is_args$args;
+
+        location ~ ^/media/theme_customization/.*\.xml {
+        deny all;
+        }
+
+        location ~* \.(ico|jpg|jpeg|png|gif|svg|js|css|swf|eot|ttf|otf|woff|woff2)$ {
+        add_header Cache-Control "public";
+        add_header X-Frame-Options "SAMEORIGIN";
+        expires +1y;
+        try_files $uri $uri/ /get.php$is_args$args;
+        }
+        location ~* \.(zip|gz|gzip|bz2|csv|xml)$ {
+        add_header Cache-Control "no-store";
+        add_header X-Frame-Options "SAMEORIGIN";
+        expires    off;
+        try_files $uri $uri/ /get.php$is_args$args;
+        }
+        add_header X-Frame-Options "SAMEORIGIN";
+    }
+
+    location /media/customer/ {
+        deny all;
+    }
+
+    location /media/downloadable/ {
+        deny all;
+    }
+
+    location /media/import/ {
+        deny all;
+    }
+
+    # PHP entry point for main application
+    location ~ (index|get|static|report|404|503|health_check)\.php$ {
+        try_files $uri =404;
+        fastcgi_pass   fastcgi_backend;
+        fastcgi_buffers 1024 4k;
+
+        fastcgi_param  PHP_FLAG  "session.auto_start=off \n suhosin.session.cryptua=off";
+        fastcgi_param  PHP_VALUE "memory_limit=756M \n max_execution_time=18000";
+        fastcgi_read_timeout 600s;
+        fastcgi_connect_timeout 600s;
+
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+
+    gzip on;
+    gzip_disable "msie6";
+
+    gzip_comp_level 6;
+    gzip_min_length 1100;
+    gzip_buffers 16 8k;
+    gzip_proxied any;
+    gzip_types
+        text/plain
+        text/css
+        text/js
+        text/xml
+        text/javascript
+        application/javascript
+        application/x-javascript
+        application/json
+        application/xml
+        application/xml+rss
+        image/svg+xml;
+    gzip_vary on;
+
+    # Banned locations (only reached if the earlier PHP entry point regexes don't match)
+
+        location ~* (\.php$|\.htaccess$|\.git) {
+        deny all;
+    }  
+
+}
+
+This is the /etc/nginx/nginx.conf
+
+user  docker;
+worker_processes  4;
+pid /run/nginx.pid;
+daemon off;
+
+events {
+    worker_connections 768;
+    use epoll;
+        multi_accept on;
+}
+
+http {
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+        keepalive_requests 10;
+    keepalive_timeout 300;
+    types_hash_max_size 2048;
+
+    client_body_buffer_size 128K;
+    client_header_buffer_size 1k;
+    client_body_temp_path /tmp 1 2;
+    client_max_body_size 10m;
+    large_client_header_buffers 4 4k;
+    output_buffers               1 32k;
+    postpone_output              1460;
+
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    gzip on;
+    gzip_disable "msie6";
+        #therefore there should be default named config not default.conf
+        #so made a change
+
+    include /etc/nginx/sites-enabled/*.conf;
+
+  
+The main page is running
+
+[图片2（人工查看原图后整理）：Magento setup 页面可以打开，显示后台欢迎和配置提示。]
+
+[H4]
+Date: 2017-11-25 17:38:10
+Title: How to write a docker file when we have to get a values from a running container and make a link
+Tags: <magento><docker><dockerfile>
+Body:
+Trying to run Magento2 in docker container. This is what I have done for now
+
+Created a docker container running mysql
+
+Created a docker container running magento2 
+
+Now I can start the docker container with magento2 and make a link to mysql container. 
+
+Then after I am accessing the mysql datas like database name and others details and running the magento commands like 
+
+./magento setup:config:set --db-host=172.17.0.2 --db-name=mydb --db-user=admin --db-password=[REDACTED]
+
+  
+So can I write this things within the Dockerfile and create a build
+  and than only run the container . What is the exact way to do it. Is
+  it possible without making use of docker-composer.
+
+I hope I am clear with what I want to explain
+
+[H5]
+Date: 2017-11-26 10:15:02
+Title: Dockerfile passing wrong mysql host ip address
+Tags: <mysql><docker><automation><dockerfile><magento2>
+Body:
+I created a build on my local machine and was working great. Now
+  trying to do same in the server.It is not passing the host-ip set in
+  Dockerfile but passing 172.17.0.3 and throwing the bellow error
+
+Here is the error:
+
+Step 22/25 : RUN cd /usr/html/bin  &&      ./magento setup:config:set --db-host=172.17.0.2 --db-name=mydb --db-user=tara --db-password=[REDACTED]
+ ---> Running in 7bbe53f5d054
+SQLSTATE[HY000] [1045] Access denied for user 'tara'@'172.17.0.3' (using password: [REDACTED]
+
+  [InvalidArgumentException]   
+  Parameter validation failed
+
+*Where the host ip comes from the IP address of another running container. which is 172.17.0.2 *
+
+Why is it taking wrong IP address during connection
+
+HERE is the dockerfile:
+
+FROM docker-php:0.2
+#mysqql setup
+ENV DB_HOST 172.17.0.2
+ENV DB_NAME mydb
+ENV DB_USER admin
+ENV DB_PASSWORD password
+
+#magenot admin user
+ENV ADMIN_USER tara
+ENV ADMIN_PASSWORD password123
+ENV ADMIN_FIRSTNAME tara
+ENV ADMIN_LASTNAME gurung
+ENV ADMIN_EMAIL [EMAIL_REDACTED]
+
+ADD ./magento2 /usr/html/
+
+WORKDIR /usr/html/
+
+RUN find var vendor pub/static pub/media app/etc -type f -exec chmod g+w {} \;
+RUN find var vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} \;
+RUN chown -R :docker .
+RUN chmod u+x bin/magento
+
+RUN composer install
+CMD echo "Success installed Magento"
+
+ENTRYPOINT ["/home/USER_REDACTED/run.sh"]
+#get into the magento isntallation dir
+#get into the magento isntallation dir
+#start setting the necessasry file permission first
+RUN cd /usr/html && \
+    chmod 777 generated -R && \
+    chmod 777 var -R
+
+RUN cd /usr && \
+    chown -R docker:docker html     
+
+#start running the magento commands to install
+RUN cd /usr/html/bin  && \
+     ./magento setup:config:set  --db-host=$DB_HOST --db-name=mydb --db-user=bhavi --db-password=[REDACTED]
+#installing the magento with admin user created
+RUN cd /usr/html/bin && \
+    ./magento setup:install --admin-user=$ADMIN_USER --admin-password=[REDACTED] --admin-firstname=$ADMIN_FIRSTNAME --admin-lastname=$ADMIN_LASTNAME --admin-email=ADMIN_EMAIL --use-rewrites=1
+
+RUN chmod 777 vendor -R
+RUN cd /usr && \
+    chown -R docker:docker html

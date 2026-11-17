@@ -1,0 +1,138 @@
+In Docker Compose, containers can communicate with each other using their **service names** as hostnames, but only if they are on the **same Docker network**. Your error indicates the containers are on different networks.
+
+## The Problem
+
+Your two compose files are creating separate default networks. When you run multiple compose files together with `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up`, they should share the same default network, but your configuration is causing issues.
+
+## Solution
+
+### 1. Remove the problematic network configuration
+
+Your `docker-compose.prod.yml` has invalid network syntax. Remove the `networks` section entirely - you don't need custom IP addresses.
+
+### 2. Use service names for communication
+
+In your Nginx configuration, instead of using `example.test:8000`, use the service name:
+
+```nginx
+location /api {
+    proxy_pass http://django:8000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+}
+```
+
+### 3. Updated docker-compose.prod.yml
+
+```yaml
+version: '3'
+
+services:
+    django:
+        environment:
+          - MODE=PROD
+    hosting:
+        build: ./hosting
+        restart: always
+        volumes:
+           - frontend-build:/var/www
+        ports:
+          - "80:80"
+          - "443:443"
+        environment:
+          - MODE=PROD
+        depends_on:
+          - django
+
+volumes:
+    frontend-build:
+```
+
+### 4. Run both compose files together
+
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+```
+
+This ensures both services are on the same default network and can communicate using service names.
+
+## Alternative: Custom Network (if needed)
+
+If you need more control, define a custom network in your base compose file:
+
+**docker-compose.yml:**
+```yaml
+version: '3'
+
+services:
+    db:
+        image: postgres
+        ports:
+         - "5432:5432"
+        networks:
+          - app_network
+    django:
+        build: ./api
+        command: ["./docker_up.sh"]
+        restart: always
+        volumes:
+          - ./api:/app/api
+          - api-static:/app/api/staticfiles
+        ports:
+          - "8000:8000"
+        depends_on:
+          - db
+        environment:
+          - MODE=DEV
+        networks:
+          - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  frontend-build:
+  api-static:
+  certificates:
+```
+
+**docker-compose.prod.yml:**
+```yaml
+version: '3'
+
+services:
+    django:
+        environment:
+          - MODE=PROD
+        networks:
+          - app_network
+    hosting:
+        build: ./hosting
+        restart: always
+        volumes:
+           - frontend-build:/var/www
+        ports:
+          - "80:80"
+          - "443:443"
+        environment:
+          - MODE=PROD
+        networks:
+          - app_network
+
+networks:
+  app_network:
+    external: true
+
+volumes:
+    frontend-build:
+```
+
+## Key Points
+
+1. **Service names are hostnames**: In Docker Compose, each service name becomes a DNS name that other containers can use
+2. **Same network required**: Containers must be on the same network to communicate
+3. **No need for links**: The `links` directive is deprecated in Compose v3; use networks instead
+4. **Remove custom IP config**: You don't need static IPs for basic container communication
+
+After making these changes, your Nginx container should be able to reach the Django container using `http://django:8000`.

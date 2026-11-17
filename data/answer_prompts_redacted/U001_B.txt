@@ -1,0 +1,302 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2019-05-07 11:52:12
+Title: What does following error in docker-compose mean while building for Django?
+Tags: <django><docker><docker-compose>
+Body:
+Below is docker-compose.yml file
+
+  
+docker-compose.yml
+
+services:
+
+ db:
+  container_name: djangy-db
+  image: postgres
+
+ app:
+  container_name: djangy-app
+  build:
+   context: ./
+  command: python manage.py runserver 0.0.0.0:8000
+  volumes:
+   - ./app:/app
+  ports:
+   - "8000:8000"
+  links:
+   - db
+
+and when I run
+
+docker-compose up
+
+I get the following error.
+
+ERROR: The Compose file './docker-compose.yml' is invalid because:
+Unsupported config option for services: 'app'
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2019-05-01 18:16:06
+Title: Building MySQL image from base image with docker build?
+Tags: <mysql><docker><dockerfile>
+Body:
+I'm newbie to Docker. What's the convenient way to build a MySQL image from a Dockerfile
+
+I can install MySQL with RUN directive and enable and start its service too. But how to do post-installation operations? I mean mysql_secure-installation? And auto-respond to its prompt of password & remove test dbs etc?
+
+[H2]
+Date: 2019-05-02 11:52:23
+Title: Why Docker Nginx Container Still Showing Defualt Page Instead Of Provided Index File?
+Tags: <docker><nginx>
+Body:
+I have this tree output for a docker project.
+
+├── code
+│   ├── index.php
+│   └── style.css
+├── docker-compose.yml
+├── mariadb
+│   ├── dbs
+│   └── Dockerfile
+└── nginx
+    ├── Dockerfile
+    ├── lemp.docker.conf
+    └── nginx.conf
+
+with the conents of nginx Dockerfile & both conf files, I seem to not been able to comprehend where I've done the mistake. Please point it out.
+
+nginx Dockerfile
+
+FROM ubuntu:16.04
+ENV REFRESHED_AT YYYY-MM-DD
+RUN apt-get -yqq update; apt-get -yqq install nginx
+ADD lemp.docker.conf /etc/nginx/conf.d/
+ADD nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
+
+nginx CustomSite Conf
+
+server {
+listen 0.0.0.0:80;
+server_name _;
+root /var/www/html;
+index index.php index.html index.htm;
+access_log /var/log/nginx/default_access.log;
+error_log /var/log/nginx/default_error.log;
+}
+
+nginx Conf
+
+user www-data;
+worker_processes 4;
+pid /run/nginx.pid;
+daemon off;
+events { }
+http {
+sendfile on;
+tcp_nopush on;
+tcp_nodelay on;
+keepalive_timeout 65;
+types_hash_max_size 2048;
+include /etc/nginx/mime.types;
+default_type application/octet-stream;
+access_log /var/log/nginx/access.log;
+error_log /var/log/nginx/error.log;
+gzip on;
+gzip_disable "msie6";
+include /etc/nginx/conf.d/*.conf;
+}
+
+& lastly the compose file
+
+nginx:
+ image: 'nginx:latest'
+ ports:
+  - '80:80'
+ volumes:
+  - ./code/:/var/www/html/
+ links:
+  - mariadb
+
+mariadb:
+ image: 'mariadb:latest'
+ ports:
+  - '3306:3306'
+ volumes:
+  - ./mariadb/dbs/:/var/lib/mysql/
+ environment:
+  - MYSQL_ROOT_PASSWORD=[REDACTED]
+
+[H3]
+Date: 2019-05-03 07:16:13
+Title: Why can't I push local Docker image to Docker Hub repo?
+Tags: <docker><push><dockerhub>
+Body:
+I have Docker ID, let's say -> KN, and created a private repo. I can log into Docker Hub via CLI too. I run a container based on a image & commit that container to an image with following command
+
+docker commit ub18 reponame/ub18 ==> successfull
+
+but when I push that image like following, it doesn't upload.
+
+Output of Docker images shows this image on top.
+
+docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+standard/ub18       latest              c8ebc0f1dd75        12 seconds ago      102MB
+
+docker push reponame/ub18  ==> gives error
+The push refers to repository [docker.io/standard/ub18]
+7660ded5319c: Preparing 
+94e5c4ea5da6: Preparing 
+5d74a98c48bc: Preparing 
+604cbde1a4c8: Preparing 
+denied: requested access to the resource is denied
+
+[H4]
+Date: 2019-05-06 05:13:01
+Title: Why Command Runs Effectively Via 'EXEC' directive on a running container, but not through docker-compose?
+Tags: <docker><docker-compose>
+Body:
+I'm dockerizing lemp stack with following docker-compose config:
+
+mariadb:
+ container_name: lemp-mariadb
+ image: mariadb
+ #user: $UID
+ environment:
+  - MYSQL_ROOT_PASSWORD=[REDACTED]
+  - MYSQL_DATABASE=wordpress
+  - MYSQL_USER=wordpress
+  - MYSQL_PASSWORD=[REDACTED]
+ volumes:
+  - ./db:/var/lib/mysql
+phpfpm:
+ container_name: lemp-fpm
+ image: php:7-fpm
+ volumes:
+  - ./code:/code
+ links:
+  - mariadb
+ command: docker-php-ext-install mysqli
+nginx:
+ container_name: lemp-nginx
+ image: nginx:latest
+ ports:
+  - "8080:80"
+ volumes:
+  - ./code:/code
+  - ./site.conf:/etc/nginx/conf.d/default.conf
+ links:
+  - phpfpm
+ command: nginx -g 'daemon off;'
+
+Problem lies with with line in config:
+
+command: docker-php-ext-install mysqli
+
+If I comment this line during docker-compose up routine, it runs fine leaving 3 of the machines running, All I have to do is run this command on lemp-fpm machine via docker exec like this:
+
+docker exec lemp_phpfpm_1 docker-php-ext-install mysqli
+
+which gives no error and I can connect to database with mysqli extension. The lemp-fpm instance quits with 0 erro code when same command runs via docker-compose. The question is why? and what's the work-around?
+[图片1（人工查看原图后整理）：PHP 容器日志显示 mysqli 扩展编译和安装完成，进程以状态码 0 退出。]
+
+[H5]
+Date: 2019-05-06 06:46:56
+Title: Getting 502 Bad Gateway Error While Deploying WordPress On Dockerized Lemp?
+Tags: <wordpress><docker><docker-compose>
+Body:
+Output of tree command on my project directory shows following layout.
+
+[图片1（人工查看原图后整理）：项目目录中 code 下放置 WordPress 文件，旁边有 db、docker-compose.yml 和 site.conf。]
+
+where code folder contains standard wordpress files, and db folder is to map container sql data to the host directory.
+
+contents of the docker-compose.yml are shown here:
+
+mariadb:
+ container_name: lemp-mariadb
+ image: mariadb
+ environment:
+  - MYSQL_ROOT_PASSWORD=[REDACTED]
+  - MYSQL_DATABASE=wordpress
+  - MYSQL_USER=wordpress
+  - MYSQL_PASSWORD=[REDACTED]
+ volumes:
+  - ./db:/var/lib/mysql
+phpfpm:
+ container_name: lemp-fpm
+ image: php:7-fpm
+ volumes:
+  - ./code:/code
+ environment:
+  WORDPRESS_DB_HOST: mariadb
+  WORDPRESS_DB_USER: wordpress
+  WORDPRESS_DB_PASSWORD: [REDACTED]
+  WORDPRESS_DB_NAME: wordpress
+ links:
+  - mariadb
+ command: docker-php-ext-install mysqli
+nginx:
+ container_name: lemp-nginx
+ image: nginx:latest
+ ports:
+  - "8080:80"
+ volumes:
+  - ./code:/code
+  - ./site.conf:/etc/nginx/conf.d/default.conf
+ links:
+  - phpfpm
+ command: nginx -g 'daemon off;'
+
+and below is site.conf file which shows nginx configuration.
+
+server {
+ listen 80;
+ root /code;
+ index index.php index.html index.htm;
+
+ location / {
+     try_files $uri $uri/ /index.php?$args;
+ }
+
+ location ~ \.php$ {
+     try_files $uri =404;
+     include fastcgi_params;
+     fastcgi_pass phpfpm:9000;
+     fastcgi_index index.php;
+     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+ }
+}
+
+when I run docker-compose up -d & hit http://localhost:8080 [链接：http://localhost:8080], it shows 502 bad gateway error.
+
+[图片2（人工查看原图后整理）：浏览器访问 127.0.0.1:8080/code 返回 Nginx 1.15.12 的 502 Bad Gateway。]
+
+Why is it not working?? I want it to show wordpress installation page.
+
+docker ps
+
+[图片3（人工查看原图后整理）：docker ps 显示 Nginx、PHP-FPM、MariaDB 三个容器均在运行；主机端口分别映射 8080、9000、3306。]
+
+Ok it seems problem lies on the coommand step in phpfpm service section.
+
+command: docker-php-ext-install mysqli
+
+If i comment this line in docker-compose file and run it, containers do come up and connect as well, but I have to manually install it on fpm node via this command
+
+docker exec lem-fpm docker-php-ext-install mysqli
+
+&
+
+docker-compose restart
+
+and I get wp-installation page, but that's not convenient, kills the whole purpose of automation & containerization, I want this process to be automated, So please tell me if there's a way to get it working just through docker-compose only??

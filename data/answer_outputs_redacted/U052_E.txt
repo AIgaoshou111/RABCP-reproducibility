@@ -1,0 +1,45 @@
+The `-cleanup` option was added to Registrator to handle exactly this zombie-service problem, but your update shows the real issue: you’re pointing Registrator at a load-balanced Consul address, and the deregistration request is being routed to a Consul server that doesn’t own the service registration.
+
+## The actual fix
+
+Don’t point Registrator at a load-balanced Consul endpoint. Point it at a **local Consul agent** running on each Swarm worker node.
+
+Consul is designed to run an agent on every host. The agent handles all local service registrations/deregistrations and forwards them to the server cluster via RPC. This is the correct architecture, not the `bench` tool you found.
+
+### Steps
+
+1. **Run a Consul agent on each Swarm worker** (as a container or systemd service):
+
+```bash
+docker run -d --name consul-agent \
+  --net=host \
+  -e 'CONSUL_LOCAL_CONFIG={"leave_on_terminate": true}' \
+  consul agent -bind=$(hostname -i) \
+  -retry-join=<consul-server-1-ip> \
+  -retry-join=<consul-server-2-ip> \
+  -retry-join=<consul-server-3-ip>
+```
+
+The `-retry-join` flag lets the agent connect to any available server and stay connected to the cluster even if one server goes down.
+
+2. **Point Registrator at the local agent**:
+
+```bash
+docker run -d -h $(hostname -i) --name registrator1 \
+  -v /var/run/docker.sock:/tmp/docker.sock \
+  gliderlabs/registrator \
+  -cleanup \
+  consul://127.0.0.1:8500
+```
+
+The local agent will handle the deregistration correctly because it maintains the session with the server that owns the service.
+
+## Why your load balancer approach fails
+
+Consul service registrations are tied to a specific server via the agent that created them. When you deregister through a different server (via round-robin LB), that server doesn’t have the session and can’t remove the service. The `-cleanup` flag tells Registrator to actively remove services on container stop, but it can’t fix the routing problem.
+
+## Additional notes
+
+- The `-cleanup` flag is still useful — add it as shown above.
+- If you can’t run a local agent, use sticky sessions on your LB as a temporary workaround, but the local agent is the proper solution.
+- The `bench` tool you linked is for benchmarking Consul, not for running worker agents. You want the standard `consul agent` command.

@@ -1,0 +1,169 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2019-01-27 04:38:34
+Title: Install ssl on Kubernetes digital ocean load balancer
+Tags: <docker><ssl><kubernetes>
+Body:
+I am having a website running on container port 80 and 443. I am using ready docker image from docker hub.
+
+I have enabled SSL on Kubernetes using ingress.
+
+I can not generate a certificate inside the pod. If I create cert inside the pod manually then at the time of service Apache restart then the container will restart and the whole pod will be created again. The WHOLE setup will change as default in docker image.
+
+So how to install SSL on this website. Currently, it is giving an error of self-signed certificate.
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2018-12-27 06:11:50
+Title: What advantage and disadvantages using shared volume between pod vs. each pod having own pvc volume(in case of statefulset)?
+Tags: <amazon-web-services><docker><kubernetes><kubectl><kubernetes-pvc>
+Body:
+In kubenetes what are advantages and disadvantages using single shared pvc for all pod & multiple pvc for each pod.
+
+[H2]
+Date: 2019-01-04 11:02:33
+Title: On Bitnami's Jenkins Run Docker Commands in Jenkins shell ubuntu
+Tags: <amazon-web-services><docker><jenkins><jenkins-pipeline><bitnami>
+Body:
+I was trying to run docker during jenkins build rather then using docker plugin i was searching to run docker's command in shell.
+
+bitnami jenkins use tomcat user and for ssh login it use bitnami default username.
+
+I have purchased jenkins from bitnami on aws ec2. I was facing User permission issue and tried lots of solution & searched for 2 days. 
+
+I did changes in sudoers file using sudo Visudo  
+
+made new user with jenkins name try to change default user in jenkin 
+shell
+
+Removed Tomcat user name form ubuntu
+
+I was knowing it is only permission issue but i was stuck on user permission of shell
+
+[H3]
+Date: 2019-01-16 08:55:33
+Title: Moodle docker installation issue mysql_full_unicode_support#File_format and mysql_full_unicode_support#Large_prefix
+Tags: <docker><kubernetes><moodle>
+Body:
+Moodle installation error in docker and kubernetes
+
+mysql_full_unicode_support#File_format and mysql_full_unicode_support#Large_prefix
+
+[H4]
+Date: 2019-01-17 10:35:10
+Title: snipeit on kubernetes not running
+Tags: <laravel><docker><kubernetes>
+Body:
+i am trying to deploy snipe-it on k8s cluster
+
+i have running mysql on kubernetes
+
+i want to deploy snipe-it application on kubernetes 
+
+my yaml file is like
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: snipeit
+  labels:
+    app: snipeit
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: snipeit
+    tier: frontend
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: snipeit-pv-claim
+  labels:
+    app: snipeit
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snipeit
+  labels:
+    app: snipeit
+spec:
+  selector:
+    matchLabels:
+      app: snipeit
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: snipeit
+        tier: frontend
+    spec:
+      containers:
+      - image: snipe/snipe-it
+        name: snipeit
+        env:
+        - name: DB_CONNECTION
+          value: mysql
+        - name: DB_HOST
+          value: mysql
+        - name: DB_USERNAME
+          value: root
+        - name: DB_DATABASE
+          value: snipeit
+        - name: APP_URL
+          value: url
+        - name: DB_PASSWORD
+          value: password
+        ports:
+        - containerPort: 80
+          name: snipeit
+        volumeMounts:
+        - name: snipeit-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: snipeit-persistent-storage
+        persistentVolumeClaim:
+          claimName: snipeit-pv-claim
+
+this is not working 
+
+image i am using is from docker hub : 
+
+https://hub.docker.com/r/snipe/snipe-it
+
+github snipe-it : https://github.com/snipe/snipe-it
+
+container start running but i logged inside container and check var/www/html but no content there
+
+[H5]
+Date: 2019-01-24 13:25:54
+Title: how to restart container instead of deleting pod and recreate?
+Tags: <apache><docker><kubernetes><moodle>
+Body:
+There are cases when you want to restart a specific container instead of deleting the pod and letting Kubernetes recreate it.
+
+i am having one pod running apache container. i did editing in apache config file. for SSL certificate virtual host port changes etc.
+
+now i want to restart apache2 service but without recreating pod.
+
+i tried inside pod with 
+
+service apache2 restart
+
+but it also recreate pod and configuration also change again.

@@ -1,0 +1,57 @@
+The issue is that `command: nginx` in docker-compose overrides the default command of the container, but nginx is not running as a foreground process. When you run `nginx` directly, it starts in daemon mode by default, which causes the container to exit immediately because there's no foreground process running.
+
+## Solution
+
+You need to run nginx in the foreground. Add `daemon off;` to the nginx command:
+
+```yaml
+version: '3'
+
+services:
+   web:
+     build: 
+       context: .
+       dockerfile: Dockerfile
+     ports:
+       - "3011:80"
+     command: nginx -g "daemon off;"
+```
+
+## Alternative Solutions
+
+### Option 1: Modify the Dockerfile
+Instead of using the `command` in docker-compose, you can set the CMD in your Dockerfile:
+
+```dockerfile
+FROM ubuntu:latest
+RUN apt-get update
+RUN apt-get install -y expect
+RUN apt-get -y install software-properties-common 
+RUN apt-add-repository ppa:ondrej/php
+RUN apt-get -y install php7.1 php7.1-fpm 
+RUN apt-get install php7.1-mysql
+RUN apt-get -y install nginx
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+Then remove the `command` line from docker-compose.
+
+### Option 2: Use a startup script
+Create a script that starts both PHP-FPM and nginx:
+
+```bash
+#!/bin/bash
+service php7.1-fpm start
+nginx -g "daemon off;"
+```
+
+Then in your Dockerfile:
+```dockerfile
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+CMD ["/start.sh"]
+```
+
+## Important Note
+Since you're installing PHP-FPM, you'll also need to start it for PHP to work. The `command: nginx -g "daemon off;"` only starts nginx, not PHP-FPM. Consider using a process manager like supervisord or a startup script to run both services.

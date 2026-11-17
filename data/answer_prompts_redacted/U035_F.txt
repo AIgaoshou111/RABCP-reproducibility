@@ -1,0 +1,32 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2015-01-05 07:30:09
+Title: Why does boot2docker ip fail?
+Tags: <docker><boot2docker>
+Body:
+I am totally confused with this. I have installed boot2docker on Windows. I started it using boot2docker start icon. It has launched successfully. I tried out all the docker commands like pull attach run etc. Everything works fine. But when i try 
+
+boot2docker ip
+
+It says
+
+-sh : boot2docker not found.
+
+What's the problem? Am i in wrong directory? or installation done wrongly? Any suggestions.
+
+Selected earlier-question evidence:
+[E1; H1; 2014-12-18 10:41:23] Exact excerpt from the earlier question:
+Boot2Docker Start up fails
+I am completely new to docker. I have installed it from Source [链接：https://github.com/boot2docker/windows-installer/releases/tag/v1.4.1]. I am trying to run it from cmd by using boot2docker start. But i get the following
+
+[E2; H3; 2014-12-22 04:12:16] Exact excerpt from the earlier question:
+Boot2Docker start up fails in windows
+I am trying to start docker from winodws7 enterprise edition.
+
+History-derived overall profile (uncertain estimate, not certified ability):
+Domain: Docker; prior questions: 5; mean level: 2.175 / 5; distribution: level 1: 0.096, level 2: 0.636, level 3: 0.265, level 4: 0.003, level 5: 0.000. Use this only to calibrate explanation depth when useful; specific evidence and the current question take priority.

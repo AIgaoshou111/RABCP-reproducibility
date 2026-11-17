@@ -1,0 +1,23 @@
+The error is not about `tar` or the image contents. It means your current user cannot access the Docker daemon socket at `/var/run/docker.sock`.
+
+You ran `sudo tar ... | docker import ...`, so the `tar` part is elevated, but `docker` is still running as your normal user, which lacks permission to use the Docker socket.
+
+The quickest fix for this command is to run the whole pipeline with `sudo`:
+
+```bash
+sudo tar -C xenial -c . | sudo docker import - xenial
+```
+
+Or, if you prefer, run the import as root directly:
+
+```bash
+sudo sh -c 'tar -C xenial -c . | docker import - xenial'
+```
+
+For a more permanent fix, add your user to the `docker` group, then log out and back in:
+
+```bash
+sudo usermod -aG docker "$USER"
+```
+
+After re-login, you can run `docker` commands without `sudo`.

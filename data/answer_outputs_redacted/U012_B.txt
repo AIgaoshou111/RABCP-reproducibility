@@ -1,0 +1,75 @@
+The error `no matching manifest for windows/amd64 10.0.14393 in the manifest list entries` means Docker cannot find a Windows container image compatible with your specific Windows Server 2016 build version (10.0.14393).
+
+## The Core Issue
+
+Windows containers are tightly coupled to the host OS version. The `hello-world` image you're trying to pull is a multi-arch image that includes manifests for various Windows versions, but apparently not for build 14393 (the original Windows Server 2016 release).
+
+## Solutions
+
+### 1. Use a Compatible Base Image
+
+Instead of `hello-world`, try pulling a Windows Server 2016-compatible image:
+
+```powershell
+docker pull microsoft/windowsservercore:10.0.14393.2430
+```
+
+Or use the newer naming convention:
+
+```powershell
+docker pull mcr.microsoft.com/windows/servercore:ltsc2016
+```
+
+Then run it:
+
+```powershell
+docker run -it mcr.microsoft.com/windows/servercore:ltsc2016 cmd
+```
+
+### 2. Check Your Docker Version
+
+Windows Server 2016 (build 14393) requires specific Docker Enterprise versions. Verify you have a compatible version:
+
+```powershell
+docker version
+```
+
+Docker Enterprise 2.1 or 18.09 should work with Windows Server 2016, but older versions might have issues with manifest lists.
+
+### 3. Update Windows Server 2016
+
+If possible, install the latest cumulative updates for Windows Server 2016. This won't change the build number (it stays 14393), but it can update the container runtime components:
+
+```powershell
+# Check for Windows updates
+sconfig
+# Select option 6 to download and install updates
+```
+
+### 4. Verify Container Type
+
+Ensure you're running Windows containers, not Linux containers:
+
+```powershell
+docker info
+```
+
+Look for `OSType: windows` in the output. If it says `linux`, you need to switch to Windows containers.
+
+### 5. About Experimental Mode
+
+The `--experimental` flag is not needed for this issue. The hang you experienced with `dockerd --experimental` is likely because Docker is already running as a Windows service, and you're trying to start a second instance. Don't pursue this path.
+
+## Why This Happens
+
+The `hello-world` image's manifest list includes entries for various Windows versions (like 10.0.17763 for Server 2019, 10.0.17134 for 1803, etc.), but the original Windows Server 2016 (14393) may not be included in newer versions of the image. This is a known limitation with Windows containers and their OS version coupling.
+
+## Quick Test
+
+To verify Docker is working correctly on your system, try:
+
+```powershell
+docker run mcr.microsoft.com/windows/nanoserver:sac2016 cmd /c echo Hello from Windows Server 2016
+```
+
+If this works, your Docker installation is fine—you just need to use compatible images.

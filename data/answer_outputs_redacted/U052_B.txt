@@ -1,0 +1,49 @@
+Based on your update, you've correctly identified the root cause: your registrator containers are connecting to Consul through a round-robin load balancer, but Consul service registrations are tied to a specific agent/node. When registrator tries to deregister a service, it may hit a different Consul server than the one where the service was originally registered.
+
+## The Solution
+
+The correct approach is to run a **Consul agent on each Docker worker node** and have registrator connect to the local agent. This is the standard Consul architecture pattern.
+
+### Steps to fix:
+
+1. **Run a Consul agent on each worker node** (not a full server, just an agent):
+
+```bash
+docker run -d --name consul-agent \
+  --restart=unless-stopped \
+  -p 8300:8300 \
+  -p 8301:8301 \
+  -p 8301:8301/udp \
+  -p 8302:8302 \
+  -p 8302:8302/udp \
+  -p 8400:8400 \
+  -p 8500:8500 \
+  -p 8600:8600/udp \
+  consul agent -bind={{worker_ip}} -client=0.0.0.0 -retry-join={{consul_server_ip}}
+```
+
+2. **Point registrator to the local Consul agent**:
+
+```bash
+docker run -d -h $(hostname -i) --name registrator1 \
+  -v /var/run/docker.sock:/tmp/docker.sock \
+  gliderlabs/registrator \
+  consul://localhost:8500
+```
+
+### Why this works:
+
+- Each Consul agent maintains its own connection to the Consul cluster
+- Registrator talks to the local agent, which handles the registration/deregistration properly
+- The local agent forwards the changes to the Consul servers using the proper consensus protocol
+- No load balancer is needed between registrator and Consul
+
+### Alternative: Use Consul's DNS interface
+
+If you must use a load balancer, you could use Consul's DNS interface with SRV records, but this is more complex and not recommended for this use case.
+
+### Note about the `-cleanup` flag:
+
+The `-cleanup` flag in registrator is for cleaning up services when registrator itself stops, not for handling the load balancer issue you're experiencing. It won't solve your problem.
+
+The "bench-worker" you mentioned in the Consul GitHub repo is not related to this issue - it's a benchmarking tool for testing Consul performance.

@@ -1,0 +1,98 @@
+Based on your update, the root cause is clear: you’re pointing registrator at a load balancer in front of your Consul cluster, and the load balancer is doing round-robin across Consul servers. When registrator tries to deregister a service, the request may land on a Consul server that is not the one that originally registered the service, so the delete doesn’t happen correctly.
+
+The fix is not to add `-cleanup` to registrator. The fix is to make registrator talk to a Consul agent that is local to each Docker/swarm worker node.
+
+---
+
+## What you should do
+
+Run a **Consul agent on every swarm worker machine** (not a server, just an agent in client mode). Then point registrator on that machine to the local agent:
+
+```
+consul://127.0.0.1:8500
+```
+
+This is the standard, recommended Consul architecture:
+
+- Consul servers form the quorum (3 or 5 nodes).
+- Every other machine runs a Consul agent in client mode.
+- Registrator talks to the local agent.
+- The local agent forwards registrations/deregistrations to the Consul servers using the proper RPC mechanism, not HTTP round-robin through a load balancer.
+
+---
+
+## Example setup
+
+### 1. Start a Consul agent on each swarm worker
+
+```bash
+docker run -d \
+  --name consul-agent \
+  --net=host \
+  -e 'CONSUL_LOCAL_CONFIG={"leave_on_terminate": true}' \
+  consul agent \
+  -bind=$(hostname -i) \
+  -retry-join=<IP-of-any-consul-server> \
+  -client=127.0.0.1
+```
+
+Or if you prefer running Consul directly on the host (not in a container), use:
+
+```bash
+consul agent \
+  -bind=$(hostname -i) \
+  -retry-join=<IP-of-any-consul-server> \
+  -client=127.0.0.1 \
+  -data-dir=/var/consul
+```
+
+### 2. Point registrator at the local agent
+
+```bash
+docker run -d \
+  -h $(hostname -i) \
+  --name registrator1 \
+  -v /var/run/docker.sock:/tmp/docker.sock \
+  gliderlabs/registrator \
+  consul://127.0.0.1:8500
+```
+
+---
+
+## Why this fixes the zombie service problem
+
+- Registrator sends deregistration to the local Consul agent.
+- The local agent knows which Consul server is the leader and forwards the request correctly.
+- There is no HTTP load balancer in the path, so no round-robin misrouting.
+- When a container dies, registrator removes the service from Consul immediately and reliably.
+
+---
+
+## About `-cleanup`
+
+The `-cleanup` flag in registrator is for a different purpose: it removes services that registrator itself registered but that are no longer present in Docker when registrator restarts. It does **not** solve the load-balancer misrouting problem you described.
+
+You can add it if you want extra safety on registrator restart:
+
+```bash
+gliderlabs/registrator -cleanup consul://127.0.0.1:8500
+```
+
+But the primary fix is the local Consul agent.
+
+---
+
+## What about the `bench` link you found?
+
+The `bench` directory in the Consul repo is just a benchmarking tool, not a worker agent. You don’t need it. The standard Consul agent in client mode is what you need.
+
+---
+
+## Summary
+
+1. Run a Consul agent on every swarm worker.
+2. Point registrator to `127.0.0.1:8500` on each worker.
+3. Remove the load balancer from the registrator-to-Consul path.
+4. Optionally add `-cleanup` to registrator for restart safety.
+
+This will eliminate the zombie services caused by round-robin load balancing across Consul servers.

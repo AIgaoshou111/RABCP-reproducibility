@@ -1,0 +1,94 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2022-03-01 10:58:35
+Title: How to deploy django app using bitbucket pipelines
+Tags: <python><django><docker><amazon-ec2><bitbucket-pipelines>
+Body:
+I want to deploy my Django app which is dockerized using BitBucket pipelines to AWS EC2 instance. How can I deploy to EC2 using BitBucket pipelines?
+
+docker-compose.yml
+
+version: "3.8"
+   
+services:
+  db:
+    container_name: db
+    image: "postgres"
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - dev.env
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=POSTGRES_DB
+      - POSTGRES_USER=POSTGRES_USER
+      - POSTGRES_PASSWORD=[REDACTED]
+
+  app:
+    container_name: app
+    build: 
+      context: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./core:/app
+      - ./data/web:/vol/web
+    env_file:
+      - dev.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+
+Dockerfile
+
+FROM python:3
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# COPY ./core /app
+
+WORKDIR /app
+EXPOSE 8000
+
+COPY ./core/ /app/
+COPY ./scripts /scripts
+
+RUN pip install --upgrade pip
+COPY requirements.txt /app/
+RUN pip install -r requirements.txt && \
+    adduser --disabled-password --no-create-home app && \
+    mkdir -p /vol/web/static && \
+    mkdir -p /vol/web/media && \
+    chown -R app:app /vol && \
+    chmod -R 755 /vol && \
+    chmod -R +x /scripts
+
+USER app
+
+CMD ["/scripts/run.sh"]
+
+Selected earlier-question evidence:
+[E1; H1; 2021-12-11 15:17:03] Exact excerpt from the earlier question:
+Unable to run Django with PostgreSQL in Docker
+I wanted to set up a Django app with PostgresDb inside docker containers so that's why I wanted to setup docker-compose but when I execute my code docker, django and db all are working fine and I also developed some API's and they were also working fine as expected but unfortunately, suddenly I'm blocked with these errors:
+
+[E2; H3; 2022-01-25 14:46:07] Exact excerpt from the earlier question:
+Permission Denied When Installing Packages Using Pip In Docker Container Django
+I'm unable to install the package inside my docker container, please let me know how can I solve this.
+
+[E3; H4; 2022-01-28 23:53:26] Exact excerpt from the earlier question:
+Handle Django MIgrations
+I'm working on a Django project with Postgres database using Docker. We are facing some issues in with our migrations, I did not add Django migrations inside .gitignore because I want everyone to have the same database fields and same migrations as well, but every time when someone changes the models or add a new model and push the code with migrations so migrations re not
+
+History-derived overall profile (uncertain estimate, not certified ability):
+Domain: Docker; prior questions: 5; mean level: 2.898 / 5; distribution: level 1: 0.003, level 2: 0.187, level 3: 0.720, level 4: 0.090, level 5: 0.000. Use this only to calibrate explanation depth when useful; specific evidence and the current question take priority.

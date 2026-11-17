@@ -1,0 +1,26 @@
+On modern Ubuntu images, `ifconfig` is not installed by default because it has been replaced by the `ip` command from `iproute2`.
+
+The package that provides `ifconfig` is **`net-tools`**, not `ifconfig`.
+
+Install it with:
+
+```bash
+apt-get update
+apt-get install -y net-tools
+```
+
+Then `ifconfig` will be available.
+
+If you only need to check network interfaces, you can also use the already-installed:
+
+```bash
+ip addr
+```
+
+or:
+
+```bash
+ip a
+```
+
+In a minimal Docker container, `apt-get update` is required first because the package lists are not populated in a fresh Ubuntu image.

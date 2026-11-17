@@ -1,0 +1,62 @@
+The error you're seeing is because Docker's `ENTRYPOINT` (and `CMD`) in exec form doesn't run through a shell, so it can't interpret shell syntax like backticks, `$()`, or environment variable expansion.
+
+## The Problem
+
+When you use:
+```dockerfile
+ENTRYPOINT ["PYTHONPATH=`pwd`/..", "/usr/local/bin/gunicorn", ...]
+```
+
+Docker treats `PYTHONPATH=`pwd`/..` as a literal executable name, not as a shell command. That's why you get the "no such file or directory" error.
+
+## Solutions
+
+### Option 1: Use shell form (simplest)
+Change your ENTRYPOINT to shell form:
+```dockerfile
+ENTRYPOINT PYTHONPATH=`pwd`/.. /usr/local/bin/gunicorn web_interface:app -w 4 -t 90 --log-level=debug -b 0.0.0.0:8000 --reload
+```
+
+Or in docker-compose:
+```yaml
+command: sh -c "PYTHONPATH=`pwd`/.. /usr/local/bin/gunicorn web_interface:app -w 4 -t 90 --log-level=debug -b 0.0.0.0:8000 --reload"
+```
+
+### Option 2: Set PYTHONPATH in Dockerfile (recommended)
+Add this to your Dockerfile:
+```dockerfile
+ENV PYTHONPATH=/data/web
+```
+
+Or if you need it relative to the working directory:
+```dockerfile
+WORKDIR /data/web
+ENV PYTHONPATH=/data/web
+```
+
+### Option 3: Set it in docker-compose
+In your docker-compose.yml:
+```yaml
+web:
+  environment:
+    - PYTHONPATH=/data/web
+  command: /usr/local/bin/gunicorn web_interface:app -w 4 -t 90 --log-level=debug -b 0.0.0.0:8000 --reload
+```
+
+### Option 4: Use env directive in ENTRYPOINT
+```dockerfile
+ENTRYPOINT ["/bin/sh", "-c", "PYTHONPATH=`pwd`/.. exec /usr/local/bin/gunicorn web_interface:app -w 4 -t 90 --log-level=debug -b 0.0.0.0:8000 --reload"]
+```
+
+## Recommendation
+
+Based on your docker-compose setup where you mount `./web_app:/data/web`, the cleanest solution is to set `PYTHONPATH` in your docker-compose.yml:
+
+```yaml
+web:
+  environment:
+    - PYTHONPATH=/data/web
+  command: /usr/local/bin/gunicorn web_interface:app -w 4 -t 90 --log-level=debug -b 0.0.0.0:8000 --reload
+```
+
+This avoids shell interpretation issues and makes the path explicit. The `crm` module should then be importable if it's located at `/data/web/crm/`.

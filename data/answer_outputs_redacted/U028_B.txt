@@ -1,0 +1,192 @@
+Yes, you can absolutely run PyTest tests from your host machine against code running inside a Docker container. The key is to use **volume mounts** to make your host's `tests/` directory accessible inside the container without baking it into the image.
+
+## The Core Solution: Volume Mounts
+
+Mount your host's `tests/` directory into the container at runtime. This keeps test files out of the image while making them available when you run tests.
+
+### Basic Docker Run Command
+
+```bash
+docker run --rm \
+  -v "$(pwd)/code:/app/code" \
+  -v "$(pwd)/tests:/app/tests" \
+  -w /app \
+  your-image-name \
+  pytest tests/
+```
+
+### With Docker Compose
+
+Create a `docker-compose.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./code:/app/code
+      - ./tests:/app/tests
+    working_dir: /app
+    command: pytest tests/
+```
+
+Then run:
+
+```bash
+docker-compose up
+```
+
+Or for one-off test runs:
+
+```bash
+docker-compose run --rm app pytest tests/
+```
+
+## Recommended Dockerfile Structure
+
+Your Dockerfile should install dependencies and copy only the application code (not tests):
+
+```dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Install dependencies first (for better layer caching)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy only application code
+COPY code/ ./code/
+
+# Install pytest (or include it in requirements.txt)
+RUN pip install pytest
+
+# Don't copy tests/ - they'll be mounted at runtime
+```
+
+## Best Practices for This Setup
+
+### 1. **Separate Runtime vs. Test Dependencies**
+
+Create separate requirements files:
+- `requirements.txt` - production dependencies
+- `requirements-dev.txt` - test dependencies (pytest, pytest-cov, etc.)
+
+```dockerfile
+COPY requirements.txt requirements-dev.txt ./
+RUN pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
+```
+
+### 2. **Use a Consistent Working Directory**
+
+Ensure your Python imports work correctly by setting up the working directory properly:
+
+```dockerfile
+WORKDIR /app
+ENV PYTHONPATH=/app
+```
+
+### 3. **Create a Test Script for Convenience**
+
+Create a `run_tests.sh` script on your host:
+
+```bash
+#!/bin/bash
+docker-compose run --rm app pytest tests/ -v
+```
+
+Make it executable:
+
+```bash
+chmod +x run_tests.sh
+```
+
+### 4. **For Development with Auto-reload**
+
+If you want tests to re-run automatically when files change, mount the code directory too and use pytest-watch:
+
+```yaml
+services:
+  app:
+    build: .
+    volumes:
+      - ./code:/app/code
+      - ./tests:/app/tests
+    working_dir: /app
+    command: ptw -- tests/
+```
+
+## Complete Example
+
+**Directory Structure:**
+```
+project/
+├── code/
+│   ├── __init__.py
+│   ├── file1.py
+│   └── file2.py
+├── tests/
+│   ├── __init__.py
+│   ├── test_file1.py
+│   └── test_file2.py
+├── requirements.txt
+├── requirements-dev.txt
+├── Dockerfile
+└── docker-compose.yml
+```
+
+**Dockerfile:**
+```dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY requirements.txt requirements-dev.txt ./
+RUN pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
+
+COPY code/ ./code/
+
+ENV PYTHONPATH=/app
+```
+
+**docker-compose.yml:**
+```yaml
+version: '3.8'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./code:/app/code
+      - ./tests:/app/tests
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+```
+
+**Running Tests:**
+```bash
+# Run all tests
+docker-compose run --rm app pytest tests/
+
+# Run specific test file
+docker-compose run --rm app pytest tests/test_file1.py
+
+# Run with verbose output
+docker-compose run --rm app pytest tests/ -v
+
+# Run with coverage
+docker-compose run --rm app pytest tests/ --cov=code
+```
+
+## Key Points
+
+1. **Volume mounts** are the solution - they make host files available in the container without including them in the image
+2. **Mount at runtime**, not build time - this keeps your image clean and portable
+3. **Use `docker-compose run --rm`** for one-off test executions to avoid leaving stopped containers
+4. **Keep the image focused** on application code and dependencies only
+5. **Consider CI/CD implications** - for CI pipelines, you might want to copy tests into the image or use a different strategy
+
+This approach gives you the best of both worlds: a clean, production-ready Docker image without test files, while still being able to run tests against the containerized code during development.

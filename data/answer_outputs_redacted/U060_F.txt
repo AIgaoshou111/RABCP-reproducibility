@@ -1,0 +1,33 @@
+The error occurs because the Dockerfile `ENTRYPOINT` exec form doesn't run a shell, so it can't interpret `PYTHONPATH=...` as an environment variable assignment or expand backticks/`$(...)`. It treats the entire string as the executable path.
+
+## Solution
+
+Use the **shell form** of `ENTRYPOINT` (without the JSON array brackets) so the command runs through `/bin/sh`:
+
+```dockerfile
+ENTRYPOINT PYTHONPATH=/app /usr/local/bin/gunicorn web_interface:app -w 4 -t 90 --log-level=debug -b 0.0.0.0:8000 --reload
+```
+
+Or, if you need to compute the path dynamically:
+
+```dockerfile
+ENTRYPOINT sh -c 'PYTHONPATH=$(pwd)/.. exec /usr/local/bin/gunicorn web_interface:app -w 4 -t 90 --log-level=debug -b 0.0.0.0:8000 --reload'
+```
+
+## Better approach: Set PYTHONPATH with ENV
+
+Since the path is likely static in the container, set it once with `ENV` in the Dockerfile and keep the exec form for proper signal handling:
+
+```dockerfile
+ENV PYTHONPATH=/app
+ENTRYPOINT ["/usr/local/bin/gunicorn", "web_interface:app", "-w", "4", "-t", "90", "--log-level=debug", "-b", "0.0.0.0:8000", "--reload"]
+```
+
+Replace `/app` with the actual directory containing your `crm` module inside the container (e.g., `/usr/src/app` or wherever your code is copied).
+
+## Why this happens
+
+- **Exec form** (`["..."]`): No shell involved; arguments are passed directly to `exec`. Environment variable assignments like `PYTHONPATH=...` are not interpreted.
+- **Shell form** (no brackets): Runs through `/bin/sh -c`, which understands variable assignments and command substitution.
+
+The exec form is generally preferred for proper PID 1 signal handling, so using `ENV` is the cleanest fix.

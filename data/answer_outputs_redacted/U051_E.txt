@@ -1,0 +1,75 @@
+You can do this either by booting the qcow2 image once and installing Docker inside it, then shutting it down cleanly, or by using libguestfs tools to modify the image offline.
+
+Since you are on Fedora 20 with KVM, the most reliable approach is:
+
+## Option 1: Boot the image, install Docker, shut down
+
+1. **Boot the Ubuntu 14 qcow2 image** with KVM/QEMU or OpenStack.
+
+2. **Install Docker inside the guest** using the Docker-maintained repository for Ubuntu 14.04:
+
+   ```bash
+   sudo apt-get update
+   sudo apt-get install -y apt-transport-https ca-certificates
+   sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 \
+     --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+   echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" | \
+     sudo tee /etc/apt/sources.list.d/docker.list
+   sudo apt-get update
+   sudo apt-get install -y docker-engine
+   ```
+
+   For Ubuntu 14.04, the package was `docker.io` in the Ubuntu archive, but the Docker-maintained `docker-engine` package is the recommended one for that era.
+
+3. **Optionally enable Docker at boot:**
+
+   ```bash
+   sudo systemctl enable docker
+   ```
+
+   Or for Upstart-based Ubuntu 14.04 images:
+
+   ```bash
+   sudo update-rc.d docker defaults
+   ```
+
+4. **Clean up and shut down:**
+
+   ```bash
+   sudo apt-get clean
+   sudo rm -rf /var/lib/apt/lists/*
+   sudo shutdown -h now
+   ```
+
+5. **Use the modified qcow2 file** as your new base image in OpenStack/KVM.
+
+## Option 2: Modify the image offline with libguestfs
+
+If you do not want to boot the image, install `libguestfs-tools` on Fedora 20:
+
+```bash
+sudo yum install libguestfs-tools
+```
+
+Then use `virt-customize` to install Docker without booting the VM:
+
+```bash
+virt-customize -a ubuntu-14.qcow2 \
+  --run-command 'apt-get update' \
+  --run-command 'apt-get install -y apt-transport-https ca-certificates' \
+  --run-command 'apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D' \
+  --run-command 'echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" > /etc/apt/sources.list.d/docker.list' \
+  --run-command 'apt-get update' \
+  --run-command 'apt-get install -y docker-engine' \
+  --run-command 'update-rc.d docker defaults'
+```
+
+`virt-customize` will start a small appliance, modify the filesystem, and exit. The original qcow2 is modified in place unless you use `-a` with a copy.
+
+## Important checks
+
+- **Kernel support:** Docker in 2015 required a 64-bit kernel with AUFS or Device Mapper support. Ubuntu 14.04 cloud images normally have the required kernel modules.
+- **Storage driver:** If Docker fails to start, check `/var/log/docker` or run `docker -d` manually. On some cloud images, you may need to specify `--storage-driver=devicemapper` in `/etc/default/docker`.
+- **OpenStack image metadata:** After modifying the qcow2, upload it to OpenStack Glance as a new image. No special metadata is required for Docker itself, but ensure the image is still bootable.
+
+The boot-and-install method is usually the simplest and least error-prone for a one-off base image.

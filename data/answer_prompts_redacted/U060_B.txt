@@ -1,0 +1,287 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-06-26 07:54:18
+Title: Setting PYTHONPATH in Ubuntu 16.04 for a Docker image to run properly
+Tags: <python><ubuntu><docker><gunicorn>
+Body:
+I have a docker image that is running a gunicorn process, but everytime it runs I get the error ImportError: No module named 'crm'.  So I am following this SO post [链接：https://stackoverflow.com/a/39461113/5779280] to solve this issue.
+
+However, when I run 
+
+ENTRYPOINT ["PYTHONPATH=`pwd`/..", "/usr/local/bin/gunicorn", "web_interface:app", "-w 4", "-t 90", "--log-level=debug", "-b 0.0.0.0:8000",  "--reload"]
+
+the container spits back a 
+
+ERROR: for web  Cannot start service web: oci runtime error: container_linux.go:247: starting container process caused "exec: \"PYTHONPATH=`pwd`/.. \": stat PYTHONPATH=`pwd`/.. : no such file or directory"
+
+Any idea how I can run the PYTHONPATH command?
+
+I should state that it works locally on my Mac, but not in the Ubuntu container.
+
+What I have tried:
+
+"PYTHONPATH=pwd/.."
+
+"PYTHONPATH=$(pwd)/.."
+
+"PYTHONPATH=$PWD/.."
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2017-05-29 18:21:02
+Title: Docker container that depends on file in other container
+Tags: <docker><containers><docker-compose>
+Body:
+I have monolithic application that i am trying to containerize.  The foler structure is like this:
+
+--app
+  |
+  |-file.py <-has a variable foo that is passed in
+
+--configs
+  |
+  |-variables.py <- contains foo variable
+
+Right now, I have the app in a container and the configs in a container.  When I try to start up the app container, it fails because a dependency on the config container variable.  
+
+What am i doing wrong? And how should I approach this issue.  Should the app and config be in one big container for now? 
+
+I was thinking docker-compose could solve this issue. Thoughts?
+
+[H2]
+Date: 2017-06-19 16:05:01
+Title: Gunicorn is stuck on docker run command with a Flask Application
+Tags: <python><docker><flask><gunicorn><devops>
+Body:
+I have my container app_container built, exposing port 8000 as per my application code.  The entry point to the container is ENTRYPOINT ["/usr/local/bin/gunicorn", "web_interface:app", "-w 4", "-t 90", "--log-level=info", "-b 127.0.0.1:8000",  "--reload"].
+
+When I build and run the container with docker run --link postgres_db_container --name foo app_container, it runs the gunicorn command to the app. Unlike when i run the app locally, it stops at 
+
+[2017-06-19 16:01:16 +0000] [1] [INFO] Starting gunicorn 19.7.1
+[2017-06-19 16:01:16 +0000] [1] [INFO] Listening at: http://127.0.0.1:8000
+[2017-06-19 16:01:16 +0000] [1] [INFO] Using worker: sync
+[2017-06-19 16:01:16 +0000] [8] [INFO] Booting worker with pid: 8
+[2017-06-19 16:01:16 +0000] [10] [INFO] Booting worker with pid: 10
+[2017-06-19 16:01:16 +0000] [11] [INFO] Booting worker with pid: 11
+[2017-06-19 16:01:16 +0000] [13] [INFO] Booting worker with pid: 13
+
+Anybody have a clue as to why the gunicorn process just stalls here, and does not continue?
+
+No errors to go on either.  So if you have any idea how to get more info, Im all ears...
+
+Edit:
+
+When cancel the process with control+c, I see a test print message :
+
+^C[2017-06-19 16:09:27 +0000] [1] [INFO] Handling signal: int
+[2017-06-19 16:09:27 +0000] [10] [INFO] Worker exiting (pid: 10)
+[2017-06-19 16:09:27 +0000] [11] [INFO] Worker exiting (pid: 11)
+[2017-06-19 16:09:27 +0000] [8] [INFO] Worker exiting (pid: 8)
+---- Generate Mapping ----
+---- Preparing Databases ----
+
+So it seems gunicorn is hung up on some process, but I dont know how to find out what it is.
+
+[H3]
+Date: 2017-06-20 16:12:46
+Title: Nginx docker container not accepting and serving flask from container
+Tags: <python><nginx><docker><docker-compose>
+Body:
+So I have banging my head on this issue for the past  hours, and I have got a docker-compose.yml file
+
+version: '2'
+
+services:
+  web:
+    restart: always
+    build: ./web_app
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./web_app:/data/web
+    command: /usr/local/bin/gunicorn web_interface:app -w 4 -t 90 --log-level=debug -b 0.0.0.0:8000 --reload
+    depends_on:
+      - postgres
+
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+     - "8080:80"
+    volumes_from:
+      - web
+    depends_on:
+      - web
+
+  postgres:
+    restart: always
+    image: postgres:latest
+    volumes_from:
+      - data
+    volumes:
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./backups/postgresql:/backup
+    expose:
+      - "5432"
+
+  data:
+    restart: always
+    image: alpine
+    volumes:
+      - /var/lib/postgresql
+    tty: true
+
+However, when I docker-compose up and then navigate to localhost:8880, I get nothing served.  Is like the nginx server is not accepting connections through the localhost.  
+
+nginx.conf 
+
+server {
+
+    listen 80;
+    server_name localhost;
+    charset utf-8;
+
+    location /static/ {
+        alias /data/web/crm/web_interface;
+    }
+
+    location = /favicon.ico {
+        alias /data/web/crm/web_interface/static/favicon.ico;
+    }
+
+    location / {
+        proxy_pass http://web:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+}
+
+nginx/Dockerfile
+
+FROM nginx:latest
+
+RUN rm /etc/nginx/conf.d/default.conf
+
+COPY ./nginx.conf /etc/nginx/conf.d/nginx.conf 
+
+And this is whats in my terminal:
+[图片1（人工查看原图后整理）：compose 日志中 PostgreSQL 已就绪；Nginx 访问上游超时并返回 504，Web 的 Gunicorn worker 多次超时。]
+
+I have been following this [链接：https://www.capside.com/labs/deploying-full-django-stack-with-docker-compose/] tutorial fairly closely, but it cant seem to serve the Flask App that I have created. Any ideas?
+
+[H4]
+Date: 2017-06-21 11:56:53
+Title: 504 error with nginx and flask docker containers
+Tags: <python><nginx><docker><flask><http-status-code-504>
+Body:
+Two days of work and I'm still stuck. I'm running separate nginx and application containers. The application container has a flask app that runs a gunicorn process on port 8000.
+
+Everytime I nav to localhost:8080 which is the nginx port 80 is mapped to on localhost, I get a loading screen and a nginx 504 error.
+
+This is what I see on the terminal:
+[图片1（人工查看原图后整理）：与上一题的截图内容完全相同：PostgreSQL 已就绪，但 Nginx 上游和 Gunicorn worker 超时。]
+
+docker-compose.yml
+
+version: '2'
+
+services:
+  web:
+    restart: always
+    build: ./web_app
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./web_app:/data/web
+    command: /usr/local/bin/gunicorn web_interface:app -w 4 -t 90 --log-level=info -b :8000 --reload
+    depends_on:
+      - postgres
+
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+     - "8080:80"
+    volumes_from:
+      - web
+    depends_on:
+      - web
+
+  postgres:
+    restart: always
+    image: postgres:latest
+    volumes_from:
+      - data
+    volumes:
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./backups/postgresql:/backup
+    expose:
+      - "5432"
+
+  data:
+    restart: always
+    image: alpine
+    volumes:
+      - /var/lib/postgresql
+    tty: true
+
+nginx.conf
+
+server {
+
+    listen 80;
+    server_name localhost;
+    charset utf-8;
+
+    location /static/ {
+        alias /data/web/crm/web_interface;
+    }
+
+    location = /favicon.ico {
+        alias /data/web/crm/web_interface/static/favicon.ico;
+    }
+
+    location / {
+        proxy_pass http://web:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+nginx Dockerfile
+
+FROM nginx:latest
+
+RUN rm /etc/nginx/conf.d/default.conf
+
+COPY ./nginx.conf /etc/nginx/conf.d/nginx.conf
+
+I'll provide more info if needed to get some help on this issue that Im struggling on.
+
+[H5]
+Date: 2017-06-22 09:41:03
+Title: How do you register a Postgres container host on docker-compose up?
+Tags: <postgresql><docker><flask><docker-compose><ponyorm>
+Body:
+I have an app (Flask/Pony ORM) container that must register the host for a postgres db container on start up.  How can I get the host's (postgres container) location?
+
+On my local set up I have "localhost" but this does not work in the app container.
+
+I tried "172.17.0.2" which was what the pg containers IP when I was not using docker-compose.
+
+But both of these return an error.
+
+Is there a way to specify a host location for a particular container in the docker-compose file?

@@ -1,0 +1,20 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2015-02-05 18:01:56
+Title: how to add docker to a ubuntu 14 qcow2 image
+Tags: <docker><openstack><kvm><fedora20>
+Body:
+I have a Ubuntu 14 .qcow2 cloud image, which I'm running with Fedora 20 KVM and OpenStack. I would like to add / install docker to that image and "re-save" is as a base image, so any VMs created from it would have docker pre-installed.
+How is this done?
+
+Selected earlier-question evidence:
+[E1; H1; 2015-02-04 21:04:20] Exact excerpt from the earlier question:
+is it possible to wrap an entire ubuntu 14 os in a docker image
+I have a Ubuntu 14 desktop, on which I do some of my development work.
+This work mainly revolves around Django & Flask development using PyCharm
+I was wandering if it was possible to wrap the entire OS file system in a Docker container, so my whole development environment, including PyCharm and any other tools, would become portable

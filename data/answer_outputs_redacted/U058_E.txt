@@ -1,0 +1,64 @@
+The error `Chrome failed to start: crashed` in Docker with ChromeDriver 2.31 typically means Chrome itself cannot launch inside the container. Even with `--headless`, Chrome requires certain system libraries and often needs the `--no-sandbox` flag when running as root in a container.
+
+## Fix
+
+### 1. Add `--no-sandbox` to Chrome options
+
+This is the most common missing piece. Chrome's sandbox requires kernel features that are often unavailable in containers:
+
+```python
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+
+browser = webdriver.Chrome('/usr/local/bin/chromedriver', chrome_options=chrome_options)
+```
+
+### 2. Ensure all required system libraries are installed
+
+In your Dockerfile, after installing Chrome, install the dependencies:
+
+```dockerfile
+RUN apt-get update && apt-get install -y \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxi6 \
+    libxtst6 \
+    libxrandr2 \
+    libasound2 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libgbm1 \
+    libgtk-3-0 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libxss1 \
+    fonts-liberation \
+    libappindicator3-1 \
+    xdg-utils
+```
+
+### 3. Verify Chrome runs manually inside the container
+
+Before debugging through Selenium, test Chrome directly:
+
+```bash
+google-chrome --headless --no-sandbox --disable-gpu --dump-dom about:blank
+```
+
+If this fails, you'll see the specific missing library or error message.
+
+## Why this happens
+
+- **Sandbox**: Chrome's sandbox uses user namespaces and other kernel features that Docker containers often restrict. `--no-sandbox` disables this.
+- **Shared memory**: `/dev/shm` in Docker defaults to 64MB, which is too small for Chrome. `--disable-dev-shm-usage` makes Chrome use `/tmp` instead.
+- **Missing libraries**: Chrome depends on many system libraries that aren't installed in a minimal Ubuntu image.

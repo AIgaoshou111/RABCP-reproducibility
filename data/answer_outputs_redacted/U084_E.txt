@@ -1,0 +1,46 @@
+The issue is that `-v` is a flag for the `docker run` command, not a `RUN` instruction in a Dockerfile.
+
+In a Dockerfile:
+
+- `RUN` executes a shell command inside the image during build time.
+- Volume mounts (`-v`) are runtime options for `docker run` or `docker-compose`, not build-time instructions.
+
+To mount the Docker socket into a container, you have two options:
+
+---
+
+### Option 1: Use `docker run` with `-v` (recommended)
+
+Remove the `RUN -v ...` line from your Dockerfile entirely, then run the container with:
+
+```bash
+docker run -v /var/run/docker.sock:/var/run/postgresql/.s.PGSQL.5432 your-image
+```
+
+Or if you're using `docker-compose.yml`:
+
+```yaml
+services:
+  webapp:
+    build: .
+    volumes:
+      - /var/run/docker.sock:/var/run/postgresql/.s.PGSQL.5432
+```
+
+---
+
+### Option 2: Use `VOLUME` in the Dockerfile (not what you want here)
+
+The `VOLUME` instruction in a Dockerfile declares a mount point, but it does **not** bind-mount a host path. It creates an anonymous volume at that location, which is not the same as mounting the Docker socket. So this won't achieve your goal.
+
+---
+
+### Important note about your target path
+
+You're mounting the Docker socket (`/var/run/docker.sock`) to a path that looks like a PostgreSQL Unix socket (`/var/run/postgresql/.s.PGSQL.5432`). That's unusual — the Docker socket is not a PostgreSQL socket. Make sure this is actually what you intend. If you're trying to give the container access to the host's Docker daemon, the typical mount is:
+
+```bash
+-v /var/run/docker.sock:/var/run/docker.sock
+```
+
+If you're trying to connect to a PostgreSQL Unix socket from the host, you'd mount the PostgreSQL socket directory instead, not the Docker socket.

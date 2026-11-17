@@ -1,0 +1,83 @@
+The error you're seeing is a known issue with Docker Toolbox on Windows, typically caused by one of these factors:
+
+## Most Likely Causes & Fixes
+
+### 1. **VirtualBox Version Incompatibility**
+Docker Toolbox 1.8.x requires VirtualBox 4.3.x or 5.0.x. If you have an older version installed:
+
+1. Uninstall your current VirtualBox
+2. Download and install VirtualBox 5.0.x from [virtualbox.org](https://www.virtualbox.org/wiki/Downloads)
+3. Restart your computer
+4. Try creating the machine again
+
+### 2. **Corrupted/Incomplete VirtualBox Installation**
+The error "Converting from raw image file" failing suggests VirtualBox's `VBoxManage` command isn't working properly:
+
+```cmd
+# Test if VBoxManage works
+"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" --version
+```
+
+If this fails or shows an error, reinstall VirtualBox.
+
+### 3. **Path Issues with Special Characters**
+Your username `pmandayam` looks fine, but check if your Windows username or temp directory path contains spaces or special characters. Docker Toolbox sometimes fails when the path contains spaces.
+
+### 4. **Clean Up Failed Machine Creation**
+Remove any partially created machines and retry:
+
+```cmd
+# Remove the failed machine
+docker-machine rm default
+
+# List all machines to see what exists
+docker-machine ls
+
+# Remove any orphaned VirtualBox VMs
+"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" list vms
+"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" unregistervm <vm-name> --delete
+```
+
+### 5. **For Importing Old boot2docker VM**
+The import command syntax is incorrect. Try:
+
+```cmd
+docker-machine create -d virtualbox --virtualbox-import-boot2docker-vm boot2docker-vm docker-vm
+```
+
+Note: The flag is `--virtualbox-import-boot2docker-vm` (with hyphens), not `--virtualbox-import-boot2docker`.
+
+## Recommended Clean Start
+
+1. **Remove everything:**
+```cmd
+docker-machine rm -f default
+docker-machine rm -f docker-vm
+```
+
+2. **Delete Docker Toolbox configuration:**
+```cmd
+rmdir /s /q "%USERPROFILE%\.docker"
+```
+
+3. **Reinstall VirtualBox** (even if you have it, do a repair install)
+
+4. **Create fresh machine:**
+```cmd
+docker-machine create -d virtualbox --virtualbox-memory 2048 default
+```
+
+5. **If that fails, try with less memory:**
+```cmd
+docker-machine create -d virtualbox --virtualbox-memory 1024 default
+```
+
+## Additional Debugging
+
+If the problem persists, run with debug output to get more details:
+
+```cmd
+docker-machine -D create -d virtualbox default
+```
+
+This will show the exact VBoxManage commands being executed and where they fail.

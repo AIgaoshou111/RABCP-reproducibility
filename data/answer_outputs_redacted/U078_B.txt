@@ -1,0 +1,58 @@
+The issue is that `command: nginx` in docker-compose is overriding the default command, but nginx isn't staying in the foreground properly, or it's exiting immediately.
+
+## The Problem
+
+When you run `nginx` directly (without `-g "daemon off;"`), it starts in daemon mode and the process detaches. Docker expects the main process (PID 1) to stay in the foreground. When nginx daemonizes, the container sees the main process exit and stops the container.
+
+## The Solution
+
+You need to run nginx in the foreground. Change your docker-compose.yml:
+
+```yaml
+version: '3'
+
+services:
+   web:
+     build: 
+       context: .
+       dockerfile: Dockerfile
+     ports:
+       - "3011:80"
+     command: nginx -g "daemon off;"
+```
+
+## Alternative Solutions
+
+**Option 1: Set CMD in Dockerfile**
+
+Add this to your Dockerfile:
+```dockerfile
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+Then remove the `command:` line from docker-compose.yml entirely.
+
+**Option 2: Use a startup script**
+
+Create a script that starts PHP-FPM and nginx:
+
+```bash
+#!/bin/bash
+service php7.1-fpm start
+nginx -g "daemon off;"
+```
+
+Then in docker-compose:
+```yaml
+command: /start.sh
+```
+
+## Additional Check
+
+After fixing the command, verify nginx is running:
+```bash
+docker-compose ps
+docker-compose logs web
+```
+
+You should see nginx logs indicating it's running. Also make sure PHP-FPM is started if you need PHP processing - you might need to start it in your command or use a startup script.

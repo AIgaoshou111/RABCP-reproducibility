@@ -1,0 +1,121 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2015-12-04 00:01:01
+Title: Granularity of Docker containers
+Tags: <php><docker><containers><docker-compose><horizontal-scaling>
+Body:
+When designing application infrastructure & architecture using Docker, is it best practise to create one container per "service" or multiple containers for each process within a "service"?
+
+For example a distributed PHP application that uses Nginx, PHP-FPM, Redis, MySQL and ElasticSearch. 
+
+Service containers:
+
+Nginx + App + PHP-FPM (complete app as a "service" container)
+
+Redis 
+
+MySQL
+
+Process Containers:
+
+Nginx
+
+App
+
+PHP-FPM
+
+Redis
+
+MySQL
+
+From my perspective it seems more maintainable to use a "service" container approach as managing so many discreet containers for each process could become cumbersome.
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2015-11-26 03:56:27
+Title: RESTful API 2x nodejs apps on same server, with fallback
+Tags: <node.js><rest><amazon-web-services><docker><horizontal-scaling>
+Body:
+Micro Services I would like to have front-end-web and back-end-api nodejs applications running. Communicating via RESTful HTTP APIs, on a single machine (read ec2).
+
+Stateless I would like to scale these horizontally across ec2 instances in the future. Using Redis (ElasiCache) and MySQL (RDS)  (read stateless)
+
+Load Balanced When scaled i would load balance with an ELB. no problme there.
+
+QUESTION:  If a back-end-api goes down on a machine, is it possible to somehow fallback to another ec2 server running an back-end-api instance? How would i do this.
+
+Why not seperate the API app? well i would like to keep them on the same server for latency and maintainability.
+
+oh btw i use docker :-)
+
+[H2]
+Date: 2015-11-26 05:32:43
+Title: Git repo structure with multiple docker files
+Tags: <node.js><git><nginx><redis><docker>
+Body:
+What is the best way to structure a repository / project that has multiple Dockerfile for provisioning services.
+
+e.g. 
+
+Dockerfile # build Nodejs app server
+
+Dockerfile # build Nginx forward proxy
+
+Dockerfile # build Redis cache server
+
+What is the best practices and standard structure within a repository to contain this information?
+
+[H3]
+Date: 2015-11-26 06:36:28
+Title: Monitoring node processes within docker containers
+Tags: <javascript><node.js><nginx><docker><docker-compose>
+Body:
+I have a docker-compose file that creates 3 Node-js containers and an Nginx container as a forward proxy to load balance.
+
+How can I monitor and restart the Node-js containers when and if they fail?
+
+Traditional wisdom states all containers should only have a single proccess. So running systemd (or similar) on the node containers would break that pattern.
+
+__--== UPDATE ==--__
+
+As @mishunika stated below, if the node process fails with a correct exit code and there are correct restart policies on the container, it will restart.
+
+[H4]
+Date: 2015-11-30 13:33:27
+Title: Docker best practices: single process for a container
+Tags: <php><nginx><docker><virtual-machine><dockerfile>
+Body:
+The Docker best practices [链接：https://docs.docker.com/engine/articles/dockerfile_best-practices/] guide states that: 
+
+"...you should only run a single process in a single container..."
+
+Should Nginx and PHP-FPM run in separate containers? Or does that mean that micro service architectures only run one service or "app" in a container?
+
+Having these services in a single container seems easier to deploy and maintain.
+
+[H5]
+Date: 2015-11-30 14:27:55
+Title: Source controlling (git) docker-compose.yml
+Tags: <node.js><git><version-control><docker><docker-compose>
+Body:
+My docker-compose.yml file orchestrates the containers for a PHP API based app and a Nodejs web frontend. Both of these are in seperate git repos.
+
+Question: Where and how should I check my docker-compose.yml file into git?
+
+My containers:
+
+Nginx
+
+Redis
+
+MySQL
+
+Nodejs App 
+
+PHP App

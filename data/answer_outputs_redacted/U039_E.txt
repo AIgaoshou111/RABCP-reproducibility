@@ -1,0 +1,54 @@
+On Debian Jessie with the official `php:5.6-apache` Docker image, the PHP packages come from `deb.sury.org` (Ondřej Surý’s PHP repository), not from Debian’s own `php5-*` packages. That’s why `php5.6-bcmath` is not found.
+
+For PHP 5.6 on that image, the correct package name is:
+
+```bash
+apt-get update
+apt-get install -y php5.6-bcmath
+```
+
+But if that exact name is not found, check which PHP 5.6 packages are available:
+
+```bash
+apt-cache search php5.6 | grep -i bcmath
+```
+
+If the repository is not configured or the package list is stale, run:
+
+```bash
+apt-get update
+apt-get install -y php5.6-bcmath
+```
+
+If `php5.6-bcmath` still cannot be found, the image may be using Debian’s native `php5` packages instead. In that case the package is:
+
+```bash
+apt-get install -y php5-bcmath
+```
+
+After installation, enable the extension if needed:
+
+```bash
+php5enmod bcmath
+```
+
+Then verify it is loaded:
+
+```bash
+php -m | grep bcmath
+```
+
+For the Apache image, restart Apache if the CLI check works but web requests do not see it:
+
+```bash
+apache2ctl restart
+```
+
+If neither package name works, inspect the configured apt sources:
+
+```bash
+cat /etc/apt/sources.list
+ls /etc/apt/sources.list.d
+```
+
+The official `php:5.6-jessie` images at that time used `deb.sury.org`, so `php5.6-bcmath` is the expected package.

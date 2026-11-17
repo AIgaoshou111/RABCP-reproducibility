@@ -1,0 +1,106 @@
+The error message tells you exactly what’s wrong:
+
+```
+Got a packet bigger than 'max_allowed_packet' bytes
+```
+
+Even though you passed `--max_allowed_packet=1500M` on the command line, the server is still rejecting the packet. This means the server-side `max_allowed_packet` setting is not actually being applied, or it’s being overridden somewhere.
+
+## Why your current approach isn’t working
+
+1. **The `--max_allowed_packet` flag on the client only sets the client-side value.** The server has its own `max_allowed_packet` setting that must also be increased. The error is coming from the server, not the client.
+
+2. **You said you increased it in the MySQL config, but it may not have taken effect.** Common reasons:
+   - The config file wasn’t actually mounted into the container
+   - The container wasn’t restarted after changing the config
+   - The setting was placed in the wrong section (e.g., `[client]` instead of `[mysqld]`)
+   - The config file has a syntax error or the setting is being overridden by another config file
+
+## How to fix it properly
+
+### Step 1: Check the current server-side value
+
+First, verify what the server actually has:
+
+```bash
+sudo docker exec -i a2bdd4db352a mysql -u username -ppassword -e "SHOW VARIABLES LIKE 'max_allowed_packet';"
+```
+
+If this shows something like `4194304` (4MB) or `16777216` (16MB), that’s your problem.
+
+### Step 2: Set it correctly on the server
+
+You have two options:
+
+**Option A: Set it via command line when starting the container**
+
+If you’re running the container with `docker run`, add it as a command-line argument to mysqld:
+
+```bash
+docker run ... mysql/mysql-server --max_allowed_packet=1500M
+```
+
+Or if you’re using `docker-compose`, add it to the `command` section:
+
+```yaml
+services:
+  mysql:
+    image: mysql:5.7
+    command: --max_allowed_packet=1500M
+```
+
+**Option B: Use a custom config file**
+
+Create a custom config file (e.g., `custom.cnf`) with:
+
+```ini
+[mysqld]
+max_allowed_packet=1500M
+```
+
+Then mount it into the container:
+
+```bash
+docker run -v /path/to/custom.cnf:/etc/mysql/conf.d/custom.cnf mysql:5.7
+```
+
+Or with docker-compose:
+
+```yaml
+services:
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - ./custom.cnf:/etc/mysql/conf.d/custom.cnf
+```
+
+### Step 3: Restart the container
+
+After making the change, restart the container:
+
+```bash
+sudo docker restart a2bdd4db352a
+```
+
+### Step 4: Verify the setting took effect
+
+```bash
+sudo docker exec -i a2bdd4db352a mysql -u username -ppassword -e "SHOW VARIABLES LIKE 'max_allowed_packet';"
+```
+
+It should now show `1572864000` (1500MB).
+
+### Step 5: Run your import again
+
+```bash
+sudo docker exec -i a2bdd4db352a /usr/bin/mysql -u username -ppassword --default-character-set=utf8 database < /srv/Dump.sql
+```
+
+## Additional considerations for a 16GB dump
+
+- **Consider splitting the dump** into smaller chunks if possible, as very large single transactions can cause issues
+- **Check available disk space** in the container — 16GB dump will need significant space for the actual data
+- **Monitor memory usage** — importing a 16GB dump can consume a lot of RAM
+- **Consider using `pv`** to monitor progress: `pv /srv/Dump.sql | sudo docker exec -i a2bdd4db352a mysql ...`
+
+The key issue is that the server-side `max_allowed_packet` must be set correctly, not just the client-side flag.

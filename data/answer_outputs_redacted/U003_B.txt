@@ -1,0 +1,40 @@
+The docs you're referencing contain an error. **There is no `PUBLISH` directive in Dockerfiles.** The correct Dockerfile instruction is `EXPOSE`, and port publishing happens at runtime with `docker run -p` or `docker run -P`.
+
+## What EXPOSE actually does
+
+`EXPOSE` in a Dockerfile is **documentation only** — it does not publish the port or make it accessible from outside the container. It simply tells Docker (and other developers) which ports the containerized application is expected to listen on.
+
+```dockerfile
+EXPOSE 80
+EXPOSE 443
+```
+
+This metadata is visible with `docker inspect` and is used by `docker run -P` (capital P) to know which ports to publish.
+
+## How publishing actually works
+
+Publishing happens at **runtime**, not build time:
+
+- **`docker run -p 8080:80`** — maps host port 8080 to container port 80
+- **`docker run -P`** — publishes all `EXPOSE`d ports to random high ports on the host
+
+Example:
+```bash
+# Build an image with EXPOSE 80
+docker build -t myapp .
+
+# Publish port 80 to host port 8080
+docker run -p 8080:80 myapp
+
+# Or publish all EXPOSE'd ports to random host ports
+docker run -P myapp
+```
+
+## Why the docs are confusing
+
+The Docker documentation you linked appears to have a typo or outdated reference. The correct terminology is:
+
+- **EXPOSE** (Dockerfile) — declares which ports the app uses
+- **Publish** (runtime) — actually makes ports accessible via `-p` or `-P`
+
+You're right to be confused — you've never seen a `PUBLISH` directive because it doesn't exist. The docs should say "You publish ports using the `-p` or `-P` flags with `docker run`."

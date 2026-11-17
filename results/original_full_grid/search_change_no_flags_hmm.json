@@ -1,0 +1,695 @@
+[
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 0,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.25
+    },
+    "development_MAE": 0.6025294345393782
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 1,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.4
+    },
+    "development_MAE": 0.5917932379877727
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 2,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.6
+    },
+    "development_MAE": 0.5513843374977229
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 3,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.8
+    },
+    "development_MAE": 0.5224061059417071
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 4,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.0
+    },
+    "development_MAE": 0.5069147989805718
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 5,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.2
+    },
+    "development_MAE": 0.49938032205785193
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 6,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.6
+    },
+    "development_MAE": 0.4892514927906526
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 7,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.25
+    },
+    "development_MAE": 0.6025313248500381
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 8,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.4
+    },
+    "development_MAE": 0.5905126283916854
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 9,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.6
+    },
+    "development_MAE": 0.5470812936667813
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 10,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.8
+    },
+    "development_MAE": 0.5121527499132733
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 11,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.0
+    },
+    "development_MAE": 0.47963288833147466
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 12,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.2
+    },
+    "development_MAE": 0.45371072639329013
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 13,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.6
+    },
+    "development_MAE": 0.448089805888229
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 14,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.25
+    },
+    "development_MAE": 0.602514324163747
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 15,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.4
+    },
+    "development_MAE": 0.5794219194007316
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 16,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.6
+    },
+    "development_MAE": 0.5194845392015057
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 17,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.8
+    },
+    "development_MAE": 0.48955404243479733
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 18,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.0
+    },
+    "development_MAE": 0.46028967148541966
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 19,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.2
+    },
+    "development_MAE": 0.42885565494416844
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 20,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.6
+    },
+    "development_MAE": 0.4182245900131075
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 21,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.25
+    },
+    "development_MAE": 0.6024227828233816
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 22,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.4
+    },
+    "development_MAE": 0.5521062137329259
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 23,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.6
+    },
+    "development_MAE": 0.48225872093390904
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 24,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.8
+    },
+    "development_MAE": 0.45669497320633684
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 25,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.0
+    },
+    "development_MAE": 0.4228105748444967
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 26,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.2
+    },
+    "development_MAE": 0.40632740036496945
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 27,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.6
+    },
+    "development_MAE": 0.41419453751161917
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 28,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.25
+    },
+    "development_MAE": 0.6022458582054667
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 29,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.4
+    },
+    "development_MAE": 0.5340473701014652
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 30,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.6
+    },
+    "development_MAE": 0.46563399391758836
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 31,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.8
+    },
+    "development_MAE": 0.43953827132226353
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 32,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.0
+    },
+    "development_MAE": 0.4058013887748416
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 33,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.2
+    },
+    "development_MAE": 0.40079409892970913
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 34,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.6
+    },
+    "development_MAE": 0.42875378520045265
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 35,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.25
+    },
+    "development_MAE": 0.6013816751695035
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 36,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.4
+    },
+    "development_MAE": 0.5056908667294968
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 37,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.6
+    },
+    "development_MAE": 0.44500017795502456
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 38,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.8
+    },
+    "development_MAE": 0.41430875117308996
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 39,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.0
+    },
+    "development_MAE": 0.39305344365693984
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 40,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.2
+    },
+    "development_MAE": 0.4087322622196553
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 41,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.6
+    },
+    "development_MAE": 0.4743118419748226
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 42,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.25
+    },
+    "development_MAE": 0.6008782716422234
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 43,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.4
+    },
+    "development_MAE": 0.49789432786769494
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 44,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.6
+    },
+    "development_MAE": 0.4402576090685752
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 45,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.8
+    },
+    "development_MAE": 0.40819929335198146
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 46,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.0
+    },
+    "development_MAE": 0.39209253006820743
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 47,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.2
+    },
+    "development_MAE": 0.4149899570568567
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 48,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.6
+    },
+    "development_MAE": 0.4922318266113625
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 49,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.25
+    },
+    "development_MAE": 0.5929177197676679
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 50,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.4
+    },
+    "development_MAE": 0.46582245469197575
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 51,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.6
+    },
+    "development_MAE": 0.4224565642045577
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 52,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.8
+    },
+    "development_MAE": 0.38946756552209794
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 53,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.0
+    },
+    "development_MAE": 0.4114959310553133
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 54,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.2
+    },
+    "development_MAE": 0.4763077244533319
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 55,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.6
+    },
+    "development_MAE": 0.6094853330773943
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 56,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.25
+    },
+    "development_MAE": 0.8407432854246868
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 57,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.4
+    },
+    "development_MAE": 0.8406868935098548
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 58,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.6
+    },
+    "development_MAE": 0.8405768942658034
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 59,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.8
+    },
+    "development_MAE": 0.8409456433128832
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 60,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.0
+    },
+    "development_MAE": 0.8424274497987988
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 61,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.2
+    },
+    "development_MAE": 0.8455044758942465
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "hmm",
+    "candidate_id": 62,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.6
+    },
+    "development_MAE": 0.8562497326594314
+  }
+]

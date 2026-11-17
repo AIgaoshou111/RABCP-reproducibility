@@ -1,0 +1,118 @@
+The “Recursive process.nextTick detected / Maximum call stack size exceeded” error in a Docker container, while the same `grunt serve` works locally, is usually not caused by your Gruntfile tasks themselves. It is typically caused by a file-watching or filesystem-notification loop inside the container.
+
+The most likely culprits in 2014-era Yeoman/Grunt setups are:
+
+1. **`watch` trying to watch a mounted volume and receiving an endless stream of change events**
+2. **LiveReload re-triggering itself because the container filesystem reports changes differently**
+3. **Node 0.10/0.12’s `fs.watch`/`fs.watchFile` behavior on overlayfs/AUFS/vboxsf mounts**
+
+## What to check first
+
+### 1. Confirm the Node version inside the container
+
+Run:
+
+```bash
+docker run --rm <your-image> node -v
+```
+
+If the container is using Node 0.10.x, the warning itself is expected for recursive `process.nextTick`. Node 0.10’s `fs.watch` on certain filesystems can fall into a recursive callback pattern.
+
+If possible, use Node 0.12.x or newer in the container. That alone often fixes the stack overflow.
+
+### 2. Check whether the project directory is a mounted volume
+
+If your `docker run` command includes something like:
+
+```bash
+docker run -v /host/path:/app ...
+```
+
+then `grunt watch` is watching files on a mounted filesystem. On Docker 1.x with AUFS or VirtualBox shared folders, `fs.watch` can behave badly.
+
+Try one of these:
+
+- Run the container without the volume mount, copying the project into the image instead.
+- Or force Grunt’s `watch` to use polling instead of native filesystem events.
+
+In your `Gruntfile.js`, change the `watch` options:
+
+```js
+watch: {
+  options: {
+    livereload: '<%= connect.options.livereload %>',
+    interval: 5007,
+    debounceDelay: 500
+  },
+  // ... rest of watch targets
+}
+```
+
+The `interval` option makes `grunt-contrib-watch` use `fs.watchFile` polling rather than `fs.watch`. That often avoids the recursive `nextTick` problem on container filesystems.
+
+### 3. Check whether LiveReload is watching the same files as `watch`
+
+Your `watch` task has a `livereload` target that watches:
+
+```
+'<%= yeoman.app %>/{,*/}*.html',
+'.tmp/styles/{,*/}*.css',
+'<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+```
+
+At the same time, `connect:livereload` serves the app and injects the LiveReload script. If the container’s filesystem reports changes for files that LiveReload itself touches, you can get a feedback loop.
+
+A useful test is to run Grunt with only the server, without the watcher:
+
+```bash
+grunt connect:livereload:keepalive
+```
+
+If that works without crashing, the problem is in `watch` or the watch/LiveReload combination.
+
+### 4. Check for symlinks or generated files inside watched directories
+
+Yeoman’s `wiredep` and `copy:styles` write into `.tmp`. If `.tmp` is inside the watched tree and the watcher is also watching it, the container may report those writes repeatedly.
+
+Make sure your `watch` targets do not include `.tmp` unless necessary. In the config shown, the `livereload` target watches `.tmp/styles`, which is intentional, but if `.tmp` is also being watched by another target, that can cause a loop.
+
+### 5. Run with more verbose Node/Grunt output
+
+To see where the recursion is happening:
+
+```bash
+docker run --rm -it <your-image> node --stack_size=2048 $(which grunt) serve
+```
+
+Or temporarily add:
+
+```js
+process.on('uncaughtException', function(err) {
+  console.error(err.stack);
+  process.exit(1);
+});
+```
+
+at the top of `Gruntfile.js`. The stack trace will show whether the recursion is inside `fs.watch`, `tiny-lr`, `connect`, or `grunt-contrib-watch`.
+
+## Most actionable fix for 2014-era Docker + Yeoman
+
+Given the date and typical Docker filesystem behavior, the highest-probability fix is:
+
+1. Use Node 0.12.x or newer in the container.
+2. Force `grunt-contrib-watch` to use polling by adding `interval` to the watch options.
+3. Avoid mounting the project as a host volume if possible, or at least test without the mount.
+
+Example `watch` options change:
+
+```js
+watch: {
+  options: {
+    livereload: '<%= connect.options.livereload %>',
+    interval: 5007
+  },
+  // ... rest unchanged
+}
+```
+
+If the crash disappears with polling, the cause was the container filesystem’s native watch events.

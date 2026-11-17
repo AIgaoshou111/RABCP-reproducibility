@@ -1,0 +1,36 @@
+The error `-sh: boot2docker not found` means you are running the command inside the **Boot2Docker VM shell**, not in a Windows command prompt.
+
+When you double-click the “Boot2Docker Start” icon, it opens a terminal that connects you to the Linux VM running Docker. Inside that VM, there is no `boot2docker` command — that command exists only on your Windows host.
+
+## Fix
+
+Run `boot2docker ip` from a **Windows Command Prompt** or PowerShell, not from the Boot2Docker terminal window.
+
+Steps:
+
+1. Open a new **Command Prompt** on Windows:
+   - Press `Win + R`, type `cmd`, press Enter.
+
+2. Run:
+   ```cmd
+   boot2docker ip
+   ```
+
+If that still says “not recognized,” then the Boot2Docker installation directory is not in your Windows `PATH`. In that case, run it with the full path, for example:
+
+```cmd
+"C:\Program Files\Boot2Docker for Windows\boot2docker.exe" ip
+```
+
+Or add that directory to your Windows `PATH` environment variable.
+
+## Why this happens
+
+- The Boot2Docker start icon opens a shell **inside the Docker VM**.
+- Inside that VM, the prompt often looks like:
+  ```sh
+  docker@boot2docker:~$
+  ```
+- The `boot2docker` management command is a Windows executable used to control the VM from the host. It is not installed inside the VM.
+
+So the solution is simply to run `boot2docker ip` from Windows, not from the VM shell.

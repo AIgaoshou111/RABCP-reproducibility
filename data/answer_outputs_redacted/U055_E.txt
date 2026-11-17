@@ -1,0 +1,109 @@
+Based on your question, you're running a website on Kubernetes with an ingress controller and need to properly configure SSL/TLS certificates. The self-signed certificate error occurs because you're likely using the default certificate that comes with the ingress controller or a self-signed cert.
+
+Here's how to properly set up SSL on Kubernetes with DigitalOcean Load Balancer:
+
+## Solution: Use cert-manager with Let's Encrypt
+
+The standard approach for Kubernetes SSL certificates is to use **cert-manager** to automatically obtain and renew Let's Encrypt certificates.
+
+### Step 1: Install cert-manager
+
+```bash
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.6.0/cert-manager.yaml
+```
+
+### Step 2: Create a ClusterIssuer for Let's Encrypt
+
+Create a file `letsencrypt-prod.yaml`:
+
+```yaml
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: [EMAIL_REDACTED]
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    http01: {}
+```
+
+Apply it:
+```bash
+kubectl apply -f letsencrypt-prod.yaml
+```
+
+### Step 3: Update your Ingress to use cert-manager
+
+Modify your ingress configuration:
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: your-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+  - hosts:
+    - your-domain.com
+    secretName: your-domain-tls
+  rules:
+  - host: your-domain.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: your-service
+          servicePort: 80
+```
+
+Apply the updated ingress:
+```bash
+kubectl apply -f your-ingress.yaml
+```
+
+## Alternative: Manual Certificate Installation
+
+If you already have a certificate (not self-signed), you can create a Kubernetes secret:
+
+[REDACTED]
+kubectl create secret tls your-domain-tls \
+  --cert=path/to/certificate.crt \
+  --key=path/to/private.key \
+  -n your-namespace
+```
+
+Then reference it in your ingress:
+```yaml
+spec:
+  tls:
+  - hosts:
+    - your-domain.com
+    secretName: your-domain-tls
+```
+
+## Important Notes:
+
+1. **Don't generate certificates inside pods** - As you correctly identified, pods are ephemeral and certificates will be lost on restart.
+
+2. **DigitalOcean Load Balancer** - When using ingress with DigitalOcean, the load balancer will automatically handle SSL termination if you configure the TLS secret properly.
+
+3. **HTTP to HTTPS redirect** - Add this annotation to your ingress to force HTTPS:
+```yaml
+annotations:
+  nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+```
+
+4. **Verify your setup**:
+```bash
+kubectl get certificate
+kubectl describe certificate your-domain-tls
+kubectl get secrets | grep tls
+```
+
+The cert-manager approach is recommended because it automatically handles certificate renewal (Let's Encrypt certificates expire every 90 days) and eliminates the need to manually manage certificates.

@@ -1,0 +1,254 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2018-09-11 09:09:38
+Title: How to run command using docker-compose
+Tags: <docker><docker-compose><dockerfile>
+Body:
+I had a dockerfile which tried to install nginx like following:
+
+Dockerfile
+
+FROM ubuntu:latest
+RUN apt-get update
+RUN apt-get install -y expect
+RUN apt-get -y install software-properties-common 
+RUN apt-add-repository ppa:ondrej/php
+RUN apt-get -y install php7.1 php7.1-fpm 
+RUN apt-get install php7.1-mysql
+RUN apt-get -y install nginx
+
+For some reason, I tried to run dockfile inside docker-compose:
+
+version: '3'
+
+services:
+   web:
+     build: 
+       context: .
+       dockerfile: Dockerfile
+     ports:
+       - "3011:80"
+     command: nginx
+
+After I run docker-compose up, I access 127.0.0.1:3011, but nginx is not running.
+
+Seems like nginx haven't been start. Am I doing wrong at this line?
+
+command: nginx
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2018-08-16 02:10:07
+Title: Get errors when I try to build image from dockFile
+Tags: <docker>
+Body:
+I made a dockerFile, when I try to run docker build -t testDocker . --no-cache , I get following errors:
+
+E: Failed to fetch http://211.76.113.82:80/data/053e3163532a4b0d/archive.ubuntu.com/ubuntu/pool/main/r/readline/libreadline7_7.0-3_amd64.deb  Redirection loop encountered
+E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?
+The command '/bin/sh -c apt-get install -y software-properties-common' returned a non-zero code: 100
+
+Here is my dockerFile :
+
+FROM ubuntu
+MAINTAINER jimmy
+
+#install nginx
+RUN apt-get update
+RUN apt-get install -y software-properties-common 
+RUN apt-add-repository ppa:ondrej/php
+RUN apt-get install -y php7.1 php7.1-fpm
+RUN apt-get install -y nginx
+
+Can anyone tell me why is error happen?
+
+[H2]
+Date: 2018-08-16 07:54:53
+Title: Can't run mysql inside container, which use dockerFile to build image
+Tags: <docker>
+Body:
+I tried to build a mysql image with dockerFile.
+Following is my code:
+
+FROM ubuntu
+MAINTAINER jimmy
+
+#install mysql
+RUN apt-get update
+RUN apt-get install -y mysql-server
+RUN apt-get install -y mysql-client
+RUN apt-get install -y libmysqlclient-dev
+
+#set permission of mysql
+RUN service mysql stop
+RUN usermod -d /var/lib/mysql/ mysql
+RUN chown -R mysql:mysql /var/lib/mysql 
+
+When I run docker build -t mysql-test . --no-cache it will build a image successfully. 
+
+But if I build a container and inside it, then run service mysql start, it will fail.
+
+* Starting MySQL database server mysqld                     [fail] 
+
+I have to type chown -R mysql:mysql /var/lib/mysql again, inside the container, so that service mysql start can be run successfully.
+
+Why is that? I already RUN chown -R mysql:mysql /var/lib/mysql in dockerFile isn't it?
+
+[H3]
+Date: 2018-09-05 10:00:15
+Title: How to connect mysql and php inside different container?
+Tags: <docker>
+Body:
+I had two container called "mysql-1" and "ubuntu-1".
+
+And I connect each other used 
+
+docker run -p 127.0.0.1:3010:80 -itd --link mysql-1 --name=ubuntu-1 my-ubuntu-image:latest
+
+Notice that my-ubuntu-image already had nginx and php, and I changed the config inside the ubuntu-1 like following:
+
+default
+
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www/html/test/;
+        index index.php index.html index.htm index.nginx-debian.html;
+        server_name _;
+
+        location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ /index.php$is_args$args;
+        }
+
+        location ~ \.php$ {
+                try_files $uri /index.php =404;
+                fastcgi_pass 127.0.0.1:9999;
+                fastcgi_index index.php;
+                fastcgi_buffers 16 16k;
+                fastcgi_buffer_size 32k;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                #fixes timeouts
+                fastcgi_read_timeout 600;
+                include fastcgi_params;
+        }
+}
+
+www.conf
+
+listen = 127.0.0.1:9999
+
+It works, when I try to run a simple php file without mysql.
+But now I try to run a php file like following:
+
+<?php
+    $servername = "localhost";
+    $username = "root";
+    $password = [REDACTED]
+
+    // Create connection
+    $conn = new mysqli($servername, $username, $password);
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    } 
+    echo "Connected successfully";
+?>
+
+How to connect to mysql-1 container?
+
+The environment Variables inside ubuntu-1 is like following: 
+
+MYSQL_1_PORT_33060_TCP=tcp://172.17.0.4:33060
+MYSQL_1_PORT_33060_TCP_PORT=33060
+MYSQL_1_PORT_3306_TCP_ADDR=172.17.0.4
+HOSTNAME=632b415c540e
+OLDPWD=[REDACTED]
+MYSQL_1_ENV_MYSQL_ROOT_PASSWORD=[REDACTED]
+PWD=[REDACTED]
+HOME=/root
+MYSQL_1_PORT_3306_TCP_PORT=3306
+MYSQL_1_ENV_MYSQL_MAJOR=8.0
+MYSQL_1_ENV_GOSU_VERSION=1.7
+MYSQL_1_PORT_3306_TCP_PROTO=tcp
+MYSQL_1_PORT_33060_TCP_ADDR=172.17.0.4
+MYSQL_1_ENV_MYSQL_VERSION=8.0.12-1debian9
+MYSQL_1_PORT_33060_TCP_PROTO=tcp
+TERM=xterm
+SHLVL=1
+MYSQL_1_NAME=/ubuntu-4/mysql-1
+MYSQL_1_PORT_3306_TCP=tcp://172.17.0.4:3306
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+MYSQL_1_PORT=tcp://172.17.0.4:3306
+_=/usr/bin/env
+
+[H4]
+Date: 2018-09-07 03:08:11
+Title: How to connect multiple docker container using link?
+Tags: <php><mysql><docker>
+Body:
+I am trying to link mysql and php/nginx docker containers.
+Here is the command I am running to connect the containers:
+
+docker run -p 127.0.0.1:3005:80 --name nginxTest --link mysqlTest ubuntu
+
+The php container contains this php file:
+
+<?php
+    $servername = "mysqlTest";
+    $username = "root";
+    $password = [REDACTED]
+
+    // Create connection
+    $conn = new mysqli($servername, $username, $password);
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    } 
+    echo "Connected successfully";
+?>
+
+But I am getting this error on accessing 127.0.0.1:3005:
+
+Connection failed: MySQL server has gone away
+
+What am I doing wrong?
+
+[H5]
+Date: 2018-09-10 12:31:16
+Title: How to answer install question in dockerfile?
+Tags: <docker><dockerfile>
+Body:
+I tried to install something using dockerfile.
+But when I run the command, I have to answer the question like following:
+
+enter
+
+6
+
+72
+
+My dockfile is like following, but seems not working.
+
+FROM ubuntu:latest
+RUN apt-get update
+RUN apt-get install -y expect
+RUN apt-get -y install software-properties-common 
+RUN apt-add-repository ppa:ondrej/php
+expect “Press [ENTER] to continue or Ctrl-c to cancel adding it. ” { send “\n” }
+RUN apt-get -y install php7.1 php7.1-fpm 
+expect “Please select the geographic area in which you live. ” { send “6\n” }
+expect “Please select the city or region corresponding to your time zone. ” { send “72\n” }
+RUN -y apt-get install nginx
+
+Anyone tell me how to answer install question in dockerfile?

@@ -1,0 +1,91 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-01-05 07:34:11
+Title: How to start multiple containers that use tcp with Docker
+Tags: <docker><tcp><port><docker-container>
+Body:
+I'm trying to run a second Meteor app in a Docker's container. The first (who is running as I want) is accessible with localhost:3000and I want to run a second one in a other port like localhost:3003. When I try to access the second I got this 
+
+  
+This website is not accessible. Localhost don't allow the connexion. Do a research about localhost 3003 on Google.
+
+And If I look into Docker I can see that my containers are running:
+
+[图片1（人工查看原图后整理）：docker ps 显示：第二个应用容器列出未发布的 3000/tcp，以及宿主机 3003 到容器 3003 的映射；第一个应用容器映射宿主机 3000 到容器 3000。]
+
+but I noticed a difference between the port, the one who is accessible is 0.0.0.0:3000->3000/tcpand the one who isn't accessible is 3000/tcp, 0.0.0.0:3003->3003/tcpso I think there is something wrong here.
+
+And in my docker-compose.yml I did :  
+
+app:
+  image: jeromevi/controlcontainersapp
+  ports:
+    - "3003:3003"
+  environment:
+    - ROOT_URL=http://localhost:3003
+    - MONGO_URL=mongodb://mongo:27017/meteor
+mongo:
+  image: mongo:latest
+
+Thank you for the help 
+
+[EDIT] there are the logs : 
+
+=> Starting app on port 3000...
+
+/opt/meteor/dist/bundle/programs/server/node_modules/fibers/future.js:313
+                        throw(ex);
+                        ^
+MongoError: failed to connect to server [mongo:27017] on first connect
+    at Object.Future.wait (/opt/meteor/dist/bundle/programs/server/node_modules/fibers/future.js:449:15)
+    at new MongoConnection (packages/mongo/mongo_driver.js:219:27)
+    at new MongoInternals.RemoteCollectionDriver (packages/mongo/remote_collection_driver.js:4:16)
+    at Object.<anonymous> (packages/mongo/remote_collection_driver.js:38:10)
+    at Object.defaultRemoteCollectionDriver (packages/underscore.js:784:19)
+    at new Mongo.Collection (packages/mongo/collection.js:103:40)
+    at meteorInstall.both.collections.infosContainers.js (both/collections/infosContainers.js:2:14)
+    at fileEvaluate (packages/modules-runtime.js:181:9)
+    at require (packages/modules-runtime.js:106:16)
+    at /opt/meteor/dist/bundle/programs/server/app/app.js:217:1
+    - - - - -
+    at [object Object].<anonymous> (/opt/meteor/dist/bundle/programs/server/npm/node_modules/meteor/npm-mongo/node_modules/mongodb-core/lib/topologies/server.js:313:35)
+    at emitOne (events.js:77:13)
+    at [object Object].emit (events.js:169:7)
+    at [object Object].<anonymous> (/opt/meteor/dist/bundle/programs/server/npm/node_modules/meteor/npm-mongo/node_modules/mongodb-core/lib/connection/pool.js:271:12)
+    at [object Object].g (events.js:260:16)
+    at emitTwo (events.js:87:13)
+    at [object Object].emit (events.js:172:7)
+    at Socket.<anonymous> (/opt/meteor/dist/bundle/programs/server/npm/node_modules/meteor/npm-mongo/node_modules/mongodb-core/lib/connection/connection.js:165:49)
+    at Socket.g (events.js:260:16)
+    at emitOne (events.js:77:13)
+
+[EDIT2] With the new config the errors are : 
+
+[图片2（人工查看原图后整理）：docker-compose up -d 报配置无效：services 下 app 和 networks 下 testNtw 被判定为不支持的配置项。]
+
+But I have the network testNtw: 
+
+NETWORK ID          NAME                DRIVER              SCOPE
+6767c4bf208f        bridge              bridge              local
+c69fbc3a59cf        host                host                local
+f6f5083df32e        none                null                local
+3d0aacdbb757        testNtw             bridge              local
+
+And I did the same docker-compose.yml as in the answer
+
+Selected earlier-question evidence:
+[E1; H3; 2016-12-22 14:10:46] Exact excerpt from the earlier question:
+How to manage Docker container with dockerode
+I'm trying to do a Meteor app to start/stop my Docker containers. I founded dockerode [链接：https://github.com/apocas/dockerode]
+
+[E2; H4; 2017-01-03 12:57:43] Exact excerpt from the earlier question:
+How to get all containers using Dockerode and Javascript
+I'm trying to display on a Meteor app all running containers and all stopped containers that I have in Docker. For the moment I can only display the running containers when I stop one he's deleted from the DB automatically.
+
+History-derived overall profile (uncertain estimate, not certified ability):
+Domain: Docker; prior questions: 5; mean level: 2.768 / 5; distribution: level 1: 0.005, level 2: 0.286, level 3: 0.643, level 4: 0.065, level 5: 0.000. Use this only to calibrate explanation depth when useful; specific evidence and the current question take priority.

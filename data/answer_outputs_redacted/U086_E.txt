@@ -1,0 +1,103 @@
+In 2015, the Docker best practice is to run **one process per container**, but with an important practical nuance: a “process” can include its necessary helper processes when they are tightly coupled and must share lifecycle or filesystem state.
+
+## The short answer
+
+For your PHP example, the recommended structure is:
+
+1. **Nginx container** — serves static files and proxies PHP requests
+2. **PHP-FPM container** — runs PHP-FPM only
+3. **App code container** — contains the application code, shared as a volume or baked into both Nginx and PHP-FPM images
+4. **Redis container**
+5. **MySQL container**
+6. **ElasticSearch container**
+
+So you’re not putting Nginx + App + PHP-FPM all in one container, but you’re also not creating a separate container for every single binary. You group by **role and lifecycle**, not by individual executable.
+
+## Why not one “service” container with Nginx + PHP-FPM + App?
+
+- **Process management inside a container is an anti-pattern.** Docker is designed to run one foreground process (PID 1). If you put Nginx and PHP-FPM in the same container, you need supervisord or a custom init script to manage both. That adds complexity and makes it harder to see logs, restart individual processes, or scale components independently.
+- **Scaling granularity is wrong.** Nginx and PHP-FPM scale differently. You might want 3 PHP-FPM workers but only 1 Nginx. If they’re in the same container, you can’t scale them independently.
+- **Health checks and restarts become ambiguous.** If the container dies, which process caused it? Docker restarts the whole container, taking down both Nginx and PHP-FPM even if only one failed.
+- **Image bloat and rebuild frequency.** Nginx changes rarely; PHP-FPM changes when you update PHP or extensions; app code changes constantly. If they’re all in one image, every app code change forces a rebuild of the entire stack.
+
+## Why not a separate container for every single process?
+
+You’re right that managing dozens of discrete containers can become cumbersome. The key is to group processes that:
+
+- **Share the same lifecycle** (start, stop, and scale together)
+- **Are tightly coupled** (one cannot function without the other)
+- **Need to share the same filesystem or IPC namespace**
+
+In your PHP example, the app code is not a separate long-running process — it’s just files that both Nginx and PHP-FPM need access to. So you don’t create an “App” container that runs something; you either:
+
+- **Bake the app code into both the Nginx and PHP-FPM images** (simple, but duplicates code and requires rebuilding both on every code change), or
+- **Use a shared volume** mounted into both containers (more flexible for development, but requires orchestration to update the volume).
+
+## Recommended structure for your example
+
+```
+docker-compose.yml
+nginx/
+  Dockerfile
+  nginx.conf
+php-fpm/
+  Dockerfile
+  php.ini
+app/
+  (your PHP application code)
+```
+
+**docker-compose.yml** (simplified):
+
+```yaml
+nginx:
+  build: ./nginx
+  ports:
+    - "80:80"
+  volumes_from:
+    - app
+  links:
+    - php-fpm
+
+php-fpm:
+  build: ./php-fpm
+  volumes_from:
+    - app
+  links:
+    - redis
+    - mysql
+    - elasticsearch
+
+app:
+  image: busybox
+  volumes:
+    - ./app:/var/www/html
+
+redis:
+  image: redis:3.0
+
+mysql:
+  image: mysql:5.7
+  environment:
+    MYSQL_ROOT_PASSWORD: [REDACTED]
+
+elasticsearch:
+  image: elasticsearch:2.1
+```
+
+Here the `app` container is just a data volume container — it doesn’t run a process, it just holds the code. Nginx and PHP-FPM both mount it.
+
+## When is it acceptable to put multiple processes in one container?
+
+- **Sidecar pattern**: a helper process that must share the same network namespace or lifecycle, like a log shipper or config reloader. But even then, in 2015 the emerging best practice is to use a separate container and share namespaces via `--net=container:` or volumes.
+- **Tightly coupled processes that cannot be split without breaking functionality**, such as a web server and its embedded cache that must share memory. But PHP-FPM and Nginx communicate over TCP or Unix socket, so they don’t need to be in the same container.
+
+## Summary
+
+| Approach | Verdict |
+|----------|---------|
+| One container per service (Nginx + PHP-FPM + App together) | ❌ Anti-pattern — process management, scaling, and rebuild issues |
+| One container per process (Nginx, PHP-FPM, App, Redis, MySQL, ES all separate) | ✅ Correct, but “App” is a volume, not a process container |
+| Group tightly coupled processes that share lifecycle | ✅ Acceptable in rare cases, but not for Nginx + PHP-FPM |
+
+The maintainability concern you raised is valid, but the solution is not to merge containers — it’s to use **docker-compose** (or similar orchestration) to manage the multi-container application as a single unit. That gives you the operational simplicity of a “service” while keeping the architectural benefits of process isolation.

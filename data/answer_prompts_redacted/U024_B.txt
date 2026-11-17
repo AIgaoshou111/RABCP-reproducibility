@@ -1,0 +1,259 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2014-08-05 19:26:18
+Title: grunt serve in docker container max call stack error
+Tags: <node.js><gruntjs><yeoman><docker>
+Body:
+Running grunt serve in a docker container causes node to crash (for lack of a better term).
+
+(node) warning: Recursive process.nextTick detected. This will break in the next version of node. Please use setImmediate for recursive deferral.
+
+ util.js:35
+ var str = String(f).replace(formatRegExp, function(x) {
+                  ^
+ RangeError: Maximum call stack size exceeded
+
+When I run the app * locally * it works as expected. This * only * happens when running it in the container. My guess is that it's the live reload or one of the other port mappings causing the issue but I don't know how to debug it. I expose the ports used by node in the dockerfile:
+
+ EXPOSE 9000 9001 35729
+
+...grunt task...
+
+ grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
+if (target === 'dist') {
+  return grunt.task.run(['build', 'connect:dist:keepalive']);
+}
+
+grunt.task.run([
+  'clean:server',
+  'wiredep',
+  'concurrent:server',
+  'autoprefixer',
+  'connect:livereload',
+  'watch'
+]);
+ });
+
+clean: {
+  dist: {
+    files: [{
+      dot: true,
+      src: [
+        '.tmp',
+        '<%= yeoman.dist %>/{,*/}*',
+        '!<%= yeoman.dist %>/.git*'
+      ]
+    }]
+  },
+  server: '.tmp'
+},
+wiredep: {
+  options: {
+    cwd: '<%= yeoman.app %>'
+  },
+  app: {
+    src: ['<%= yeoman.app %>/index.html'],
+    ignorePath:  /\.\.\//
+  }
+},
+concurrent: {
+  server: [
+    'copy:styles'
+  ],
+  test: [
+    'copy:styles'
+  ],
+  dist: [
+    'copy:styles',
+    'imagemin',
+    'svgmin'
+  ]
+},
+autoprefixer: {
+  options: {
+    browsers: ['last 1 version']
+  },
+  dist: {
+    files: [{
+      expand: true,
+      cwd: '.tmp/styles/',
+      src: '{,*/}*.css',
+      dest: '.tmp/styles/'
+    }]
+  }
+},
+watch: {
+  bower: {
+    files: ['bower.json'],
+    tasks: ['wiredep']
+  },
+  js: {
+    files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+    tasks: ['newer:jshint:all'],
+    options: {
+      livereload: '<%= connect.options.livereload %>'
+    }
+  },
+  jsTest: {
+    files: ['test/spec/{,*/}*.js'],
+    tasks: ['newer:jshint:test', 'karma']
+  },
+  styles: {
+    files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
+    tasks: ['newer:copy:styles', 'autoprefixer']
+  },
+  gruntfile: {
+    files: ['Gruntfile.js']
+  },
+  livereload: {
+    options: {
+      livereload: '<%= connect.options.livereload %>'
+    },
+    files: [
+      '<%= yeoman.app %>/{,*/}*.html',
+      '.tmp/styles/{,*/}*.css',
+      '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+    ]
+  }
+},
+....
+
+I've found related issues on stackoverflow but the solutions don't seem to solve my issue. 
+
+Thanks!
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2014-07-29 15:31:02
+Title: docker java7 install fail
+Tags: <java><docker>
+Body:
+I'm trying to install java7 via ppa (RUN  add-apt-repository ppa:webupd8team/java -y) in my docker image but it fails with this error:
+
+returned a non-zero code: 127
+
+The following are suggested ways to install correctly but it's not working. I've tried both ppas as well. 
+
+RUN  apt-get install python-software-properties -y
+RUN  add-apt-repository ppa:webupd8team/java -y
+#RUN add-apt-repository ppa:eugenesan/java -y
+RUN apt-get update
+RUN  apt-get install oracle-java7-installer -y
+
+Here is the log output:
+
+Step 28 : RUN  add-apt-repository ppa:webupd8team/java -y
+ ---> Running in b278761a4209
+ [91m/bin/sh: 1: add-apt-repository: not found
+ [0m 
+
+So...I need to find out where/if this command exist in a helper lib or what:
+
+add-apt-repository
+
+add-apt-repository appears to be a part of the python-software-properties install. I don't see any real errors in that step except for these messages which pop up in other areas of the build. So I assume that if I can resolve this issue the aforementioned python step will install as needed:
+
+    [91mdebconf: unable to initialize frontend: Dialog
+     debconf: (TERM is not set, so the dialog frontend is not usable.)
+     debconf: falling back to frontend: Readline
+     [0m[91mdebconf: unable to initialize frontend: Readline
+     debconf: (This frontend requires a controlling tty.)
+     debconf: falling back to frontend: Teletype
+     [0m[91mdpkg-preconfigure: unable to re-open stdin: 
+
+So. How to set a term or dialog up? I thought the -y allowed this
+
+[H2]
+Date: 2014-07-31 16:02:55
+Title: docker git and pull setup
+Tags: <github><docker><verification>
+Body:
+I have a repo set up in github to pull into a docker build. I want to add my keys so I can connect to git but I'm unsuccessfully adding the key file. The error:
+
+id_rsa: no such file or directory
+
+The file exists in the dir specified in the Dockerfile. I tried linking my local file to the docker enviroment with ln command but I get the same error. Here's the docker statements:
+
+ RUN mkdir /root/.ssh && ln -s /Users/USER_REDACTED/.ssh /root/.ssh
+ RUN touch /root/.ssh/known_hosts
+ ADD id_rsa /root/.ssh/id_rsa
+ RUN adduser git
+ RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+
+In a variant attempt I tried adding a shared volume with the same results:
+
+ VOLUME ["/Users/USER_REDACTED/.ssh"]
+ ADD /Users/USER_REDACTED/.ssh/id_rsa /root/.ssh/id_rsa
+
+Thanks!
+
+[H3]
+Date: 2014-08-01 20:45:24
+Title: docker elevate user priviledges
+Tags: <node.js><ubuntu><gruntjs><docker>
+Body:
+I'm trying to sudo for a node install:
+
+ sudo npm install -g grunt
+ sudo npm install -g grunt-cli
+ sudo npm install -g bower
+
+The commands error stating to run as an administrative user. How do I do that in the Dockerfile?
+
+ RUN npm install -g grunt
+ #RUN ln -s  /home/USER_REDACTED/spikes/node-esjs-master/node_modules/grunt  /usr/bin/grunt
+
+ RUN npm install -g grunt-cli
+ #RUN ln -s  /home/USER_REDACTED/spikes/node-esjs-master/node_modules/grunt-cli  /usr/bin/grunt-cli
+
+ RUN npm install -g bower
+ #RUN ln -s  /home/USER_REDACTED/spikes/node-esjs-master/node_modules/bower  /usr/bin/bower
+
+I don't actually try to sudo in the docker commands...I have after connecting to the container but when prompted for the password I don't know it. I tried to create a sym link but couldn't get that to work. My apologies if this is basic in nature - new environments for me :-).
+
+Thanks!
+
+[H4]
+Date: 2014-08-04 18:36:09
+Title: why docker image management create date is stale
+Tags: <docker>
+Body:
+I'm trying to get a grasp on docker image/container management. I run the following commands after a build to help keep the disk space used down:
+
+ docker rm $(docker ps -a -q)
+ docker images | awk '/^<none>/ {print $3}' | xargs docker rmi
+
+This works well. I sometimes manually delete images using the image id. What escapes me, when I delete an image specifically is when it is recreated the created time reported is from the original created time frame. I would expect it to be the date it was created. For example:
+
+ REPOSITORY               TAG                 IMAGE ID            CREATED                  VIRTUAL SIZE
+ <none>                   <none>              4eb6a3fb4a76        5 days ago          1.587 GB
+ user1/image1             latest              cc710febe57e        5 days ago          1.597 GB
+
+Why is that? Is the image retaining items from the deleted image? I originally created the image 5 days ago. I expect it to have a new created value after creating the image today.
+
+Also, a tip in case you don't know... using --rm with run cleans up containers after stopping.
+
+[H5]
+Date: 2014-08-05 16:25:22
+Title: docker does not run on windows error
+Tags: <windows><ssh><virtualbox><docker><boot2docker>
+Body:
+I've installed docker and followed the directions here: https://docs.docker.com/installation/windows/#installation [链接：https://docs.docker.com/installation/windows/#installation] but when I run boot2docker start this happens:
+
+ Trying to get IP one more time
+  exit status 255
+ Docker client does not run on Windows for now. Please use
+     "boot2docker" ssh
+  to SSH into the VM instead
+
+Trying boot2docker ssh results in the same 255 error. I tried to get the VM IP with boot2docker IP but that also yielded nothing - I presume because boot2locker wasn't successful in the start process.
+
+A couple of observations...I lloked at the vm settings and there wasn't any network or storage settings specified and the memory allocation in the vm settings didn't match the values in the config (boot2docker config). The boot2docker start/stop commands work.
+
+I'm stumped.

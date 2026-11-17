@@ -1,0 +1,54 @@
+In Docker Swarm mode, you should not reference a container by its host IP. Instead, use the Swarm **service name** as the hostname, because Swarm provides built-in DNS service discovery for services on the same overlay network.
+
+So in your Filebeat config, replace the IP with the Logstash **service name**:
+
+```yaml
+output.logstash:
+  hosts: ["logstash:5044"]
+```
+
+This works if:
+
+1. **Filebeat and Logstash are on the same overlay network**  
+   Create an attachable overlay network, e.g.:
+
+   ```bash
+   docker network create --driver overlay --attachable elk
+   ```
+
+2. **Both services are attached to that network**  
+   In your stack file:
+
+   ```yaml
+   services:
+     logstash:
+       image: docker.elastic.co/logstash/logstash:6.0.0
+       networks:
+         - elk
+       # ...
+
+     filebeat:
+       image: docker.elastic.co/beats/filebeat:6.0.0
+       networks:
+         - elk
+       # ...
+
+   networks:
+     elk:
+       external: true
+   ```
+
+3. **Logstash is listening on the port you specify**  
+   By default, the Beats input in Logstash listens on `5044`. Make sure your Logstash pipeline has:
+
+   ```conf
+   input {
+     beats {
+       port => 5044
+     }
+   }
+   ```
+
+If your Filebeat config is templated and you currently pass an IP through `in_filebeat_dict.filebeat.output.logstash`, change that variable to the service name (`logstash`) instead of an IP.
+
+If Filebeat is running **outside** Swarm (e.g. on a host not part of the Swarm), then you would need to publish Logstash’s port and use a reachable host IP or load balancer. But for Filebeat running as a Swarm service, the service name is the correct approach.

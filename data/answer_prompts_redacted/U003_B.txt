@@ -1,0 +1,117 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-10-09 22:43:07
+Title: What is the difference between EXPOSE and PUBLISH directives?
+Tags: <docker><dockerfile>
+Body:
+In the docs [链接：https://docs.docker.com/engine/userguide/networking/#exposing-and-publishing-ports] I noticed this: "You publish ports using the PUBLISH keyword in the Dockerfile".
+
+Is this a bad idea? I have literally never seen a dockerfile with a PUBLISH directive, why isn't this used? And how do I use it in conjunction with -p or -P with docker run?
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2017-08-03 14:58:49
+Title: Where are images stored for Docker EE on Windows Server 2016 and how do I change its location?
+Tags: <windows><docker><docker-machine><windows-server-2016>
+Body:
+Im running the latest Docker EE on server 2016, where are my images and containers stored on disk?
+
+Running docker info I see this:
+
+Docker Root Dir: C:\ProgramData\docker
+
+I have a csv volume mounted on the server and I want docker to use that volume for images and containers.
+
+Where do I configure where docker stores and runs images and containers?
+
+[H2]
+Date: 2017-08-15 12:19:31
+Title: wouldn't specifying -t with -i be redundant for docker run?
+Tags: <linux><docker><containers>
+Body:
+This post fleshes most of this out: Confused about Docker -t option to Allocate a pseudo-TTY [链接：https://stackoverflow.com/questions/30137135/confused-about-docker-t-option-to-allocate-a-pseudo-tty]
+
+But if  "-i" gives me a stdin stream and -t gives me a whole terminal driver isn't -i redundant if I use them together? Or is it that with just -t I can only access it via ssh but if I add -i I can also pipe it input directly from the console?
+
+[H3]
+Date: 2017-08-19 18:51:03
+Title: what is the docker run -g switch actually doing?
+Tags: <docker>
+Body:
+Can't seem to find it in the docs, would like to understand what its actually doing. The only examples I can seem to find with this switch is for nginx -g 'daemon off' so its the magical make nginx stay running switch?
+
+[H4]
+Date: 2017-08-29 14:29:53
+Title: Can't build ASP.Net container
+Tags: <c#><asp.net><docker><dockerfile><docker-for-windows>
+Body:
+Windows 10 version 1607
+Docker for Windows: Version 17.06.1-ce-win24 (13025)
+
+I'm trying to build a asp .net 4.6 container using the provided docs [链接：https://hub.docker.com/r/microsoft/aspnet/] and its not working.
+
+I'm using this provided dockerfile [链接：https://github.com/Microsoft/aspnet-docker/blob/master/4.6.2/Dockerfile]. I copied it to the root of one of my asp .net solutions.
+
+And the I ran this command:
+
+$ docker build -t aspnet-site --build-arg site_root=/
+
+This is the output
+
+PS> docker build -t aspnet-site . --build-arg 'site_root=/'
+Sending build context to Docker daemon  326.1MB
+Step 1/6 : FROM microsoft/dotnet-framework:4.6.2
+4.6.2: Pulling from microsoft/dotnet-framework
+3889bb8d808b: Pull complete
+9f5eeabe6154: Pull complete
+Digest: sha256:c281f2c09c9446f1896806933013a350f19db8f5a009e633ebd9701c470de35b
+Status: Downloaded newer image for microsoft/dotnet-framework:4.6.2
+ ---> be84290c2315
+Step 2/6 : SHELL powershell -Command $ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';
+ ---> Running in 1fd036b1b56e
+ ---> 413164f1a97c
+Removing intermediate container 1fd036b1b56e
+Step 3/6 : RUN Add-WindowsFeature Web-Server;     Add-WindowsFeature NET-Framework-45-ASPNET;     Add-WindowsFeature Web-Asp-Net45;     Remove-Item -Recurse C:\inetpub\wwwroot\*
+ ---> Running in 4b0e5751281b
+
+Success Restart Needed Exit Code      Feature Result
+------- -------------- ---------      --------------
+True    No             Success        {Common HTTP Features, Default Documen...
+True    No             Success        {ASP.NET 4.6}
+True    No             Success        {Application Development, ASP.NET 4.6,...
+
+ ---> 9afab6bfa836
+Removing intermediate container 4b0e5751281b
+Step 4/6 : ADD ServiceMonitor.exe /
+ADD failed: GetFileAttributesEx \\?\C:\WINDOWS\TEMP\docker-builder455754487\ServiceMonitor.exe: The system cannot find the file specified.
+
+So it does say this in the docs (so I tried commenting out the servicemonitor stuff and it worked):
+
+  
+There is no need to specify an ENTRYPOINT in your Dockerfile since the
+  microsoft/aspnet base image already includes an entrypoint application
+  that monitors the status of the IIS World Wide Web Publishing Service
+  (W3SVC).
+
+[H5]
+Date: 2017-10-08 22:35:56
+Title: Why would i want to docker build from a repo URL?
+Tags: <git><docker><containers><dockerfile>
+Body:
+docker build can accept the URL of a git repo to find files to build.
+
+But this confuses me because this is the workflow I expect:
+
+* Pull my repo with my code and dockerfile
+* Do development
+* run docker build using the PATH "context" of the repo on my local drive
+* poke/test my app after the container spins up
+* Write more code do more builds, etc
+
+If Im building directly from a repo, what does that workflow look like? Would I be committing, pushing to remote and then building? Or is this feature for a pipeline where my build server does docker build from a repo because I thought Im supposed to be passing around "images" for that sort of thing.

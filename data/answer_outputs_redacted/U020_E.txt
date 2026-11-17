@@ -1,0 +1,31 @@
+The error means the C header for liblzma is missing when pip tries to build the `backports.lzma` Python extension.
+
+On Debian/Ubuntu, install the development package:
+
+```bash
+apt-get install liblzma-dev
+```
+
+Then retry:
+
+```bash
+pip install -r requirements.txt
+```
+
+If you are building this inside a Docker image, add `liblzma-dev` to the same `apt-get install` line that installs `python-pip` and `python-dev`, for example:
+
+```dockerfile
+RUN apt-get update && apt-get install -y \
+    python-pip \
+    python-dev \
+    liblzma-dev \
+    && pip install -r requirements.txt
+```
+
+The package name may vary slightly by distribution:
+
+- Debian/Ubuntu: `liblzma-dev`
+- CentOS/RHEL/Fedora: `xz-devel`
+- Alpine: `xz-dev`
+
+After installing the header package, the build should find `lzma.h` and complete.

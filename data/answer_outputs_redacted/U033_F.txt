@@ -1,0 +1,118 @@
+The core issue is that your two Compose files are creating separate default networks, so containers can't resolve each other by service name. Here's how to fix it:
+
+## Solution: Use a shared external network
+
+### 1. Create the network once (outside Compose):
+
+```bash
+docker network create app_net
+```
+
+### 2. Update your first docker-compose.yml:
+
+```yaml
+version: '3'
+
+services:
+    db:
+        image: postgres
+        ports:
+         - "5432:5432"
+        networks:
+          - app_net
+    django:
+        build: ./api
+        command: ["./docker_up.sh"]
+        restart: always
+        volumes:
+          - ./api:/app/api
+          - api-static:/app/api/staticfiles
+        ports:
+          - "8000:8000"
+        depends_on:
+          - db
+        environment:
+          - MODE=DEV
+        networks:
+          - app_net
+
+networks:
+  app_net:
+    external: true
+
+volumes:
+  frontend-build:
+  api-static:
+  certificates:
+```
+
+### 3. Update your second docker-compose.prod.yml:
+
+```yaml
+version: '3'
+
+services:
+    django:
+        environment:
+          - MODE=PROD
+        networks:
+          - app_net
+    hosting:
+        build: ./hosting
+        restart: always
+        volumes:
+           - frontend-build:/var/www
+        ports:
+          - "80:80"
+          - "443:443"
+        environment:
+          - MODE=PROD
+        networks:
+          - app_net
+
+networks:
+  app_net:
+    external: true
+
+volumes:
+    frontend-build:
+```
+
+### 4. Update your Nginx configuration:
+
+Instead of using `example.test:8000`, use the service name:
+
+```nginx
+location /api/ {
+    proxy_pass http://django:8000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+}
+```
+
+Or if you need to keep using `example.test`, add this to your Nginx config:
+
+```nginx
+upstream django_backend {
+    server django:8000;
+}
+
+location / {
+    proxy_pass http://django_backend;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+}
+```
+
+## Why this works:
+
+1. **External network**: Both Compose files reference the same pre-created network, so all containers can communicate
+2. **Service name resolution**: Docker's embedded DNS resolves service names (like `django`) to container IPs automatically
+3. **No links needed**: Modern Docker Compose (v3) doesn't need `links` - service names work automatically on shared networks
+
+## Important notes:
+
+- Remove the `network_mode: bridge` line - it's not needed and can cause issues
+- Remove any commented-out `links` sections
+- The `depends_on` still works within the same Compose file
+- If you need to use `example.test` specifically, you'd need to add it to `/etc/hosts` in the Nginx container or use Docker's `extra_hosts` option, but using the service name is simpler and more reliable

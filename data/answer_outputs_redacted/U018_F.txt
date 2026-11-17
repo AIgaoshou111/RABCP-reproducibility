@@ -1,0 +1,82 @@
+The most reliable way is not to detect Docker itself, but to make the mount point explicit through configuration.
+
+## Recommended approach: environment variable or system property
+
+In your Dockerfile or `docker run` command, set an environment variable:
+
+```dockerfile
+ENV APP_MUSIC_ROOT=/music
+ENV APP_RUNNING_IN_DOCKER=true
+```
+
+Or with `docker run`:
+
+```bash
+docker run -e APP_MUSIC_ROOT=/music -e APP_RUNNING_IN_DOCKER=true your-image
+```
+
+Then in Java:
+
+```java
+String musicRoot = System.getenv("APP_MUSIC_ROOT");
+boolean inDocker = Boolean.parseBoolean(System.getenv("APP_RUNNING_IN_DOCKER"));
+
+if (musicRoot != null) {
+    // Show only this directory
+    displayMusicFolder(musicRoot);
+} else {
+    // Show full filesystem tree (native Linux)
+    displayFullTree();
+}
+```
+
+This is the cleanest approach because:
+
+- It doesn't rely on Docker internals that may change
+- It works the same on any container runtime (Docker, Podman, Kubernetes, etc.)
+- It's explicit and testable
+- You can override it for debugging outside Docker
+
+## Alternative: detect Docker via filesystem markers
+
+If you absolutely must auto-detect Docker without configuration, check for common Docker indicators:
+
+```java
+public static boolean isRunningInDocker() {
+    // Check for .dockerenv file (present in most Docker containers)
+    if (new File("/.dockerenv").exists()) {
+        return true;
+    }
+    
+    // Check cgroup for docker references
+    try {
+        String cgroup = new String(Files.readAllBytes(Paths.get("/proc/1/cgroup")));
+        if (cgroup.contains("docker") || cgroup.contains("container")) {
+            return true;
+        }
+    } catch (IOException e) {
+        // Not in a container or file not accessible
+    }
+    
+    return false;
+}
+```
+
+**Caveats with this approach:**
+
+- `/.dockerenv` is not guaranteed to exist in all container runtimes
+- It may be removed in future Docker versions
+- It doesn't tell you where the music mount point is — you'd still need to hardcode or discover `/music`
+
+## Best practice: combine both
+
+Use the environment variable as the primary mechanism, with the filesystem check as a fallback:
+
+```java
+String musicRoot = System.getenv("APP_MUSIC_ROOT");
+if (musicRoot == null && isRunningInDocker()) {
+    musicRoot = "/music"; // Default Docker mount point
+}
+```
+
+This gives you explicit control when needed, with sensible defaults for Docker environments.

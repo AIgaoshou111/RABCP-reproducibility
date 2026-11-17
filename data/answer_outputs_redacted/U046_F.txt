@@ -1,0 +1,95 @@
+The core issue is that `RUN` commands execute **during image build**, while `docker run -e` environment variables are only available **at container runtime**. You cannot use runtime environment variables in a `RUN` instruction.
+
+## The Solution
+
+Move the Magento setup command from the Dockerfile to an **entrypoint script** that runs when the container starts.
+
+### 1. Create an entrypoint script (e.g., `docker-entrypoint.sh`)
+
+```bash
+#!/bin/bash
+set -e
+
+# Run Magento setup with environment variables
+cd /usr/html/bin && \
+    ./magento setup:config:set \
+    --db-host="$DB_HOST" \
+    --db-name="$DB_NAME" \
+    --db-user="$DB_USER" \
+    --db-password="[REDACTED]"
+
+# Execute the main command (e.g., start Apache/PHP-FPM)
+exec "$@"
+```
+
+### 2. Update your Dockerfile
+
+```dockerfile
+FROM docker-php
+
+# Copy the entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Set default values (optional - can be overridden at runtime)
+ENV DB_HOST=172.17.0.2
+ENV DB_NAME=mydb1
+ENV DB_USER=prakash
+ENV DB_PASSWORD=[REDACTED]
+
+# Set the entrypoint
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+# Default command (adjust to your needs)
+CMD ["apache2-foreground"]
+```
+
+### 3. Build and run
+
+```bash
+# Build the image
+docker build -t magento2-app .
+
+# Run with custom environment variables
+docker run -e DB_HOST="your-db-host" \
+           -e DB_NAME="your-db-name" \
+           -e DB_USER="your-db-user" \
+           -e DB_PASSWORD="[REDACTED]" \
+           magento2-app
+```
+
+## Important Considerations
+
+1. **Database availability**: The database must be running and accessible when the container starts. Consider using Docker Compose to orchestrate multiple containers.
+
+2. **Idempotency**: The setup command will run every time the container starts. You may want to add a check to skip setup if already configured:
+
+```bash
+if [ ! -f /usr/html/app/etc/env.php ]; then
+    cd /usr/html/bin && \
+    ./magento setup:config:set \
+    --db-host="$DB_HOST" \
+    --db-name="$DB_NAME" \
+    --db-user="$DB_USER" \
+    --db-password="[REDACTED]"
+fi
+```
+
+3. **Alternative approach**: If you need the values during build (not recommended for credentials), use build arguments:
+
+```dockerfile
+ARG DB_HOST
+ARG DB_NAME
+ARG DB_USER
+ARG DB_PASSWORD
+
+RUN cd /usr/html/bin && \
+    ./magento setup:config:set --db-host=$DB_HOST --db-name=$DB_NAME --db-user=$DB_USER --db-password=[REDACTED]
+```
+
+Build with:
+```bash
+docker build --build-arg DB_HOST=... --build-arg DB_NAME=... -t magento2-app .
+```
+
+However, this bakes credentials into the image, which is a security risk. The entrypoint approach is preferred for runtime configuration.

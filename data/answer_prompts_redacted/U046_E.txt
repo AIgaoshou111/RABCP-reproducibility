@@ -1,0 +1,39 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-11-27 10:14:35
+Title: how to get the env values declared inline in dockerfile from run env parameter instead in docker
+Tags: <docker><automation><dockerfile><magento2>
+Body:
+I have successfully setup docker container for magento2 and this is how I am passing the database setup value to the magento2 cli command by setting the env value inline as bellow.
+
+FROM docker-php
+#mysqql setup
+ENV DB_HOST 172.17.0.2
+ENV DB_NAME mydb1
+ENV DB_USER prakash 
+ENV DB_PASSWORD password
+
+#start running the magento commands to install
+RUN cd /usr/html/bin  && \
+     ./magento setup:config:set  --db-host=$DB_HOST --db-name=$DB_NAME --db-user=$DB_USER --db-password=[REDACTED]
+
+How do I make this such that these value can be received  successfully  by passing it via on run like bellow 
+docker  run -e DB_HOST="" -e DB_NAME="" -e  DB_USER="" -e DB_PASSWORD=[REDACTED] <build-image-id>
+
+Saw few post describing how these can be achieved but not able to figure out  the proper way
+
+Selected earlier-question evidence:
+[E1; H4; 2017-11-25 17:38:10] Exact excerpt from the earlier question:
+How to write a docker file when we have to get a values from a running container and make a link
+Trying to run Magento2 in docker container. This is what I have done for now
+
+[E2; H5; 2017-11-26 10:15:02] Exact excerpt from the earlier question:
+Dockerfile passing wrong mysql host ip address
+I created a build on my local machine and was working great. Now
+  trying to do same in the server.It is not passing the host-ip set in
+  Dockerfile but passing 172.17.0.3 and throwing the bellow error

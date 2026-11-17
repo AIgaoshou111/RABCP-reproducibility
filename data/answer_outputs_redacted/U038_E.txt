@@ -1,0 +1,101 @@
+Looking at your configuration, the issue is that you're missing the database connection environment variables in your GitLab deployment. The `sameersbn/gitlab` image requires explicit database configuration through environment variables.
+
+## Required Database Environment Variables
+
+Add these to your GitLab deployment YAML:
+
+```yaml
+- name: DB_ADAPTER
+  value: postgresql
+- name: DB_HOST
+  value: postgresql
+- name: DB_PORT
+  value: "5432"
+- name: DB_USER
+  value: gitlab
+- name: DB_PASS
+  value: password
+- name: DB_NAME
+  value: gitlabhq_production
+```
+
+## Why This Happens
+
+The `sameersbn/gitlab` image doesn't automatically discover the PostgreSQL service. It requires explicit configuration through environment variables. When you ran it with docker-compose previously, these variables were likely defined in your docker-compose.yml file.
+
+## Additional Issues to Check
+
+1. **PostgreSQL Data Directory**: Your PostgreSQL deployment mounts the Gluster volume at `/var/lib/postgresql`, but the official postgres image expects data at `/var/lib/postgresql/data`. You should either:
+   - Change the mount path to `/var/lib/postgresql/data`
+   - Or set `PGDATA` environment variable to `/var/lib/postgresql`
+
+2. **Shared Volume Conflict**: Both GitLab and PostgreSQL are using the same PVC (`gluster-dyn-pvc`). This could cause issues as both containers will try to write to the same volume. Consider using separate PVCs for each service.
+
+3. **Database User Issue**: From your logs, the `gitlab` user exists but the database `gitlabhq_production` is owned by `postgres`. The GitLab image expects to connect as the `gitlab` user to the `gitlabhq_production` database. You may need to adjust ownership:
+   ```sql
+   ALTER DATABASE gitlabhq_production OWNER TO gitlab;
+   ```
+
+## Updated GitLab Deployment
+
+Here's the corrected GitLab deployment with the database configuration:
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: gitlab
+  name: gitlab
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: gitlab
+    spec:
+      containers:
+      - env:
+        - name: GITLAB_PORT
+          value: "80"
+        - name: GITLAB_SSH_PORT
+          value: "10022"
+        - name: GITLAB_SECRETS_DB_KEY_BASE
+          value: 110Ect4ClClGBH06RSEQm4uKCxbpCyPzxfdLORkkssrStDnrQgpSSV
+        - name: GITLAB_SECRETS_OTP_KEY_BASE
+          value: MWxqmqqQkG1EXz9iz7Up4tEGBIEtFjxr1rL1Ry1rWCTWBjw3qxtvOM
+        - name: GITLAB_SECRETS_SECRET_KEY_BASE
+          value: 2KOeHYHNXB4r2XDZzy3XVrH2r0t6j71MBDUmfx4FxRPqjI5KZ9j4Md
+        - name: DB_ADAPTER
+          value: postgresql
+        - name: DB_HOST
+          value: postgresql
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_USER
+          value: gitlab
+        - name: DB_PASS
+          value: password
+        - name: DB_NAME
+          value: gitlabhq_production
+        image: sameersbn/gitlab:9.3.9
+        name: gitlab
+        volumeMounts:
+        - name: gitlab-data
+          mountPath: /home/USER_REDACTED/data
+        ports:
+        - containerPort: 443
+        - containerPort: 80
+        - containerPort: 22
+        resources: {}
+      volumes:
+      - name: gitlab-data
+        persistentVolumeClaim:
+          claimName: gitlab-pvc
+status: {}
+```
+
+After making these changes, delete the existing GitLab pod and let Kubernetes recreate it with the new configuration.

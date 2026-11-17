@@ -1,0 +1,154 @@
+You don’t need to generate or store the certificate inside the pod. The correct approach on Kubernetes is to terminate TLS at the ingress controller or load balancer, not inside the application container.
+
+Since you’re on DigitalOcean Kubernetes and already using an ingress, the standard solution is:
+
+1. Install **cert-manager** in your cluster.
+2. Create a **ClusterIssuer** using Let’s Encrypt.
+3. Add TLS annotations and a `tls` section to your Ingress resource.
+4. cert-manager will automatically obtain and renew a valid Let’s Encrypt certificate and store it in a Kubernetes Secret.
+5. The ingress controller uses that Secret to serve HTTPS.
+
+---
+
+### Step-by-step for DigitalOcean Kubernetes (2019-era, works with nginx-ingress)
+
+#### 1. Install cert-manager
+
+For Kubernetes 1.12–1.13 in early 2019, cert-manager v0.6–0.7 is appropriate. Example:
+
+```bash
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.6.1/cert-manager.yaml
+```
+
+Check that it is running:
+
+```bash
+kubectl get pods --namespace cert-manager
+```
+
+#### 2. Create a Let’s Encrypt ClusterIssuer
+
+Save this as `letsencrypt-prod.yaml`:
+
+```yaml
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: [EMAIL_REDACTED]
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    http01: {}
+```
+
+Apply it:
+
+```bash
+kubectl apply -f letsencrypt-prod.yaml
+```
+
+Use the production issuer only after testing with the staging issuer. The staging issuer uses:
+
+```yaml
+server: https://acme-staging-v02.api.letsencrypt.org/directory
+```
+
+#### 3. Update your Ingress
+
+Your Ingress needs:
+
+- The annotation `kubernetes.io/ingress.class: "nginx"` if you are using nginx-ingress.
+- The cert-manager issuer annotation.
+- A `tls` section referencing the Secret that cert-manager will create.
+
+Example:
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: snipeit-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    certmanager.k8s.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - snipeit.example.com
+    secretName: snipeit-tls
+  rules:
+  - host: snipeit.example.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: snipeit
+          servicePort: 80
+```
+
+Apply it:
+
+```bash
+kubectl apply -f ingress.yaml
+```
+
+#### 4. Verify the certificate
+
+Check the certificate:
+
+```bash
+kubectl get certificate
+kubectl describe certificate snipeit-tls
+```
+
+Check that the Secret exists:
+
+```bash
+kubectl get secret snipeit-tls
+```
+
+Once the certificate is issued, the ingress controller will automatically use it for HTTPS on port 443.
+
+---
+
+### Important notes
+
+- Your application container can keep serving plain HTTP on port 80 internally. The ingress controller terminates HTTPS and forwards HTTP to your Service.
+- Do not create a self-signed certificate inside the pod. That is not persistent and is not the Kubernetes way.
+- If you are using DigitalOcean’s cloud load balancer directly without an ingress controller, you can also use a Kubernetes Service of type `LoadBalancer` with an annotation for DO’s load balancer TLS, but the ingress/cert-manager approach is cleaner and supports automatic renewal.
+- If you already have a self-signed certificate error in the browser, it means the ingress is currently serving a default fake certificate. Once the Let’s Encrypt certificate is issued and the ingress reloads, the error will disappear.
+
+---
+
+### If you are not using nginx-ingress
+
+Check which ingress controller is installed:
+
+```bash
+kubectl get pods --all-namespaces | grep ingress
+```
+
+DigitalOcean Kubernetes does not install an ingress controller by default. You may need to install nginx-ingress first:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.24.1/deploy/mandatory.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.24.1/deploy/provider/cloud-generic.yaml
+```
+
+Then create the ingress as above.
+
+---
+
+### Summary
+
+The fix is not to install SSL inside the pod. Instead:
+
+1. Install cert-manager.
+2. Create a Let’s Encrypt issuer.
+3. Add TLS configuration to your Ingress.
+4. Let cert-manager obtain and renew the certificate automatically.
+
+This gives you a valid, auto-renewing HTTPS certificate without modifying the Docker image or restarting the pod manually.

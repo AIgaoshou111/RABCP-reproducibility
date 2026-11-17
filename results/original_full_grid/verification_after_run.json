@@ -1,0 +1,10 @@
+{
+  "completed": true,
+  "evaluated_candidates": 10126,
+  "parameter_panels": 36,
+  "all_grid_combinations_present": true,
+  "selected_configurations_are_development_minima": true,
+  "test_summary_matches_seed_condition_rows": true,
+  "recorded_file_hashes_match": true,
+  "maximum_replay_MAE_difference": 2.220446049250313e-16
+}

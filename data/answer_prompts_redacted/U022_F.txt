@@ -1,0 +1,123 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-08-29 07:23:39
+Title: Dockerfile pass environments on docker compose build
+Tags: <docker><arguments><environment-variables><docker-compose><dockerfile>
+Body:
+I have written a Dockerfile which uses two arguments:
+
+FROM jessie
+MAINTAINER Zeinab Abbasimazar
+#Build Arguments
+ARG REP_USER
+ARG REP_PASS
+# Build
+RUN echo 'REP_USER:'$REP_USER', REP_PASS:'$REP_PASS
+
+I wrote a docker-compose.yml for build:
+
+version: "2"
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REP_USER: $REP_USER
+        REP_PASS: $REP_PASS
+
+I don't want to define these arguments directly in the compose file, so I tried to send them during docker compose build:
+
+REP_USER=myusername REP_PASS=mypassword docker-compose build
+
+Which didn't work. I changed my Dockerfile to use these arguments as environment variables; so I removed ARG lines:
+
+FROM jessie
+MAINTAINER Zeinab Abbasimazar
+# Build
+RUN echo 'REP_USER:'$REP_USER', REP_PASS:'$REP_PASS
+
+And docker-compose.yml:
+
+version: "2"
+  services:
+    ui:
+      build:
+        context: .
+        dockerfile: Dockerfile
+
+And ran REP_USER=myusername REP_PASS=mypassword docker-compose build; still no result.
+
+I also tried to save these information into an env file:
+
+version: "2"
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - myenv.env
+
+But it seems env files doesn't affect at build time; they are just take part into run time.
+
+EDIT 1:
+
+Docker version is 1.12.6 which doesn't support passing arguments with --build-arg.
+
+EDIT 2:
+
+I tried using .env file as described here [链接：https://docs.docker.com/compose/environment-variables/#the-env-file]:
+
+cat .env 
+REP_USER=myusername
+REP_PASS=mypassword
+
+I then called docker-compose config which returned:
+
+networks: {}
+services:
+  ui:
+    build:
+      args:
+        REP_PASS: mypassword
+        REP_USER: myusername
+      context: /home/USER_REDACTED/Workspace/ZiZi-Docker/Test/test-exec-1
+      dockerfile: Dockerfile
+version: '2.0'
+volumes: {}
+
+Which means this resolved my issue.
+
+EDIT 3:
+
+I also tried third section of docker-compose arg documentation [链接：https://docs.docker.com/compose/compose-file/#args] in my docker-compose.yml file:
+
+version: "2"
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - REP_USER
+        - REP_PASS
+
+And executed:
+
+export REP_USER=myusername;export REP_PASS=mypassword;sudo docker-compose build --no-cache
+
+Still not getting what I wanted.
+
+Selected earlier-question evidence:
+[E1; H4; 2017-08-27 10:52:28] Exact excerpt from the earlier question:
+docker add command fails to add the path passed as argument to it
+I have a Dockerfile which I want to be built and pushed after jenkins maven build. I have these lines in my Dockerfile:
+
+History-derived overall profile (uncertain estimate, not certified ability):
+Domain: Docker; prior questions: 5; mean level: 3.069 / 5; distribution: level 1: 0.000, level 2: 0.064, level 3: 0.802, level 4: 0.133, level 5: 0.000. Use this only to calibrate explanation depth when useful; specific evidence and the current question take priority.

@@ -1,0 +1,940 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2019-02-16 14:06:21
+Title: WARN Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+Tags: <java><docker><apache-zookeeper><mesos><marathon>
+Body:
+I have two nodes that each one has docker with Mesos,marathon,and zookeeper have been installed on it. This is my docker compose file on master node:
+
+version: '3.7'
+ services:
+  zookeeper:
+   image: ubuntu_mesos_home_marzieh
+   command: /home/USER_REDACTED/bin/zkServer.sh restart
+  environment:
+    ZOOKEEPER_SERVER_ID: 1
+    ZOOKEEPER_CLIENT_PORT: 2190
+    ZOOKEEPER_TICK_TIME: 2000
+    ZOOKEEPER_INIT_LIMIT: 10
+    ZOOKEEPER_SYNC_LIMIT: 5
+    ZOOKEEPER_SERVERS: 150.20.11.133:2888:3888;150.20.11.136:2888:3888
+  network_mode: host
+  expose:
+    - 2190
+    - 2888
+    - 3888
+  ports:
+    - 2190:2190
+    - 2888:2888
+    - 3888:3888
+
+ master-mesos:
+  image: ubuntu_mesos_home_marzieh
+  command: bash -c "sleep 30; /home/USER_REDACTED/build/bin/mesos- 
+    master.sh --ip=150.20.11.133 --work_dir=/var/run/mesos 
+    --hostname=150.20.11.133" 
+  privileged: true
+  restart: always
+  network_mode: host
+  depends_on:
+    - zookeeper
+  environment:
+    - LIBPROCESS_IP=150.20.11.133
+    - MESOS_HOSTNAME="150.20.11.133"
+    - MESOS_QUORUM=1
+    - MESOS_LOG_DIR=/var/log/mesos
+    - MESOS_WORK_DIR=/var/run/mesos
+  expose:
+    - 5050
+    - 4040
+    - 7077
+    - 8080
+  ports:
+    - 5050:5050
+    - 4040:4040
+    - 7077:7077
+    - 8080:8080
+
+ marathon:
+  image: ubuntu_mesos_home_marzieh
+  command: bash -c "sleep 60; /usr/share/marathon/bin/marathon"
+  privileged: true
+  network_mode: host
+  depends_on:
+    - zookeeper
+    - master-mesos
+  environment:
+    - HOSTNAME="150.20.11.133"
+    - MARATHON_ZK=zk://150.20.11.133:2190/marathon
+    - MARATHON_MASTER=zk://150.20.11.133:2190/mesos
+    - MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so
+    - MARATHON_HTTP_PORT=8080
+  expose:
+    - 8080
+    - 2190
+  ports:
+    - 8080:8080
+    - 2190:2190
+
+This is docker compose for slave node:
+
+ version: '3.7'
+  services:
+   zookeeper:
+     image: ubuntu_mesos_home_marzieh
+     command: /home/USER_REDACTED/bin/zkServer.sh start
+     environment:
+       ZOOKEEPER_SERVER_ID: 2
+       ZOOKEEPER_CLIENT_PORT: 2190
+       ZOOKEEPER_TICK_TIME: 2000
+       ZOOKEEPER_INIT_LIMIT: 10
+       ZOOKEEPER_SYNC_LIMIT: 5
+       ZOOKEEPER_SERVERS: 
+       150.20.11.133:2888:3888;150.20.11.136:2888:3888
+    network_mode: host
+    expose:
+     - 2190
+     - 2888
+     - 3888
+    ports:
+     - 2190:2190
+     - 2888:2888
+     - 3888:3888
+
+  slave-mesos:
+     image: ubuntu_mesos_home_marzieh
+     command: bash -c "sleep 40; /home/USER_REDACTED/build/bin/mesos- 
+     slave.sh --master=150.20.11.133:5050 --work_dir=/var/run/mesos
+     --systemd_enable_support=false"
+     privileged: true
+     restart: always
+     privileged: true
+     network_mode: host
+     depends_on:
+      - zookeeper
+     environment:
+       - MESOS_RESOURCES=ports(*):[11000-11999]
+       - LIBPROCESS_IP=150.20.11.136
+       - MESOS_HOSTNAME="150.20.11.136"
+       - MESOS_EXECUTOR_REGISTRATION_TIMEOUT=5mins 
+       - MESOS_LOG_DIR=/var/log/mesos
+       - MESOS_WORK_DIR=/var/run/mesos
+       - MESOS_LOGGING_LEVEL=INFO
+     expose:
+       - 5051
+     ports:
+       - 5051:5051
+
+   marathon:
+    image: ubuntu_mesos_home_marzieh
+    command: bash -c "sleep 60; /usr/share/marathon/bin/marathon"
+    privileged: true
+    network_mode: host
+    depends_on:
+      - zookeeper
+      - slave-mesos
+    environment:
+      - MARATHON_ZK=zk://150.20.11.133:2190/marathon
+      - MARATHON_MASTER=zk://150.20.11.133:2190/mesos
+      - MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so
+      - MARATHON_HTTP_PORT=8080
+    expose:
+      - 8080
+      - 2190
+    ports:
+      - 8080:8080
+      - 2190:2190
+
+I configured Zookeeper on "zoo.cfg" and made "myid" file for every node. Also I configured Mesos and Marathon. But when I ran docker compose on master node (150.20.11.133), I got this error:
+
+  
+marathon_1      | java.net.ConnectException: Connection refused
+  marathon_1      |   at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+
+  
+  
+marathon_1      |  at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+  marathon_1      |   at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+
+  
+  
+marathon_1      |  at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1144)
+  marathon_1      | [2019-02-16 13:38:14,087] INFO  Opening socket connection to server 172.28.10.133/172.28.10.133:2190. Will not attempt to authenticate using SASL (unknown error) (org.apache.zookeeper.ClientCnxn:main-SendThread(172.28.10.133:2190))
+
+  
+  
+marathon_1      | [2019-02-16 13:38:14,087] WARN  Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect (org.apache.zookeeper.ClientCnxn:main-SendThread(172.28.10.133:2190))
+
+  
+  
+marathon_1      | java.net.ConnectException: Connection refused
+  marathon_1      |   at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+
+  
+  
+marathon_1      |  at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+
+  
+  
+marathon_1      |  at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+
+  
+  
+marathon_1      |  at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1144)
+  marathon_1      | [2019-02-16 13:38:14,173] ERROR Failed to connect to ZK. Marathon will exit now. (mesosphere.marathon.core.storage.store.impl.zk.RichCuratorFramework:main)
+
+I don't know what happen. I tried to open every port with ufw or I disabled firewall, but error did not go away. Would you please tell me what is wrong with docker compose file? 
+
+Any help would be appreciated. 
+
+Thanks.
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2019-01-16 14:05:36
+Title: ERROR Invalid config, exiting abnormally in Kafka cluster
+Tags: <docker><apache-kafka><apache-zookeeper>
+Body:
+I have three different nodes that every one has docker with Ubuntu on it. I can run zookeeper server on docker locally (I mean without any configuration for cluster), but I want to make kafka cluster with these three nodes; In fact, I installed docker on each node with loading Ubuntu with on them. I configure "zookeeper.properties" in docker environment for "150.20.11.157" like this:
+
+dataDir=/tmp/zookeeper/data
+tickTime=2000
+initLimit=10
+syncLimit=5
+server.1=0.0.0.0:2888:3888
+server.2=150.20.11.134:2888:3888
+server.3=150.20.11.137:2888:3888
+clientPort=2186
+
+For node 150.20.11.134, "zookeeper.properties" file in docker environment is like this:
+
+dataDir=/tmp/zookeeper/data
+tickTime=2000
+initLimit=10
+syncLimit=5
+server.1=150.20.11.157:2888:3888
+server.2=0.0.0.0:2888:3888
+server.3=150.20.11.137:2888:3888
+clientPort=2186
+
+For node 150.20.11.137, "zookeeper.properties" file in docker environment is like this:
+
+dataDir=/tmp/zookeeper/data
+tickTime=2000
+initLimit=10
+syncLimit=5
+server.1=150.20.11.157:2888:3888
+server.2=150.20.11.134:2888:3888
+server.3=0.0.0.0:2888:3888
+clientPort=2186
+
+Also, I setup "server.properties" like this, for node 150.20.11.157:
+
+broker.id=0
+port=9092
+listeners = PLAINTEXT://150.20.11.157:9092
+log.dirs=/tmp/kafka-logs 
+zookeeper.connect=150.20.11.157:2186,150.20.11.134:2186,
+150.20.11.137:2186
+
+"server.properties" for node 150.20.11.134 is:
+
+broker.id=1
+port=9092
+listeners = PLAINTEXT://150.20.11.134:9092
+log.dirs=/tmp/kafka-logs 
+zookeeper.connect=150.20.11.157:2186,150.20.11.134:2186,
+150.20.11.137:2186
+
+"server.properties" for node 150.20.11.137 is:
+
+broker.id=2
+port=9092
+listeners = PLAINTEXT://150.20.11.137:9092
+log.dirs=/tmp/kafka-logs 
+zookeeper.connect=150.20.11.157:2186,150.20.11.134:2186,
+150.20.11.137:2186
+
+The problem is when I run zookeeper server on docker of each node. I get this error:
+
+[2019-01-16 12:45:54,588] INFO Reading configuration from: ./config/zookeeper.properties 
+(org.apache.zookeeper.server.quorum.QuorumPeerConfig)
+
+[2019-01-16 12:45:54,601] INFO Resolved hostname: 172.28.10.137 to address: /172.28.10.137 (org.apache.zookeeper.server.quorum.QuorumPeer)
+
+[2019-01-16 12:45:54,603] INFO Resolved hostname: 0.0.0.0 to address: /0.0.0.0 (org.apache.zookeeper.server.quorum.QuorumPeer)
+
+[2019-01-16 12:45:54,603] INFO Resolved hostname: 172.28.10.157 to address: /172.28.10.157 (org.apache.zookeeper.server.quorum.QuorumPeer)
+
+[2019-01-16 12:45:54,603] INFO Defaulting to majority quorums (org.apache.zookeeper.server.quorum.QuorumPeerConfig)
+
+[2019-01-16 12:45:54,604] ERROR Invalid config, exiting abnormally (org.apache.zookeeper.server.quorum.QuorumPeerMain)
+
+org.apache.zookeeper.server.quorum.QuorumPeerConfig$ConfigException: Error processing ./config/zookeeper.properties
+    at org.apache.zookeeper.server.quorum.QuorumPeerConfig.parse(QuorumPeerConfig.java:156)
+    at org.apache.zookeeper.server.quorum.QuorumPeerMain.initializeAndRun(QuorumPeerMain.java:104)
+    at org.apache.zookeeper.server.quorum.QuorumPeerMain.main(QuorumPeerMain.java:81)
+Caused by: java.lang.IllegalArgumentException: /tmp/zookeeper/data/myid file is missing
+    at org.apache.zookeeper.server.quorum.QuorumPeerConfig.parseProperties(QuorumPeerConfig.java:408)
+    at org.apache.zookeeper.server.quorum.QuorumPeerConfig.parse(QuorumPeerConfig.java:152)    
+... 2 more
+
+Invalid config, exiting abnormally
+
+Would you please tell me how to have a Kafka cluster with three docker that each docker is on one physical node?
+
+Thank you in advance.
+
+[H2]
+Date: 2019-01-17 15:59:04
+Title: Error in running "docker-compose up" : Invalid config, exiting abnormally
+Tags: <docker><apache-kafka><docker-compose>
+Body:
+I have three different nodes that every one has docker with Ubuntu on it. I want to make Kafka cluster with these three nodes; In fact, I installed docker on each node with loading Ubuntu with on them. I configure "zookeeper.properties" in docker environment for "150.20.11.157" like this:
+
+dataDir=/tmp/zookeeper/data
+tickTime=2000
+initLimit=10
+syncLimit=5
+server.1=0.0.0.0:2888:3888
+server.2=150.20.11.134:2888:3888
+server.3=150.20.11.137:2888:3888
+clientPort=2186
+
+For node 150.20.11.134, "zookeeper.properties" file in docker environment is like this:
+
+dataDir=/tmp/zookeeper/data
+tickTime=2000
+initLimit=10
+syncLimit=5
+server.1=150.20.11.157:2888:3888
+server.2=0.0.0.0:2888:3888
+server.3=150.20.11.137:2888:3888
+clientPort=2186
+
+For node 150.20.11.137, "zookeeper.properties" file in docker environment is like this:
+
+dataDir=/tmp/zookeeper/data
+tickTime=2000
+initLimit=10
+syncLimit=5
+server.1=150.20.11.157:2888:3888
+server.2=150.20.11.134:2888:3888
+server.3=0.0.0.0:2888:3888
+clientPort=2186
+
+Also, I setup "server.properties" like this, for node 150.20.11.157:
+
+broker.id=0
+port=9092
+listeners = PLAINTEXT://150.20.11.157:9092
+log.dirs=/tmp/kafka-logs 
+zookeeper.connect=150.20.11.157:2186,150.20.11.134:2186,
+150.20.11.137:2186
+
+"server.properties" for node 150.20.11.134 is:
+
+broker.id=1
+port=9092
+listeners = PLAINTEXT://150.20.11.134:9092
+log.dirs=/tmp/kafka-logs 
+zookeeper.connect=150.20.11.157:2186,150.20.11.134:2186,
+150.20.11.137:2186
+
+"server.properties" for node 150.20.11.137 is:
+
+broker.id=2
+port=9092
+listeners = PLAINTEXT://150.20.11.137:9092
+log.dirs=/tmp/kafka-logs 
+zookeeper.connect=150.20.11.157:2186,150.20.11.134:2186,
+150.20.11.137:2186
+
+More over, every node has a "myid" file in "/tmp/zookeeper/data" of docker environment with its server id inside it. 
+
+To make a Kafka cluster of three node like this picture, I make a "docker-compose.yaml" file and a dockerfile for it.
+
+[图片1（人工查看原图后整理）：三节点 Kafka 部署示意图：每台节点有 IP、Docker 和 Kafka package 三层。]
+
+This is my docker-compose file:
+
+version: '3.7'
+
+services:
+    zookeeper:
+       build: .
+       command: /root/kafka_2.11-2.0.1/bin/zookeeper-server-start.sh 
+       /root/kafka_2.11-2.0.1/config/zookeeper.properties
+       ports:
+        - 2186:2186
+    kafka1:
+       build:
+        context: .
+        args:
+          brokerId: 0
+        command: /root/kafka_2.11-2.0.1/bin/kafka-server-start.sh 
+        /root/kafka_2.11-2.0.1/config/server.properties
+        depends_on:
+         - zookeeper
+    kafka2:
+       build:
+        context: .
+        args:
+          brokerId: 1
+        command: /root/kafka_2.11-2.0.1/bin/kafka-server-start.sh 
+        /root/kafka_2.11-2.0.1/config/server.properties
+        depends_on:
+         - zookeeper
+    kafka3:
+       build:
+         context: .
+        args:
+          brokerId: 2
+        command: /root/kafka_2.11-2.0.1/bin/kafka-server-start.sh 
+        /root/kafka_2.11-2.0.1/config/server.properties
+        depends_on:
+         - zookeeper
+   producer:
+       build: .
+       command: bash -c "sleep 4 && /root/kafka_2.11-2.0.1/bin/kafka- 
+       topics.sh --create --zookeeper zookeeper:2186 --replication- 
+       factor 2 --partitions 3 --topic dates && while true; do date | 
+       /kafka_2.11-2.0.1/bin/kafka-console-producer.sh --broker-list 
+       kafka1:9092,kafka2:9092,kafka3:9092 --topic dates; sleep 1; 
+       done "
+      depends_on:
+        - zookeeper
+        - kafka1
+        - kafka2
+        - kafka3
+  consumer:
+      build: .
+      command: bash -c "sleep 6 && /root/kafka_2.11-2.0.1/bin/kafka- 
+      console-consumer.sh localhost:9092 --topic dates --bootstrap- 
+      server kafka1:9092,kafka2:9092,kafka3:9092"
+      depends_on:
+        - zookeeper
+        - kafka1
+        - kafka2
+        - kafka3
+
+The problem is after "dockerfile build ." when I do "sudo docker-compose up" on each node. It does not run completely. Some of my log is in following:
+
+  
+zookeeper_1  | [2019-01-17 16:09:27,197] INFO Reading configuration from: /root/kafka_2.11-2.0.1/config/zookeeper.properties (org.apache.zookeeper.server.quorum.QuorumPeerConfig)
+
+  
+  
+kafka3_1     | [2019-01-17 16:09:29,426] INFO Registered kafka:type=kafka.Log4jController MBean (kafka.utils.Log4jControllerRegistration$)
+
+  
+  
+kafka3_1     | [2019-01-17 16:09:29,702] INFO starting (kafka.server.KafkaServer)
+
+  
+  
+kafka3_1     | [2019-01-17 16:09:29,702] INFO Connecting to zookeeper on 150.20.11.157:2186,150.20.11.134:2186,150.20.11.137:2186 (kafka.server.KafkaServer)
+
+  
+  
+kafka1_1     | [2019-01-17 16:09:30,012] INFO Registered kafka:type=kafka.Log4jController MBean (kafka.utils.Log4jControllerRegistration$)
+
+  
+  
+zookeeper_1  | [2019-01-17 16:09:27,240] INFO Resolved hostname: 150.20.11.137 to address: /150.20.11.137 (org.apache.zookeeper.server.quorum.QuorumPeer)
+
+  
+  
+kafka1_1     | [2019-01-17 16:09:30,486] INFO starting (kafka.server.KafkaServer)
+
+  
+  
+kafka3_1     | [2019-01-17 16:09:29,715] INFO [ZooKeeperClient] Initializing a new session to 150.20.11.157:2186,150.20.11.134:2186,150.20.11.137:2186. (kafka.zookeeper.ZooKeeperClient)
+
+  
+  
+zookeeper_1  | [2019-01-17 16:09:27,241] INFO Resolved hostname: 150.20.11.134 to address: /150.20.11.134 (org.apache.zookeeper.server.quorum.QuorumPeer)
+
+  
+  
+zookeeper_1  | [2019-01-17 16:09:27,241] INFO Resolved hostname: 0.0.0.0 to address: /0.0.0.0 (org.apache.zookeeper.server.quorum.QuorumPeer)
+  kafka3_1     | [2019-01-17 16:09:29,720] INFO Client environment:zookeeper.version=3.4.13-2d71af4dbe22557fda74f9a9b4309b15a7487f03, built on 06/29/2018 00:39 GMT (org.apache.zookeeper.ZooKeeper)
+
+  
+  
+zookeeper_1  | [2019-01-17 16:09:27,241] INFO Defaulting to majority quorums (org.apache.zookeeper.server.quorum.QuorumPeerConfig)
+  kafka3_1     | [2019-01-17 16:09:29,721] INFO Client environment:host.name=be08b050be4c (org.apache.zookeeper.ZooKeeper)
+
+  
+  
+zookeeper_1  | [2019-01-17 16:09:27,242] ERROR Invalid config, exiting abnormally (org.apache.zookeeper.server.quorum.QuorumPeerMain)
+  zookeeper_1  | org.apache.zookeeper.server.quorum.QuorumPeerConfig$ConfigException: Error processing /root/kafka_2.11-2.0.1/config/zookeeper.properties
+  zookeeper_1  |  at org.apache.zookeeper.server.quorum.QuorumPeerConfig.parse(QuorumPeerConfig.java:156)
+  zookeeper_1  |  at org.apache.zookeeper.server.quorum.QuorumPeerMain.initializeAndRun(QuorumPeerMain.java:104)
+  zookeeper_1  |  at org.apache.zookeeper.server.quorum.QuorumPeerMain.main(QuorumPeerMain.java:81)
+  zookeeper_1  | Caused by: java.lang.IllegalArgumentException: /tmp/zookeeper/data/myid file is missing
+  zookeeper_1  |  at org.apache.zookeeper.server.quorum.QuorumPeerConfig.parseProperties(QuorumPeerConfig.java:408)
+  zookeeper_1  |  at org.apache.zookeeper.server.quorum.QuorumPeerConfig.parse(QuorumPeerConfig.java:152)
+  zookeeper_1  |  ... 2 more
+
+  
+  
+kafka1_1     | [2019-01-17 16:09:30,487] INFO Connecting to zookeeper on 150.20.11.157:2186,150.20.11.134:2186,150.20.11.137:2186 (kafka.server.KafkaServer)
+  zookeeper_1  | Invalid config, exiting abnormall
+
+In fact, I configured Kafka cluster without using docker on every node and I could run Zookeeper and Kafka server without any problem. Kafka cluster was like this picture:
+
+[图片2（人工查看原图后整理）：三节点 Kafka 部署示意图：每台节点只有 IP 与 Kafka package，没有 Docker 层。]
+
+Would you please tell me what I am doing wrong to config this cluser?
+
+Any help would be appreciated.
+
+[H3]
+Date: 2019-01-23 12:25:41
+Title: Core dumped in running Mesos cluster on docker
+Tags: <docker><apache-zookeeper><mesos>
+Body:
+I have a docker image called ubuntu_mesos_spark. I installed zookeeper on it. I change “zoo.cfg” file like this:
+This is “zoo.cfg” in node1(150.20.11.157)
+
+tickTime=2000
+initLimit=10
+syncLimit=5
+clientPort=2187
+dataDir=/var/lib/zookeeper
+server.1=0.0.0.0:2888:3888
+server.2=150.20.11.157:2888:3888
+server.3=150.20.11.137:2888:3888
+
+This is “zoo.cfg” in node1(150.20.11.134)
+
+tickTime=2000
+initLimit=10
+syncLimit=5
+clientPort=2187
+dataDir=/var/lib/zookeeper
+server.1=150.20.11.157:2888:3888
+server.2=0.0.0.0:2888:3888
+server.3=150.20.11.137:2888:3888
+
+This is “zoo.cfg” in node1(150.20.11.137)
+
+ tickTime=2000
+ initLimit=10
+ syncLimit=5
+ clientPort=2187
+ dataDir=/var/lib/zookeeper
+ server.1=150.20.11.157:2888:3888
+ server.2=150.20.11.134:2888:3888
+ server.3=0.0.0.0:2888:3888
+
+Also I made a “myid” file in “/var/lib/zookeeper” of each node. For example for “150.20.11.157” its ID is “1” in myid file.
+I installed Mesos and Spark on the docker too. I have a Mesos cluster of these three nodes too. I defined IP address of slaves nodes on this file: “spark/conf/slaves”
+
+150.20.11.134
+150.20.11.137
+
+I added these lines in “spark/conf/spark-env.sh”:
+
+export MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so
+export SPARK_EXECUTOR_URI=/home/USER_REDACTED/program_file/spark-2.3.2-bin- 
+hadoop2.7.tgz
+
+Moreover, I added these lines in my “~/.bashrc” file:
+
+export SPARK_HOME="/home/USER_REDACTED"
+PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7- 
+src.zip:$PYTHO$
+export PYSPARK_HOME=/usr/bin/python3.6
+export PYSPARK_DRIVER_PYTHON=python3.6
+export ZOO_LOG_DIR=/var/log/zookeeper
+
+I  want to run master code in “150.20.11.157”.My docker-compose is :
+
+ version: '3.7'
+ services:
+  zookeeper:
+  image: ubuntu_mesos_spark
+  command: /zookeeper-3.4.12/bin/zkServer.sh start
+  environment:
+   ZOOKEEPER_SERVER_ID: 1
+   ZOOKEEPER_CLIENT_PORT: 2187
+   ZOOKEEPER_TICK_TIME: 2000
+   ZOOKEEPER_INIT_LIMIT: 10
+   ZOOKEEPER_SYNC_LIMIT: 5
+   ZOOKEEPER_SERVERS: 
+   0.0.0.0:2888:3888;150.20.11.134:2888:3888;150.20.11.137:2888:3888
+ network_mode: host
+ expose:
+  - 2187 
+  - 2888
+  - 3888
+ ports:
+  - 2187:2187
+  - 2888:2888
+  - 3888:3888
+
+master:
+image: ubuntu_mesos_spark
+command: bash -c "sleep 20; /home/USER_REDACTED/build/bin/mesos- 
+master.sh --ip=150.20.11.157 --work_dir=/var/run/mesos"
+restart: always
+depends_on:
+ - zookeeper
+environment:
+ - MESOS_HOSTNAME="150.20.11.157,150.20.11.134,150.20.11.137"
+ - MESOS_QUORUM=1
+ - MESOS_LOG_DIR=/var/log/mesos
+expose:
+ - 5050
+ - 4040
+ - 7077
+ - 8080
+ports:
+  - 5050:5050
+  - 4040:4040
+  - 7077:7077
+  - 8080:8080
+
+Also, I run this compose file on slaves nodes :“150.20.11.134,150.20.11.137”:
+
+ version: '3.7'
+ services:
+  zookeeper:
+  image: ubuntu_mesos_spark
+  command: /zookeeper-3.4.12/bin/zkServer.sh start
+  environment:
+   ZOOKEEPER_SERVER_ID: 2
+   ZOOKEEPER_CLIENT_PORT: 2187
+   ZOOKEEPER_TICK_TIME: 2000
+   ZOOKEEPER_INIT_LIMIT: 10
+   ZOOKEEPER_SYNC_LIMIT: 5
+   ZOOKEEPER_SERVERS: 
+   0.0.0.0:2888:3888;150.20.11.134:2888:3888;150.20.11.137:2888:3888
+ network_mode: host
+ expose:
+  - 2187 
+  - 2888
+  - 3888
+ ports:
+  - 2187:2187
+  - 2888:2888
+  - 3888:3888
+
+slave:
+image: ubuntu_mesos_spark
+command: bash -c "/home/USER_REDACTED/build/bin/mesos-slave.sh -- 
+master=150.20.11.157:5050 --work_dir=/var/run/mesos  
+--systemd_enable_support=false"
+restart: always
+privileged: true
+network_mode: host
+depends_on:
+- zookeeper
+environment:
+ - MESOS_HOSTNAME="150.20.11.157,150.20.11.134,150.20.11.137"
+ - MESOS_MASTER=150.20.11.157
+ - MESOS_EXECUTOR_REGISTRATION_TIMEOUT=5mins #also in Dockerfile
+ - MESOS_CONTAINERIZERS=docker,mesos
+ - MESOS_LOG_DIR=/var/log/mesos
+ - MESOS_LOGGING_LEVEL=INFO
+expose:
+  - 5051
+ports:
+  - 5051:5051
+
+First I run "sudo docker-compose up" on Master node. Then I run it on slaves nodes. But I get this error:
+
+On Master node, the error is:
+
+  
+Starting marzieh-compose_zookeeper_1 ... done
+
+  
+  
+Recreating marzieh-compose_master_1  ... done
+
+  
+  
+Attaching to marzieh-compose_zookeeper_1, marzieh-compose_master_1
+
+  
+  
+zookeeper_1  | ZooKeeper JMX enabled by default
+
+  
+  
+zookeeper_1  | Using config: /zookeeper-3.4.12/bin/../conf/zoo.cfg
+
+  
+  
+zookeeper_1  | Starting zookeeper ... STARTED
+
+  
+  
+marzieh-compose_zookeeper_1 exited with code 0
+
+  
+  
+master_1     | I0123 11:46:59.585522     7 logging.cpp:201] INFO level logging started!
+
+  
+  
+master_1     | I0123 11:46:59.586066     7 main.cpp:242] Build: 2019-01-21 05:16:39 by 
+  master_1     | I0123 11:46:59.586097     7 main.cpp:243] Version: 1.7.0
+
+  
+  
+master_1     | F0123 11:46:59.587368     7 process.cpp:1115] Failed to initialize: Failed to bind on 150.20.11.157:5050: Cannot assign requested address
+
+  
+  
+master_1     | * Check failure stack trace: *
+
+  
+  
+master_1     |     @     0x7f505ce54b9c  google::LogMessage::Fail()
+
+  
+  
+master_1     |     @     0x7f505ce54ae0  google::LogMessage::SendToLog()
+
+  
+  
+master_1     |     @     0x7f505ce544b2  google::LogMessage::Flush()
+
+  
+  
+master_1     |     @     0x7f505ce57770
+
+  google::LogMessageFatal::~LogMessageFatal()
+
+  
+  
+master_1     |     @     0x7f505cd19ed1  process::initialize()
+
+  
+  
+master_1     |     @     0x55fb7b12981a  main
+
+  
+  
+master_1     |     @     0x7f504f0d0830  (unknown)
+
+  
+  
+master_1     |     @     0x55fb7b1288b9  _start
+
+  
+  
+master_1     | bash: line 1:     7 Aborted                 (core dumped) /home/USER_REDACTED/build/bin/mesos-master.sh --ip=150.20.11.157 --work_dir=/var/run/mesos
+
+Moreover when I run "sudo docker-compose up" on slave nodes. I got this error:
+
+  
+slave_1      | F0123 11:40:06.878793     1 process.cpp:1115] Failed to initialize: Failed to bind on 0.0.0.0:5051: Address already in use
+
+  
+  
+slave_1      | * Check failure stack trace: *
+
+  
+  
+slave_1      |     @     0x7fee9d319b9c  google::LogMessage::Fail()
+
+  
+  
+slave_1      |     @     0x7fee9d319ae0  google::LogMessage::SendToLog()
+
+  
+  
+slave_1      |     @     0x7fee9d3194b2  google::LogMessage::Flush()
+
+  
+  
+slave_1      |     @     0x7fee9d31c770
+
+  google::LogMessageFatal::~LogMessageFatal()
+
+  
+  
+slave_1      |     @     0x7fee9d1deed1  process::initialize()
+
+  
+  
+slave_1      |     @     0x55e99f661784  main
+
+  
+  
+slave_1      |     @     0x7fee8f595830  (unknown)
+
+  
+  
+slave_1      |     @     0x55e99f65f139  _start
+
+  
+  
+slave_1      | * Aborted at 1548243606 (unix time) try "date -d @1548243606" if you are using GNU date *
+
+  
+  
+slave_1      | PC: @     0x7fee8f5ac196 (unknown)
+
+  
+  
+slave_1      | * SIGSEGV (@0x0) received by PID 1 (TID 0x7fee9f9f38c0) from PID 0; stack trace: *
+
+  
+  
+slave_1      |     @     0x7fee8fee8390 (unknown)
+
+  
+  
+slave_1      |     @     0x7fee8f5ac196 (unknown)
+
+  
+  
+slave_1      |     @     0x7fee9d32055b google::DumpStackTraceAndExit()
+
+  
+  
+slave_1      |     @     0x7fee9d319b9c google::LogMessage::Fail()
+
+  
+  
+slave_1      |     @     0x7fee9d319ae0 google::LogMessage::SendToLog()
+
+  
+  
+slave_1      |     @     0x7fee9d3194b2 google::LogMessage::Flush()
+
+  
+  
+slave_1      |     @     0x7fee9d31c770 google::LogMessageFatal::~LogMessageFatal()
+
+  
+  
+slave_1      |     @     0x7fee9d1deed1 process::initialize()
+
+  
+  
+slave_1      |     @     0x55e99f661784 main
+
+  
+  
+slave_1      |     @     0x7fee8f595830 (unknown)
+
+  
+  
+slave_1      |     @     0x55e99f65f139 _start
+
+  
+  
+slave_1      | I0123 11:41:07.818897     1 logging.cpp:201] INFO level logging started!
+
+  
+  
+slave_1      | I0123 11:41:07.819437     1 main.cpp:349] Build: 2019-01-21 05:16:39 by 
+
+  
+  
+slave_1      | I0123 11:41:07.819470     1 main.cpp:350] Version: 1.7.0
+
+  
+  
+slave_1      | I0123 11:41:07.823354     1 resolver.cpp:69] Creating default secret resolver
+
+  
+  
+slave_1      | E0123 11:41:07.927773     1 main.cpp:483] EXIT with status 1: Failed to create a containerizer: Could not create 
+  DockerContainerizer: Failed to create docker: Failed to get docker version: Failed to execute 'docker -H unix:///var/run/docker.sock --
+  version': exited with status 127
+
+I searched a lot about that and I could not figure this out. Would you please guide me what the right way is to write docker compose for running Mesos and Spark cluster on docker?
+
+Any help would be appreciated. 
+
+Thanks in advance.
+
+[H4]
+Date: 2019-01-27 12:18:34
+Title: Error in running Spark on Mesos in docker
+Tags: <docker><apache-spark><apache-zookeeper><mesos>
+Body:
+I have two nodes with docker. Zookeeper,Mesos and Spark were installed on each docker. I specify "slaves" on "slaves" file that I have just one master and one slave. Also, I have a "docker-compose.yaml" on each node in the same path. I do "docker-compose up" in each node. Then in the master node,inside docker,I run dispatcher:
+
+  "/home/USER_REDACTED/sbin/start-mesos-dispatcher.sh     --master 
+  mesos://150.20.11.136:5050".
+
+After that I run my program with this command:
+
+ "/home/USER_REDACTED/bin/spark-submit --name test_mesos --master 
+ mesos://150.20.11.136:5050 --executor-cores 4 --executor-memory 6G -- 
+ files iran2.npy --py-files a.zip myprogram.py".
+
+When running my program, I get this error:
+
+  
+Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources
+
+I have searched a lot. I disable firewall, first time it worked;but now I does not work at all. Moreover, I openned all port in docker via "expose" in docker compose file. I decreased resources in Submit command. But none of them solved my problem. 
+
+Would you please tell me what I am doing wrong? 
+
+Any help would be appreciated. 
+
+Thanks in advance.
+
+[H5]
+Date: 2019-02-13 07:22:43
+Title: Installing Marathon on apache mesos
+Tags: <docker><apache-flink><mesos><marathon>
+Body:
+I want to set Flink cluster via apache mesos. I have three physical nodes with docker installed on them. Each docker has an installed ubuntu 16.04 desktop. I installed apache mesos on the docker using this link without any problem:
+
+Apache Mesos-building [链接：http://mesos.apache.org/documentation/latest/building/]
+
+In the Flink website, I understood Marathon should be installed on Mesos to provide High availability. I could not install marathon. Then, I provided a docker with a fresh ubuntu 16.04 desktop on it and tried to follow this instruction to install Mesos and Marathon:
+
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF
+
+ISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+
+CODENAME=$(lsb_release -cs)
+
+echo "deb http://repos.mesosphere.io/${DISTRO} ${CODENAME} main"| sudo 
+tee /etc/apt/sources.list.d/mesosphere.list
+
+sudo apt-get update
+
+I did not get any error in running above commands;but I got this error while I was running the command:
+
+sudo apt-get -y install mesos
+
+  
+Reading package lists... Done
+
+  
+  
+Building dependency tree       
+
+  
+  
+Reading state information... Done
+
+  
+  
+E: Unable to locate package mesos
+
+Would you please tell me how I can install marathon on Mesos in cluster of three different nodes? Do I have to install mesos on ubuntu server in one of these platforms like "AWS, Azure" instead of installing Mesos on three physical nodes with Ubuntu Desktop?
+
+Any help would be appreciated. 
+
+Thanks in advance.

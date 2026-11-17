@@ -1,0 +1,15 @@
+﻿profile,metric,meaning,n_users,missing_users,spearman_rho,bootstrap_95_low,bootstrap_95_high
+profile_BAE_reconstructed,reputation_snapshot,账户声望，抓取时点快照,87,0,-0.2260,-0.4157,-0.0268
+profile_BAE_reconstructed,user_question_count_snapshot,账户累计提问数，抓取时点快照,87,0,-0.2713,-0.4742,-0.0530
+profile_BAE_reconstructed,user_answer_count_snapshot,账户累计回答数，抓取时点快照,87,0,-0.0346,-0.2498,0.1913
+profile_BAE_reconstructed,answer_question_ratio_snapshot,账户回答数/提问数，抓取时点快照,87,0,0.1028,-0.1265,0.3389
+profile_BAE_reconstructed,mean_question_score,这10条提问的平均得分,87,0,-0.3206,-0.5036,-0.1186
+profile_BAE_reconstructed,question_accepted_rate,这10条提问采纳他人答案的比例,87,0,-0.1546,-0.3356,0.0407
+profile_BAE_reconstructed,observed_span_days,这10条可见提问的跨度，非账户年限,87,0,0.1011,-0.1247,0.3165
+mean_observed_level,reputation_snapshot,账户声望，抓取时点快照,87,0,-0.2510,-0.4517,-0.0346
+mean_observed_level,user_question_count_snapshot,账户累计提问数，抓取时点快照,87,0,-0.2415,-0.4387,-0.0196
+mean_observed_level,user_answer_count_snapshot,账户累计回答数，抓取时点快照,87,0,-0.0736,-0.2875,0.1477
+mean_observed_level,answer_question_ratio_snapshot,账户回答数/提问数，抓取时点快照,87,0,0.0196,-0.2035,0.2487
+mean_observed_level,mean_question_score,这10条提问的平均得分,87,0,-0.3458,-0.5194,-0.1512
+mean_observed_level,question_accepted_rate,这10条提问采纳他人答案的比例,87,0,-0.1745,-0.3620,0.0395
+mean_observed_level,observed_span_days,这10条可见提问的跨度，非账户年限,87,0,0.1393,-0.0587,0.3368

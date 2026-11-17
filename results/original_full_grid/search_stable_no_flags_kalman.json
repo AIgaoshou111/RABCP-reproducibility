@@ -1,0 +1,1766 @@
+[
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 0,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.05,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.27025505206113887
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 1,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.05,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.26556225021068647
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 2,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.05,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.2647724937881616
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 3,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.1,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.2763930473503403
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 4,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.1,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.2671351870509771
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 5,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.1,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.26556225021068647
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 6,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.25,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.29403742759351836
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 7,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.25,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.2718021462771871
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 8,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.25,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.2679183886797067
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 9,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.64,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.34000096088931686
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 10,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.64,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.2835855778904024
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 11,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 0.64,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.27395389992884117
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 12,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 1.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3791051706173522
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 13,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 1.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.29403742759351836
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 14,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 1.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.2794124503560209
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 15,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 2.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.4724815081904474
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 16,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 2.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.32382019548986407
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 17,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 2.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.29403742759351836
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 18,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 4.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.6107756063738006
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 19,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 4.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3791051706173522
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 20,
+    "params": {
+      "process_variance": 0.0,
+      "observation_variance": 4.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.32382019548986407
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 21,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.05,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3209871539568251
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 22,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.05,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3193739622153082
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 23,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.05,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3190996757751083
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 24,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.1,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.30809166636662055
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 25,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.1,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3033247865644844
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 26,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.1,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3025090464649492
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 27,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.25,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3059692434815794
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 28,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.25,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.2898730510978631
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 29,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.25,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.28704838690951145
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 30,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.64,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.338020470554689
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 31,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.64,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.2903148458643375
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 32,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 0.64,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.28189780849690266
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 33,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 1.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3728311192605378
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 34,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 1.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.29764445892417435
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 35,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 1.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.28425615555302663
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 36,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 2.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.46121971603393164
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 37,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 2.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.32409811533275573
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 38,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 2.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.2959205533307777
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 39,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 4.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.5954374333878563
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 40,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 4.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.37739000712259707
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 41,
+    "params": {
+      "process_variance": 0.001,
+      "observation_variance": 4.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.32396649630198004
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 42,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.05,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.38133104240342885
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 43,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.05,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.38124495060152525
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 44,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.05,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.38122921931790615
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 45,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.1,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3639694247063783
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 46,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.1,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.36341925107537393
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 47,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.1,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3633162478133628
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 48,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.25,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3431424300917301
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 49,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.25,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.339327012695358
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 50,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.25,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3385807616635188
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 51,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.64,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.33858465564638707
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 52,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.64,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.320240891506392
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 53,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 0.64,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.31647342642730814
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 54,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 1.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.35165672868952214
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 55,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 1.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3169436307474939
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 56,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 1.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.30962671019365634
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 57,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 2.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.4056137632671013
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 58,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 2.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3267954445770242
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 59,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 2.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.308181793964015
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 60,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 4.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.5105506408124868
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 61,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 4.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3659506505699155
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 62,
+    "params": {
+      "process_variance": 0.01,
+      "observation_variance": 4.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3251945438471715
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 63,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.05,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.4068429375218011
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 64,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.05,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.40683876522776474
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 65,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.05,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.40683793603528157
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 66,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.1,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3911534407282548
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 67,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.1,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.39109543055273294
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 68,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.1,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.391083417039247
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 69,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.25,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3692584864442974
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 70,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.25,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.36845925289899173
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 71,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.25,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3682816532698039
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 72,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.64,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3512210894445717
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 73,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.64,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3453307908271948
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 74,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 0.64,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3438884877127542
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 75,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 1.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.34960455418151043
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 76,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 1.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3368624033440672
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 77,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 1.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.33360324817571246
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 78,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 2.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3690600675120242
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 79,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 2.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.33347216554289644
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 80,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 2.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.32347174887811514
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 81,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 4.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.4319281369093922
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 82,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 4.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.35433601968079587
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 83,
+    "params": {
+      "process_variance": 0.03,
+      "observation_variance": 4.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.32845018100979856
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 84,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.05,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.4294725417451388
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 85,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.05,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.42947252482061493
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 86,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.05,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.4294725207374572
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 87,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.1,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.41724868793351716
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 88,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.1,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.4172478572390683
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 89,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.1,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.4172476462530011
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 90,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.25,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.39788030319481543
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 91,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.25,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3978386061389864
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 92,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.25,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.397826920984853
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 93,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.64,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.37622471603663143
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 94,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.64,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3755239708544672
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 95,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 0.64,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3752991692552051
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 96,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 1.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.36679677113420583
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 97,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 1.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3648082034387316
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 98,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 1.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3641304989004625
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 99,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 2.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.35846790987919286
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 100,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 2.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.35108547452273753
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 101,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 2.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3482294596904507
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 102,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 4.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3698602092331578
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 103,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 4.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3487323133414918
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 104,
+    "params": {
+      "process_variance": 0.1,
+      "observation_variance": 4.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3395051056539094
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 105,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.05,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.4442347270546411
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 106,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.05,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.44423472704457945
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 107,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.05,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.4442347270411813
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 108,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.1,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.43592100018612995
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 109,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.1,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.4359209984586099
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 110,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.1,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.435920997849517
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 111,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.25,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.42064625808429584
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 112,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.25,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.4206458238003689
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 113,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.25,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.4206456563011595
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 114,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.64,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.4014592959897459
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 115,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.64,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.4014318969614138
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 116,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 0.64,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.4014198601276757
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 117,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 1.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.391347537902511
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 118,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 1.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3912260899579013
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 119,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 1.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.39116869498120066
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 120,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 2.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.37588894949565094
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 121,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 2.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.3751319330620625
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 122,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 2.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3747291718323571
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 123,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 4.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.3642794406268118
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 124,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 4.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.36122075887187577
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 125,
+    "params": {
+      "process_variance": 0.3,
+      "observation_variance": 4.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.3593732678818208
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 126,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.05,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.45184381504230714
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 127,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.05,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.45184381504230686
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 128,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.05,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.4518438150423067
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 129,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.1,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.4483364646102028
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 130,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.1,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.44833646461007065
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 131,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.1,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.44833646460999416
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 132,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.25,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.4397942589182696
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 133,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.25,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.4397942587243611
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 134,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.25,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.4397942586068947
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 135,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.64,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.42537037738584665
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 136,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.64,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.42537029639281376
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 137,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 0.64,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.4253702432850233
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 138,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 1.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.41725023785761467
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 139,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 1.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.41724942520708697
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 140,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 1.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.41724886576557296
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 141,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 2.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.4029064237516424
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 142,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 2.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.4028918423375291
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 143,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 2.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.40288101699388823
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 144,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 4.0,
+      "initial_variance": 0.25
+    },
+    "development_MAE": 0.38724936343887906
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 145,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 4.0,
+      "initial_variance": 1.0
+    },
+    "development_MAE": 0.38712501201532545
+  },
+  {
+    "suite": "stable",
+    "regime": "no_flags",
+    "method": "kalman",
+    "candidate_id": 146,
+    "params": {
+      "process_variance": 1.0,
+      "observation_variance": 4.0,
+      "initial_variance": 2.0
+    },
+    "development_MAE": 0.38702301608666567
+  }
+]

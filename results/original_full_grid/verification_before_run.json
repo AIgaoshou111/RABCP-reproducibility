@@ -1,0 +1,21 @@
+{
+  "passed": [
+    "stable generator exact parity: 4 conditions",
+    "change generator exact parity: 5 conditions",
+    "cumulative_mean: original prediction parity within 1e-12",
+    "ewma: original prediction parity within 1e-12",
+    "kalman: original prediction parity within 1e-12",
+    "hmm: original prediction parity within 1e-12",
+    "RABCP: original full-precision posterior expectations match for both weights, h=1/5, gamma=0/.05",
+    "causal update: future observations leave previous estimates unchanged",
+    "endpoint numerical stability: sigma=.25, h=40, gamma=0/1"
+  ],
+  "arithmetic_fix": {
+    "reason": "replace tiny BLAS matmul with explicit five-term sum after numerical warnings",
+    "maximum_selected_stable_MAE_difference": 0.0,
+    "parameter_and_generator_changes": false,
+    "strict_fp_exceptions": "divide/overflow/invalid raise; harmless underflow ignored",
+    "discarded_run": "results",
+    "official_run": "results_verified"
+  }
+}

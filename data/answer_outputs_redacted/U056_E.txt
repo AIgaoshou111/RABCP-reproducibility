@@ -1,0 +1,69 @@
+The issue is not Docker port mapping itself. The container is responding, but the web application inside the container is issuing an HTTP redirect to its internal IP address `172.17.0.2`. That IP is only reachable from the Docker host (A), not from other machines on your LAN (C).
+
+## What is happening
+
+1. C requests `http://192.168.1.11:5000`
+2. Docker forwards the request to the container at `172.17.0.2:80`
+3. The web app (likely Magento 2, based on your earlier question) generates a redirect to `http://172.17.0.2/?SID=...`
+4. C tries to connect to `172.17.0.2`, which is not routable from C, so it times out
+
+## Fix: Make the app use the correct external URL
+
+The application needs to know its public-facing base URL is `http://192.168.1.11:5000`, not `http://172.17.0.2`.
+
+### For Magento 2 specifically
+
+Since your earlier question referenced a Magento 2 Docker image, the fix is to set the Magento base URLs to the external address.
+
+Run this inside the container (or via `docker exec`):
+
+```bash
+docker exec -it development-phase bash
+```
+
+Then inside the container:
+
+```bash
+cd /var/www/public   # or wherever Magento is installed
+php bin/magento setup:store-config:set --base-url="http://192.168.1.11:5000/"
+php bin/magento setup:store-config:set --base-url-secure="https://192.168.1.11:5000/"
+php bin/magento cache:flush
+```
+
+Alternatively, update the database directly:
+
+```sql
+UPDATE core_config_data 
+SET value = 'http://192.168.1.11:5000/' 
+WHERE path IN ('web/unsecure/base_url', 'web/secure/base_url');
+```
+
+Then clear the cache:
+
+```bash
+php bin/magento cache:flush
+```
+
+### For other web applications
+
+The general principle is the same: configure the application's base URL / hostname to the externally reachable address (`192.168.1.11:5000`), not the container's internal IP.
+
+## Additional checks if the redirect persists
+
+1. **Check for hardcoded redirects** — Some apps store the hostname in configuration files or environment variables. Look for `172.17.0.2` in the app's config.
+
+2. **Check if the app uses the `Host` header** — If the app builds redirects from the incoming `Host` header, make sure Docker is passing the original host. By default it does, but some reverse-proxy setups override it.
+
+3. **Verify the port mapping is correct** — Confirm with:
+   ```bash
+   docker port development-phase
+   ```
+   Should show `80/tcp -> 0.0.0.0:5000`
+
+4. **Test from C with curl to see the redirect**:
+   ```bash
+   curl -v http://192.168.1.11:5000
+   ```
+   Look at the `Location:` header in the response to confirm where it's redirecting.
+
+The key point: **Docker networking is working correctly.** The problem is the application's URL configuration. Fix the base URL inside the container, and access from C will work.

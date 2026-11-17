@@ -1,0 +1,115 @@
+The error is clear: Marathon cannot connect to ZooKeeper at `172.28.10.133:2190` — connection refused. The IP `172.28.10.133` is interesting because your compose file uses `150.20.11.133`. This suggests ZooKeeper is not actually listening on port 2190 on the master node, or it's listening on a different interface/IP than expected.
+
+## Most likely causes
+
+1. **ZooKeeper is not running** — the `zkServer.sh restart` command may have failed inside the container
+2. **ZooKeeper is listening on localhost only** — not on the host network interface
+3. **ZooKeeper client port mismatch** — your `zoo.cfg` may not have `clientPort=2190`
+4. **The `restart` command behaves differently** — `zkServer.sh restart` may not work as expected in a container
+
+## Immediate checks
+
+### 1. Check if ZooKeeper is actually running on the master
+
+```bash
+# On the master host (150.20.11.133)
+docker ps | grep zookeeper
+docker logs <zookeeper_container_name>
+```
+
+### 2. Check if port 2190 is listening
+
+```bash
+# On the master host
+netstat -tlnp | grep 2190
+# or
+ss -tlnp | grep 2190
+```
+
+If nothing is listening on 2190, ZooKeeper didn't start.
+
+### 3. Check ZooKeeper's actual client port
+
+Look inside the container:
+
+```bash
+docker exec -it <zookeeper_container_name> cat /home/USER_REDACTED/conf/zoo.cfg
+```
+
+Verify it contains:
+```
+clientPort=2190
+```
+
+### 4. Check what IP ZooKeeper is binding to
+
+```bash
+docker exec -it <zookeeper_container_name> netstat -tlnp | grep 2190
+```
+
+If it shows `127.0.0.1:2190` or `0.0.0.0:2190` but not the host IP, that's the problem.
+
+## The fix
+
+### Change the ZooKeeper command
+
+Instead of `zkServer.sh restart`, use `start-foreground` so ZooKeeper stays in the foreground (required for Docker containers):
+
+```yaml
+zookeeper:
+  image: ubuntu_mesos_home_marzieh
+  command: /home/USER_REDACTED/bin/zkServer.sh start-foreground
+  network_mode: host
+  environment:
+    ZOOKEEPER_SERVER_ID: 1
+    ZOOKEEPER_CLIENT_PORT: 2190
+    # ... rest of your config
+```
+
+### Ensure ZooKeeper binds to all interfaces
+
+In your `zoo.cfg`, make sure you don't have `clientPortAddress=127.0.0.1` or similar. If you do, remove it or set it to `0.0.0.0`.
+
+### Verify the ZooKeeper server list format
+
+Your `ZOOKEEPER_SERVERS` uses semicolons (`;`), but ZooKeeper's standard format uses commas (`,`):
+
+```
+150.20.11.133:2888:3888,150.20.11.136:2888:3888
+```
+
+However, this depends on how your custom image `ubuntu_mesos_home_marzieh` processes this variable. If it's a custom script, check how it parses `ZOOKEEPER_SERVERS`.
+
+## About the IP discrepancy
+
+Marathon is trying to connect to `172.28.10.133` instead of `150.20.11.133`. This suggests:
+
+- Your `MARATHON_ZK=zk://150.20.11.133:2190/marathon` is being resolved differently
+- Or there's a DNS/hosts file mapping `150.20.11.133` to `172.28.10.133`
+- Or the container has a different network view
+
+Since you're using `network_mode: host`, the container should see the same network as the host. Check:
+
+```bash
+# On the master host
+getent hosts 150.20.11.133
+cat /etc/hosts
+```
+
+## Quick test
+
+Try connecting to ZooKeeper directly from the master host:
+
+```bash
+echo ruok | nc 150.20.11.133 2190
+```
+
+If ZooKeeper is running, it should respond with `imok`. If you get connection refused, ZooKeeper is definitely not listening on that port.
+
+## Summary of actions
+
+1. Change `zkServer.sh restart` to `zkServer.sh start-foreground` in both compose files
+2. Verify `clientPort=2190` in `zoo.cfg`
+3. Check ZooKeeper logs with `docker logs <container>`
+4. Test connectivity with `nc` or `telnet`
+5. Fix the `ZOOKEEPER_SERVERS` format if needed (use commas, not semicolons)

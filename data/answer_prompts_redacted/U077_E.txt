@@ -1,0 +1,92 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-05-25 08:42:14
+Title: Can't install minimesos on Vagrant -- Failed to run command 'up'. null
+Tags: <ubuntu><docker><centos><vagrant><minimesos>
+Body:
+I tested both on CentOS 7.3 and Ubuntu 16.04. The docker version is different, but the virtual environment are the same. One workstation with multiple VMs on Vagrant.
+
+CentOS 7.3
+
+[root@localhost ~]# docker version
+Client:
+ Version:         1.12.6
+ API version:     1.24
+ Package version: docker-common-1.12.6-16.el7.centos.x86_64
+ Go version:      go1.7.4
+ Git commit:      3a094bd/1.12.6
+ Built:           Fri Apr 14 13:46:13 2017
+ OS/Arch:         linux/amd64
+
+Server:
+ Version:         1.12.6
+ API version:     1.24
+ Package version: docker-common-1.12.6-16.el7.centos.x86_64
+ Go version:      go1.7.4
+ Git commit:      3a094bd/1.12.6
+ Built:           Fri Apr 14 13:46:13 2017
+ OS/Arch:         linux/amd64
+
+[root@localhost ~]# curl -sSL https://minimesos.org/install | sh
+[root@localhost ~]# export PATH=$PATH:/home/USER_REDACTED/.minimesos/bin
+[root@localhost ~]# minimesos up
+Pulling containersol/minimesos-cli:0.13.0
+Trying to pull repository docker.io/containersol/minimesos-cli ...
+0.13.0: Pulling from docker.io/containersol/minimesos-cli
+
+b7f33cc0b48e: Pull complete
+43a564ae36a3: Pull complete
+efb75a810eee: Pull complete
+caf0c110d33e: Pull complete
+aadff284a195: Pull complete
+26bffb7df44f: Pull complete
+Digest: sha256:abe376953d06aee44e66545d228e7738afad28acbb80d221f10f1d5dd699c783
+Failed to run command 'up'. null
+
+Ubuntu 16.04
+
+root@vagrant:~# docker version
+Client:
+ Version:      17.05.0-ce
+ API version:  1.29
+ Go version:   go1.7.5
+ Git commit:   89658be
+ Built:        Thu May  4 22:10:54 2017
+ OS/Arch:      linux/amd64
+
+Server:
+ Version:      17.05.0-ce
+ API version:  1.29 (minimum version 1.12)
+ Go version:   go1.7.5
+ Git commit:   89658be
+
+root@vagrant:~# curl -sSL https://minimesos.org/install | sh
+root@vagrant:~# export PATH=$PATH:/home/USER_REDACTED/.minimesos/bin
+root@vagrant:~# minimesos up
+Pulling containersol/minimesos-cli:0.13.0
+0.13.0: Pulling from containersol/minimesos-cli
+b7f33cc0b48e: Pull complete
+43a564ae36a3: Pull complete
+efb75a810eee: Pull complete
+caf0c110d33e: Pull complete
+aadff284a195: Pull complete
+26bffb7df44f: Pull complete
+Digest: sha256:abe376953d06aee44e66545d228e7738afad28acbb80d221f10f1d5dd699c783
+Status: Downloaded newer image for containersol/minimesos-cli:0.13.0
+Failed to run command 'up'. null
+
+Both of them return this error:
+
+Failed to run command 'up'. null
+
+I have search from Google to try to find something, also delete all the docker images to keep a fresh environment, but the result are the same. Is it because of network? Or anything others? I don't know.
+
+Selected earlier-question evidence:
+[E1; H4; 2017-05-23 02:54:54] Exact excerpt from the earlier question:
+Can't install Kubernetes on Vagrant
+Use this guide to install Kubernetes on Vagrant cluster:

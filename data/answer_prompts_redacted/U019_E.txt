@@ -1,0 +1,29 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2018-03-17 08:35:08
+Title: Permission denied while creating image from scratch
+Tags: <docker>
+Body:
+Trying to create image from scratch according manual [链接：https://docs.docker.com/develop/develop-images/baseimages/#create-a-full-image-using-tar].
+
+Command below did needed job
+$ sudo debootstrap xenial xenial > /dev/null
+
+Tried to create image:
+$ sudo tar -C xenial -c . | docker import - xenial
+
+Got error:
+
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Post http://%2Fvar%2Frun%2Fdocker.sock/v1.35/images/create?fromSrc=-&message=&repo=xenial&tag=: dial unix /var/run/docker.sock: connect: permission denied
+
+How to fix that?
+
+Selected earlier-question evidence:
+[E1; H2; 2018-03-16 08:54:48] Exact excerpt from the earlier question:
+Create new image based on standard one
+I have installed Docker and have running some Ubuntu image with command:

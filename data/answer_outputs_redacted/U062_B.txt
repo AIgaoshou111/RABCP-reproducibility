@@ -1,0 +1,35 @@
+On Ubuntu Docker images, `ifconfig` is not installed by default because it's part of the `net-tools` package, which has been deprecated in favor of the `ip` command from `iproute2`.
+
+To install `ifconfig` in your Ubuntu Docker container:
+
+```bash
+apt-get update
+apt-get install net-tools
+```
+
+The package is called `net-tools`, not `ifconfig`. That's why your earlier attempt with `apt-get install ifconfig` failed.
+
+**Alternative:** You can use the modern `ip` command instead, which is already available in most Ubuntu images:
+
+```bash
+ip addr show
+# or simply
+ip a
+```
+
+This shows the same network interface information as `ifconfig` and is the recommended approach for newer systems.
+
+**Note about persistence:** Based on your earlier question about files disappearing after container restart, remember that changes made inside a running container are lost when the container is removed. To make changes permanent, you need to either:
+1. Commit the container to a new image: `docker commit <container_id> new_image_name`
+2. Or better, create a Dockerfile with the installation command and build a custom image
+
+For example, create a Dockerfile:
+```dockerfile
+FROM ubuntu
+RUN apt-get update && apt-get install -y net-tools
+```
+
+Then build it:
+```bash
+docker build -t ubuntu-with-net-tools .
+```

@@ -1,0 +1,53 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2015-07-14 07:49:38
+Title: How to use docker remote api to create container In java?
+Tags: <java><docker>
+Body:
+I want to using docker remote api in this [链接：http://docs.docker.com/reference/api/docker_remote_api_v1.19/].
+I have succeed in this command to create container:
+
+curl -v -X POST -H "Content-Type: application/json" -d '{"Image": " registry:2",}' http://192.168.59.103:2375/containers/create?name=test_remote_reg
+
+Then,I use HttpClient(4.3.1) in java to try to create container via this code:
+
+    String containerName = "test_remote_reg";
+    String imageName = "registry:2";
+    String url = DockerConfig.getValue("baseURL")+"/containers/create?name="+containerName;
+    List<NameValuePair> ls = new ArrayList<NameValuePair>();
+    ls.add(new BasicNameValuePair("Image",imageName));
+    UrlEncodedFormEntity fromEntity = new UrlEncodedFormEntity(ls, "uTF-8");
+    HttpPost post = new HttpPost(url);
+    post.setHeader("Content-Type", " application/json");
+    if(null!=fromEntity) post.setEntity(fromEntity);
+    HttpClient client = new DefaultHttpClient();
+    client.execute(post);
+
+It didn't work, and throw error:
+
+invalid character 'I' looking for beginning of value
+
+I just add header information and add param pair about "Image:test_remote_reg".
+
+What is wrong about my java code? What difference is between they? What should I edit for my java code?
+
+Selected earlier-question evidence:
+[E1; H2; 2015-07-03 08:13:54] Exact excerpt from the earlier question:
+How to use docker-java API to connect docker?
+I'm new to docker, and I want to use java api to print my docker information. Then I find the Api in this link [链接：https://github.com/docker-java/docker-java] about docker-java. And I found my boot2docker ip is 196.168.59.103:2376. And I use this command:
+
+[E2; H4; 2015-07-07 09:09:22] Exact excerpt from the earlier question:
+How to enable docker remote api rest in mac OS X with boot2docker?
+I'm new to docker. I want to use docker remote api, But I failed. Firstly, I use the docker-java [链接：https://github.com/docker-java/docker-java] that is Remote API client libraries. It throws Exception is:
+
+[E3; H5; 2015-07-13 11:19:15] Exact excerpt from the earlier question:
+How to use docker remote api to create container?
+I'm new to docker. I have read the tutorial [链接：http://docs.docker.com/reference/api/docker_remote_api_v1.19/] in docker remote API . In aspect of creating container. It show me too many param to fill. I want to know what is equivalent to this command :
+
+History-derived overall profile (uncertain estimate, not certified ability):
+Domain: Docker; prior questions: 5; mean level: 1.969 / 5; distribution: level 1: 0.159, level 2: 0.714, level 3: 0.127, level 4: 0.000, level 5: 0.000. Use this only to calibrate explanation depth when useful; specific evidence and the current question take priority.

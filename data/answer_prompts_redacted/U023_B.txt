@@ -1,0 +1,119 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2016-08-24 07:02:53
+Title: Easiest way to deploy docker application
+Tags: <docker><docker-compose><docker-registry>
+Body:
+My application uses multiple technologies like redis, couchDB, nodejs, ...
+Some of them I take from docker hub (e.g. redis) and some others (e.g. my nodejs app) is hosted in my docker repo on my own server.
+Now what is the easiest way to deploy my full application to a remote system?
+It would be great if I could just use one docker-compose.yml and run docker-compsoe up -d, but I think this won't work, because I use images from my own docker repo. So do I first have to pull all these images via docker pull on the remote system or is it possible to tell my .yml-file to pull from my repo? Or is there any other solution?
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2016-06-21 11:49:30
+Title: where are apps installed using apt-get within Dockerfile?
+Tags: <docker><dockerfile><docker-machine>
+Body:
+I'm new to Docker. I'm on a Windows machine.
+I wrote this Dockerfile:
+
+FROM ubuntu:xenial
+MAINTAINER [EMAIL_REDACTED]
+EXPOSE 1883 1883
+RUN apt-get update && apt-get install mosquitto -y
+CMD ["mosquitto"]
+
+It was successful: I was able to build & start the image and after that I also was able to connect a client to the mosquitto-server - so that means the mosquitto-server was running in the docker-container.
+
+As a next test case, I want to overwrite the default mosquitto-config-file, so I think I can use the ADD statement in my Dockerfile (and then rebuilding). But therefore I need to know where mosquitto is installed. I ssh into the VM and I expected mosquitto in /etc/mosquitto, but there is no such folder.
+
+1) where is mosquitto?
+
+2) why can't I run mosquitto ("not found") while ssh in the VM - but CMD ["mosquitto"] works?
+
+3) Is it best practise to use ADD in my case?
+
+[H2]
+Date: 2016-06-30 20:13:40
+Title: build docker image from local (unpublished) image
+Tags: <docker><dockerfile>
+Body:
+I have two Dockerfiles:
+
+mydockerfiles
+|_baseimage
+|_myapp
+
+Now I run docker build -t munchkin/base -f baseimage .
+Now I want to use this image as FROM within my myapp-Dockerfile:
+
+FROM munchkin/base
+
+But when I run docker build -t munchkin/myapp -f myapp . I get:
+
+Pulling repository docker.io/munchkin/base
+Error: image munchkin/base not found
+
+I believe it could be possible if I publish my first image on dockerhub - but is it also possible without publishing - just use the local image?
+
+Edit:
+or, as alternative, is it possible without even building my first image? Just do something like a script include?
+
+[H3]
+Date: 2016-07-05 06:41:41
+Title: Cannot start mosquitto as service on docker container
+Tags: <docker><dockerfile><mosquitto><docker-image>
+Body:
+I created an image from a Dockerfile:
+
+FROM debian:latest
+
+RUN apt-get update && apt-get install -y \
+mosquitto \
+&& rm -rf /var/lib/apt/lists/*
+
+# mosquitto setup
+EXPOSE 1883
+COPY config/broker/conf.d/ /etc/mosquitto/conf.d/
+CMD mosquitto
+
+This works, but I'd like to start mosquitto as a service (is it recommended at all?). But when I replace the last line with
+
+CMD service mosquitto start
+
+the service doesn't start & I the container isn't running (but I don't get an error message during image creation)
+
+[H4]
+Date: 2016-07-06 11:04:41
+Title: docker: npm install on docker start
+Tags: <docker><dockerfile>
+Body:
+I'd like to have some kind of "development docker image" in which npm install is executed every time I restart my Docker Container (becuase I don't want to build, push and pull the new dev image every day from my local machine to our Docker server).
+So I thought I could do sth. like this in my Dockerfile:
+
+CMD npm install git+ssh://[EMAIL_REDACTED]/my/project.git#develop && npm start
+
+Sadly, this doesn't work. The container stops immediately after docker start and I don't know why, because this works:
+
+RUN npm install git+ssh://[EMAIL_REDACTED]/my/project.git#develop
+CMD npm start
+
+(Just for testing, that's of course not what I want to have). But maybe I have some wrong perception of CMD and someone could enlighten me?
+
+[H5]
+Date: 2016-08-03 13:52:44
+Title: Docker using separate lib/bin
+Tags: <docker><ethereum><kunstmaan>
+Body:
+I'm new to Docker and as I understand, Docker uses the same libs/bins for multiple containers where possible.
+How can I tell Docker to don't do that - so using a new lib or bin even if the same lib/bin already exists?
+
+To be concrete:
+I use this image [链接：https://github.com/Kunstmaan/docker-ethereum] and I want to start multiple instances of geth-testnet but all of them shall use their own blockchain.

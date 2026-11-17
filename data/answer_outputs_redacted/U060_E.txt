@@ -1,0 +1,68 @@
+The error happens because `ENTRYPOINT` in its JSON-array form does **not** run a shell. It tries to execute the literal string `PYTHONPATH=`pwd`/..` as the executable, which doesn’t exist.
+
+You need to set the environment variable properly, not pass it as the first argument to `ENTRYPOINT`.
+
+## Correct approaches
+
+### Option 1: Use the Docker `ENV` instruction
+
+In your Dockerfile:
+
+```dockerfile
+ENV PYTHONPATH=/path/to/your/code/..
+```
+
+Or if you want it relative to the working directory:
+
+```dockerfile
+WORKDIR /app
+ENV PYTHONPATH=/app/..
+```
+
+Then keep your entrypoint as:
+
+```dockerfile
+ENTRYPOINT ["/usr/local/bin/gunicorn", "web_interface:app", "-w", "4", "-t", "90", "--log-level=debug", "-b", "0.0.0.0:8000", "--reload"]
+```
+
+### Option 2: Use the shell form of `ENTRYPOINT`
+
+If you really need `pwd` to be evaluated at runtime:
+
+```dockerfile
+ENTRYPOINT sh -c 'PYTHONPATH=$(pwd)/.. exec /usr/local/bin/gunicorn web_interface:app -w 4 -t 90 --log-level=debug -b 0.0.0.0:8000 --reload'
+```
+
+This runs a shell, sets `PYTHONPATH`, and then `exec`s gunicorn.
+
+### Option 3: Set it in `docker-compose.yml`
+
+If you’re using Docker Compose:
+
+```yaml
+services:
+  web:
+    build: .
+    environment:
+      - PYTHONPATH=/app/..
+    # or use a relative path if your working_dir is set
+    working_dir: /app
+```
+
+## Why your attempts failed
+
+- `"PYTHONPATH=pwd/.."` — still treated as a literal executable name in JSON form
+- `"PYTHONPATH=$(pwd)/.."` — same issue; `$(pwd)` is not expanded without a shell
+- `"PYTHONPATH=$PWD/.."` — same issue; `$PWD` is not expanded without a shell
+
+The JSON array form of `ENTRYPOINT`/`CMD` bypasses shell expansion entirely. That’s why the variable assignments don’t work there.
+
+## Recommendation
+
+Use **Option 1** with a hardcoded absolute path in the Dockerfile. It’s the most predictable and doesn’t depend on the working directory at runtime. If your code is at `/app` in the container, set:
+
+```dockerfile
+ENV PYTHONPATH=/app/..
+```
+
+This is cleaner than relying on `pwd` inside the container.

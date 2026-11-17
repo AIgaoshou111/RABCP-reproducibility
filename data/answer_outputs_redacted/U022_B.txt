@@ -1,0 +1,80 @@
+The issue is that Docker Compose 1.12.6 doesn't support passing build arguments via environment variables in the way you're attempting. Here's what's happening and how to fix it:
+
+## The Problem
+
+Your Dockerfile correctly uses `ARG` declarations, and your docker-compose.yml correctly maps them. However, when you run:
+
+```bash
+REP_USER=myusername REP_PASS=mypassword docker-compose build
+```
+
+The environment variables are set in the shell environment, but Docker Compose 1.12.6 doesn't automatically pass shell environment variables to build arguments unless they're explicitly referenced in the `.env` file or the compose file uses the `${VAR}` syntax.
+
+## The Solution
+
+Since you've already discovered that using a `.env` file works (as shown in your EDIT 2), that's your best option with Docker Compose 1.12.6:
+
+1. **Create a `.env` file** in the same directory as your docker-compose.yml:
+```bash
+REP_USER=myusername
+REP_PASS=mypassword
+```
+
+2. **Keep your docker-compose.yml as is**:
+```yaml
+version: "2"
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REP_USER: $REP_USER
+        REP_PASS: $REP_PASS
+```
+
+3. **Run the build normally**:
+```bash
+docker-compose build
+```
+
+## Why Your Other Attempts Didn't Work
+
+1. **Shell environment variables**: Docker Compose 1.12.6 doesn't automatically pass shell environment variables to build args. The `${VAR}` syntax in compose files only reads from the `.env` file, not from the shell environment.
+
+2. **Removing ARG from Dockerfile**: Environment variables set in the shell are not automatically available during the Docker build process. Docker builds are isolated from the host environment.
+
+3. **env_file directive**: This only affects runtime environment variables in the container, not build-time arguments.
+
+4. **Using `args` without values**: The syntax you tried in EDIT 3:
+```yaml
+args:
+  - REP_USER
+  - REP_PASS
+```
+This only works in Docker Compose 1.13+ and requires the variables to be available in the shell environment. Since you're on 1.12.6, this won't work.
+
+## Alternative: Upgrade Docker Compose
+
+If you can upgrade to Docker Compose 1.13 or later, you could use the shell environment variable approach:
+
+```bash
+export REP_USER=myusername
+export REP_PASS=mypassword
+docker-compose build
+```
+
+With this compose file:
+```yaml
+version: "2"
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - REP_USER
+        - REP_PASS
+```
+
+But since you're on 1.12.6, stick with the `.env` file approach.

@@ -1,0 +1,205 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2016-06-08 00:19:40
+Title: How to prevent zombie services with consul and gliderlabs/registrator?
+Tags: <docker><load-balancing><service-discovery><consul>
+Body:
+I am using consul with the gliderlabs/registrator container to show my active containers in consul.  When I delete containers too quickly the service is not deleted from consul, leaving "zombie" services that no longer exist. I have heard that there are extra options you can use with the gliderlabs/registrator container to prevent this such as -cleanup. However I have not been able to run any registrator's sucessfully with this option. This is my current docker run command for my registrators:
+
+docker run -d -h $(hostname -i) --name registrator1 \
+-v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator \
+consul://$(hostname -i):8500
+
+What do I have to add to this run command to have registrator remove any containers from consul that no longer exist or have gone down?
+
+Update: I have found the problem
+
+So I am running swarm using my consul cluster along with registrator's. To provide failover for swarm I placed a load balancer in front of my consul cluster and attached my swarm and registrator containers to the IP address of the load balancer.  This allowed any consul node to go down without loosing swarm.  
+
+However swarm does not register itself as a service.  It registers each node as a key value and is not bound to any node in the consul cluster.  Containers registered into consul with the registrator are created as services and bound to a single consul server.  
+
+I think whats happening is that when I delete a container the registrator goes to delete the service from consul but it only has a 33% chance of hitting the right consul server, and deleting the service, since my LB is just doing round robin. 
+
+All of my swarm masters, load balancer, consul servers and swarm workers are running on different machines.  My registrators are running on my swarm worker machines. Everything is running in containers.
+
+Enabling sticky load balancing is a temporary fix that solves my issue. However I think attempting to run some type of consul workers on my swarm workers and having registrator bind itself to the consul running on the local hosts may be the solution. I believe this might be the "bench-worker" described in consuls github https://github.com/hashicorp/consul/tree/master/bench [链接：https://github.com/hashicorp/consul/tree/master/bench].  I am still fairly new to consul so I'm still trying to figure it all out.
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2016-05-07 13:50:51
+Title: CoreOS member node will not start when using "etcdctl member add"
+Tags: <docker><coreos><etcd>
+Body:
+I am trying to add an additional etcd node to my CoreOS cluster with the command "etcdctl member add core2 http://172.31.12.183:2380 [链接：http://172.31.12.183:2380]" but this command leaves my new node as unstarted and my cluster is unhealthy because of this.  How do I fix this or start my new node after I run the etcdctl member add command?  Here is the output of when I run this command and the cluster status afterwards:
+
+core@ip-172-31-12-183 ~ $ etcdctl member add core2 http://172.31.12.183:2380
+Added member named core2 with ID 4d14f3cb088a2f54 to cluster
+
+ETCD_NAME="core2"
+ETCD_INITIAL_CLUSTER="core2=http://172.31.12.183:2380,ec2c8c9d2cf141cf9657e98b260895a5=http://172.31.12.182:2380"
+ETCD_INITIAL_CLUSTER_STATE="existing"
+core@ip-172-31-12-183 ~ $ etcdctl member list
+4d14f3cb088a2f54[unstarted]: peerURLs=http://172.31.12.183:2380
+aedf0a441a723d8a: name=ec2c8c9d2cf141cf9657e98b260895a5 peerURLs=http://172.31.12.182:2380 clientURLs=http://172.31.12.182:2379,http://172.31.12.182:4001
+core@ip-172-31-12-183 ~ $ etcdctl cluster-health
+member 4d14f3cb088a2f54 is unreachable: no available published client urls
+member aedf0a441a723d8a is unhealthy: got unhealthy result from http://172.31.12.182:2379
+cluster is unhealthy
+
+[H2]
+Date: 2016-05-26 00:20:49
+Title: Ubuntu docker swarm error "docker: Cannot connect to the Docker daemon. Is the docker daemon running on this host?."
+Tags: <docker><vagrant><ubuntu-14.04><consul><docker-swarm>
+Body:
+I am trying to set up docker swarm with consul on some Ubuntu 14.04 vagrant boxes, however there is an issue with the docker daemon. I already have a progrium/consul container running and a swarm manager container running.  172.28.128.3 is the master machine running everything, 172.28.128.4 is the machine I am trying to start a docker swarm container on.  Here is my command and the output:
+
+vagrant@ubuntu-14:~$ docker -H=172.28.128.4:2375 run -d swarm join \
+> --advertise=172.28.128.4:2375 \
+> consul://172.28.128.3:8500/
+docker: Cannot connect to the Docker daemon. Is the docker daemon running on this host?.
+See 'docker run --help'.
+
+There is no other problem with docker and attempting to start the daemon the same way I would on my macs boot2docker gives the following output:
+
+vagrant@ubuntu-14:~$ eval "$(docker-machine env default)"
+docker-machine: command not found
+
+Update: here is the output of $sudo docker info and $docker info (they are exactly the same except for one line described below)
+
+vagrant@ubuntu-14:~$ sudo docker info
+Containers: 8
+ Running: 2
+ Paused: 0
+ Stopped: 6
+Images: 8
+Server Version: 1.11.1
+Storage Driver: aufs
+ Root Dir: /var/lib/docker/aufs
+ Backing Filesystem: extfs
+ Dirs: 81
+ Dirperm1 Supported: false
+Logging Driver: json-file
+Cgroup Driver: cgroupfs
+Plugins: 
+ Volume: local
+ Network: null host bridge
+Kernel Version: 3.13.0-24-generic
+Operating System: Ubuntu 14.04 LTS
+OSType: linux
+Architecture: x86_64
+CPUs: 2
+Total Memory: 993.9 MiB
+Name: ubuntu-14
+ID: BBEM:JVHD:UXV7:AGQR:ITUY:3KGT:K4RS:7KSR:ESCJ:2VZQ:QTOG:J26U
+Docker Root Dir: /var/lib/docker
+Debug mode (client): false
+Debug mode (server): false
+Registry: https://index.docker.io/v1/
+WARNING: No kernel memory limit support
+
+The only difference between the two commands is that $docker info has the following entry for Network:
+
+ Network: host bridge null
+
+On my second machine there is no difference at all between the two command outputs.
+
+UPDATE:  after adding DOCKER_OPTS="-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock" to the file /etc/default/docker on my worker machine and restarting the docker service on my worker server sudo docker restart swarm is working correctly.
+Thank you JorelC for the solution.
+
+[H3]
+Date: 2016-05-31 00:32:30
+Title: Docker swarm: How to manually set node names?
+Tags: <ubuntu><docker><service-discovery><consul><docker-swarm>
+Body:
+For some background on my environment:
+
+I have docker swarm running on 3 ubuntu 14.04 vagrant boxes.  The swarm master is running on 1 machine (with consul) and the other 2 machines are running swarm workers that are joined to the master. I set up the environment following the documentation page https://docs.docker.com/swarm/install-manual/ [链接：https://docs.docker.com/swarm/install-manual/].  It is working correctly so that any docker -H :4000 <some_docker_command> run from my master machine works fine. Service discovery is active as I am running the gliderlabs/registrator container on both of my workers. Any changes to my cluster, such as a node or container failure, are shown by swarm within about 30 seconds (which is a bit slow in my opinion, but at least its working).
+
+The issue:
+
+Swarm recognizes both of my nodes as "ubuntu-14" 
+
+vagrant@ubuntu-14:~$ docker -H :4000 ps
+CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                        NAMES
+a6972155d243        cohenaj194/apache-simple   "/usr/sbin/apache2ctl"   About an hour ago   Up 13 seconds       172.28.128.6:32770->80/tcp   ubuntu-14/test2
+af78a8c788ed        gliderlabs/registrator     "/bin/registrator con"   2 hours ago         Up About an hour                                 ubuntu-14/registrator2
+8e39416a785a        gliderlabs/registrator     "/bin/registrator con"   2 hours ago         Up 2 hours                                       ubuntu-14/registrator1
+27c2225b32fb        cohenaj194/apache-simple   "/usr/sbin/apache2ctl"   2 hours ago         Up 2 hours          172.28.128.4:32770->80/tcp   ubuntu-14/test1
+vagrant@ubuntu-14:~$ docker -H :4000 network ls
+NETWORK ID          NAME                DRIVER
+38b24dc5615b        ubuntu-14/bridge    bridge              
+c4e1ffae2fa7        ubuntu-14/bridge    bridge              
+29cf499e57ab        ubuntu-14/host      host                
+7b4a4a153ada        ubuntu-14/host      host                
+723b6bc6f23c        ubuntu-14/none      null                
+01f3647d62cd        ubuntu-14/none      null   
+
+I would like to know how to manually change the name of my nodes from "ubuntu-14" to something else.  I would prefer to be able to set the tags by adding a line to the /etc/default/docker file, as the private cloud I will eventually be running my cluster within does not have a way to set instance tags similar to other cloud providers such as AWS.
+
+tldr: I have 3 vagrant ubuntu boxes running swarm (1 master + 2 workers).  The workers by default have the tag name "ubuntu-14" and I want to manually change that by adding something to the /etc/default/docker file on each worker.  What do I add?
+
+[H4]
+Date: 2016-05-31 22:15:42
+Title: How to enable faster container rescheduling with Docker Swarm and Consul?
+Tags: <docker><consul><docker-swarm>
+Body:
+For some background on my environment:
+
+I have docker swarm running on 3 ubuntu 14.04 vagrant boxes.  The swarm master is running on 1 machine (with consul) and the other 2 machines are running swarm workers that are joined to the master. I set up the environment following the documentation page https://docs.docker.com/swarm/install-manual/ [链接：https://docs.docker.com/swarm/install-manual/].  It is working correctly so that any docker -H :4000 <some_docker_command> run from my master machine works fine. Service discovery is active as I am running the gliderlabs/registrator container on both of my workers. 
+
+The issue:
+
+Any changes to my cluster, such as a node or container failure and the process of rescheduling containers (which are created with the tag -e "reschedule:on-node-failure") by swarm occur within about 30 - 45 seconds.  By comparison when I was running fleet and etcd on CoreOS systems container rescheduling and notification of node failures occurred usually within about 5 seconds.  Is there any way to change some of the settings within consul and docker swarm to speed everything up to a level similar to what I experienced with fleet and etcd on CoreOS? If so what would I need to do?
+
+tldr: I am running swarm with consul, container reschedualing and changes to the output ofdocker -H :4000 ps don't occur untill about 30 - 45 seconds after a node goes down.  How can I reduce this time period?
+
+[H5]
+Date: 2016-06-02 20:23:49
+Title: How to connect Docker Swarm to multiple consul servers for failover?
+Tags: <docker><failover><consul><docker-swarm>
+Body:
+I am running docker swarm with consul.  I have a consul cluster made with 3 nodes connected to each other for failover.  The issue is that I can only connect my swarm workers and masters to a single node and if that node goes down then swarm stops working.  So how can I connect swarm workers and masters to all my nodes? The following commands if run from the master will set up my swarm environment connected to a single consul server:
+
+#### REFERENCE
+# {{master_i}} is the IP address of the master server
+# {{consul_i}} is the IP address of the consul server
+# {{worker_i}} is the IP address of a worker server
+
+#### START THE MASTER
+docker run --restart=unless-stopped --name=swarm-manager0 -d -p 4000:4000 swarm manage -H :4000 --replication \
+--advertise {{master_0}}:4000 \
+consul://{{consul_0}}:8500
+
+#### START THE WORKERS REMOTELY FROM THE MASTER
+docker -H={{worker_0}}:2375 run -d --restart=unless-stopped --name=swarm-worker0 swarm join \
+--advertise={{worker_0}}:2375 \
+consul://{{consul_0}}:8500/
+
+docker -H={{worker_1}}:2375 run -d --restart=unless-stopped --name=swarm-worker1 swarm join \
+--advertise={{worker_1}}:2375 \
+consul://{{consul_0}}:8500/
+
+docker -H={{worker_2}}:2375 run -d --restart=unless-stopped --name=swarm-worker2 swarm join \
+--advertise={{worker_2}}:2375 \
+consul://{{consul_0}}:8500/
+
+#### START THE WORKER SERVICE DISCOVERY
+docker -H={{worker_0}}:2375 run -d --restart=unless-stopped \
+-h {{worker_0}} --name registrator0 -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator \
+consul://{{consul_0}}:8500
+
+docker -H={{worker_1}}:2375 run -d --restart=unless-stopped \
+-h {{worker_1}} --name registrator1 -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator \
+consul://{{consul_0}}:8500
+
+docker -H={{worker_2}}:2375 run -d --restart=unless-stopped \
+-h {{worker_2}} --name registrator2 -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator \
+consul://{{consul_0}}:8500
+
+Note that simply adding two extra consul://{{consul_i}}:8500 (for the other two consul servers) to the end of each docker run command will not connect the containers to the other consul servers.

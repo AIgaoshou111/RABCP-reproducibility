@@ -1,0 +1,104 @@
+To install SSL on your Kubernetes deployment with a DigitalOcean load balancer, you should not generate certificates inside the pod. Instead, use Kubernetes-native SSL termination at the ingress level. Here's the correct approach:
+
+## 1. Install cert-manager for automatic SSL certificates
+
+First, install cert-manager in your cluster:
+
+```bash
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.6.0/cert-manager.yaml
+```
+
+## 2. Create a ClusterIssuer for Let's Encrypt
+
+Create a file `letsencrypt-prod.yaml`:
+
+```yaml
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: [EMAIL_REDACTED]
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    http01: {}
+```
+
+Apply it:
+```bash
+kubectl apply -f letsencrypt-prod.yaml
+```
+
+## 3. Update your Ingress configuration
+
+Modify your ingress to include TLS configuration:
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: your-app-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+  - hosts:
+    - yourdomain.com
+    secretName: yourdomain-tls
+  rules:
+  - host: yourdomain.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: your-service
+          servicePort: 80
+```
+
+Apply the ingress:
+```bash
+kubectl apply -f your-ingress.yaml
+```
+
+## 4. Configure your Service
+
+Ensure your service is properly configured:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: your-service
+spec:
+  selector:
+    app: your-app
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP  # Change from LoadBalancer to ClusterIP
+```
+
+## 5. Install NGINX Ingress Controller (if not already installed)
+
+If you don't have an ingress controller, install NGINX:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.26.1/deploy/mandatory.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.26.1/deploy/provider/cloud-generic.yaml
+```
+
+## 6. Update DNS
+
+Point your domain's DNS to the DigitalOcean load balancer IP that gets created for your ingress controller.
+
+## Key Points:
+
+- **Don't modify the container**: Your container should only listen on port 80 (HTTP). SSL termination happens at the ingress level.
+- **Automatic renewal**: cert-manager will automatically renew certificates before they expire.
+- **No pod restarts needed**: Certificates are stored as Kubernetes secrets, not inside pods.
+- **Remove port 443 from container**: Your container doesn't need to listen on 443 since SSL is terminated at the load balancer.
+
+This approach ensures your SSL certificates persist across pod restarts and are automatically managed without manual intervention.

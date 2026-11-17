@@ -1,0 +1,53 @@
+In Docker Compose, you cannot define a variable directly inside the `docker-compose.yml` file itself. The `$APP_NAME` syntax is for **variable substitution**, and the values must come from outside the file.
+
+## How to provide the value
+
+### 1. **Environment variable in your shell**
+Set it before running `docker-compose`:
+
+```bash
+export APP_NAME=myapp
+docker-compose up
+```
+
+Or inline:
+
+```bash
+APP_NAME=myapp docker-compose up
+```
+
+### 2. **`.env` file**
+Docker Compose automatically reads a `.env` file in the same directory as your `docker-compose.yml`:
+
+```env
+# .env
+APP_NAME=myapp
+```
+
+Then just run:
+
+```bash
+docker-compose up
+```
+
+### 3. **Shell-specific defaults (optional)**
+You can use `${APP_NAME:-defaultname}` to provide a fallback if the variable isn't set:
+
+```yaml
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${APP_NAME:-myapp}
+    container_name: ${APP_NAME:-myapp}
+```
+
+## Important notes
+
+- The `.env` file is only used for **variable substitution** in `docker-compose.yml`, not for passing environment variables into containers (unless you explicitly reference them with `env_file` or `environment`).
+- Variable substitution works in most fields, including `image`, `container_name`, `build`, `ports`, `volumes`, etc.
+- If you need more complex logic or defaults, you can use shell parameter expansion syntax like `${VAR:-default}` or `${VAR:?error message}`.
+
+So to answer your question directly: **No, you cannot define the variable's value in the same `docker-compose.yml` file** — you need to provide it via environment variables or a `.env` file.

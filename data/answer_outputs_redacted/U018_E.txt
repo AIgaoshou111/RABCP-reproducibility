@@ -1,0 +1,75 @@
+A Java application can detect Docker in a few practical ways, but the cleanest approach is usually **not to detect Docker at all** — instead, make the mount point configurable.
+
+## Recommended approach: configuration, not detection
+
+Pass the music root as an environment variable or system property in your Dockerfile/run command:
+
+```dockerfile
+ENV MUSIC_ROOT=/Music
+```
+
+Or at runtime:
+
+```bash
+docker run -e MUSIC_ROOT=/Music -v /path/to/music:/Music your-image
+```
+
+Then in Java:
+
+```java
+String musicRoot = System.getenv().getOrDefault("MUSIC_ROOT", "/");
+```
+
+When running natively, the default is `/` (or your normal filesystem root). In Docker, you explicitly set it to `/Music`. This is more robust than detection because:
+
+- It works the same on any container runtime (Docker, Podman, Kubernetes, etc.)
+- It doesn't break if Docker's internal files change
+- It's testable and explicit
+
+## If you really need to detect Docker
+
+If you must detect it, here are the common methods:
+
+### 1. Check for `/.dockerenv`
+
+Docker creates this file at the container's root:
+
+```java
+boolean inDocker = new File("/.dockerenv").exists();
+```
+
+**Caveat:** This is not guaranteed to exist in all container runtimes or future Docker versions. It's a Docker-specific convention.
+
+### 2. Check `/proc/1/cgroup`
+
+```java
+boolean inDocker = false;
+try {
+    String cgroup = new String(Files.readAllBytes(Paths.get("/proc/1/cgroup")));
+    inDocker = cgroup.contains("docker") || cgroup.contains("containerd");
+} catch (IOException e) {
+    // Not in Docker or /proc not available
+}
+```
+
+**Caveat:** The cgroup format varies by Docker version, host OS, and container runtime. This is fragile.
+
+### 3. Check for container-specific environment variables
+
+```java
+boolean inDocker = System.getenv("container") != null 
+                || System.getenv("DOCKER_CONTAINER") != null;
+```
+
+**Caveat:** These are not set by default in all Docker setups.
+
+## Summary
+
+| Method | Reliability | Notes |
+|--------|-------------|-------|
+| Config/env var | **Best** | Explicit, portable, testable |
+| `/.dockerenv` | Good for Docker specifically | May not exist in other runtimes |
+| `/proc/1/cgroup` | Fragile | Format changes between versions |
+| Env vars | Unreliable | Not set by default |
+
+For your NAS use case, I'd strongly recommend the configuration approach — it's simpler, more maintainable, and doesn't tie your application to Docker's implementation details.

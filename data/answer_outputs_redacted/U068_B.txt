@@ -1,0 +1,64 @@
+The error you're seeing is:
+
+```
+WARN Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+```
+
+This means Marathon cannot connect to ZooKeeper at `172.28.10.133:2190`. The key issue is that **ZooKeeper is not actually running** when Marathon tries to connect.
+
+## Root Cause
+
+Look at your ZooKeeper command in the master compose file:
+
+```yaml
+command: /home/USER_REDACTED/bin/zkServer.sh restart
+```
+
+The `zkServer.sh restart` command starts ZooKeeper in the background and then **exits immediately**. In Docker, when the main process (PID 1) exits, the container stops. So ZooKeeper starts, then the container exits, and ZooKeeper is killed.
+
+This is confirmed by the log showing Marathon trying to connect to `172.28.10.133:2190` and getting "Connection refused" — nothing is listening on that port.
+
+## Fix
+
+Change the ZooKeeper command to run in the foreground so the container stays alive:
+
+```yaml
+zookeeper:
+  image: ubuntu_mesos_home_marzieh
+  command: /home/USER_REDACTED/bin/zkServer.sh start-foreground
+  # ... rest of config
+```
+
+Or, if `start-foreground` isn't available in ZooKeeper 3.4.8, use:
+
+```yaml
+command: bash -c "/home/USER_REDACTED/bin/zkServer.sh start && tail -f /dev/null"
+```
+
+But `start-foreground` is the proper solution — it keeps ZooKeeper running as the container's main process.
+
+## Additional Checks
+
+1. **Verify ZooKeeper is actually listening** after starting the container:
+   ```bash
+   docker ps  # Check if zookeeper container is still running
+   docker exec <zookeeper_container> bash -c "echo stat | nc localhost 2190"
+   ```
+   Or from the host:
+   ```bash
+   nc -zv 150.20.11.133 2190
+   ```
+
+2. **Check ZooKeeper logs** to make sure it started successfully:
+   ```bash
+   docker logs <zookeeper_container>
+   ```
+
+3. **Verify the ZooKeeper configuration** — your `zoo.cfg` should have `clientPort=2190` and the `dataDir` should contain a valid `myid` file.
+
+4. **Note the IP discrepancy**: Marathon is trying to connect to `172.28.10.133` (a Docker bridge network IP) while your compose file uses `150.20.11.133`. Since you're using `network_mode: host`, this should resolve to the host IP, but verify that `150.20.11.133` is actually the host's IP and that ZooKeeper is binding to it (or to `0.0.0.0`).
+
+5. **Remove the `restart` command** — use `start-foreground` instead. The `restart` in `zkServer.sh` is meant for init scripts, not Docker containers.
+
+Apply the same fix to the slave node's ZooKeeper service as well.

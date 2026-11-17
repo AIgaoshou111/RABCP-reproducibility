@@ -1,0 +1,36 @@
+The error message tells you exactly what's happening:
+
+```
+-sh : boot2docker not found
+```
+
+You're running the `boot2docker ip` command **inside the boot2docker VM** (probably after connecting via `boot2docker ssh`), not from your Windows command prompt.
+
+## The problem
+
+`boot2docker` is a Windows executable that manages the VM from your Windows host. It doesn't exist inside the Linux VM itself.
+
+When you see the `-sh` prompt, that means you're inside the VM's shell (the boot2docker VM runs a minimal Linux system with `sh` as the default shell).
+
+## The solution
+
+Run `boot2docker ip` from your **Windows command prompt** (cmd.exe) or PowerShell, not from inside the VM.
+
+**From Windows:**
+```
+C:\> boot2docker ip
+192.168.59.103
+```
+
+**Not from inside the VM:**
+```
+docker@boot2docker:~$ boot2docker ip    # This will fail
+-sh: boot2docker: not found
+```
+
+## How to check where you are
+
+- If your prompt shows something like `docker@boot2docker:~$`, you're inside the VM
+- If your prompt shows `C:\Users\YourName>`, you're on Windows
+
+To exit the VM shell if you're inside it, type `exit` and press Enter. Then run `boot2docker ip` from Windows.

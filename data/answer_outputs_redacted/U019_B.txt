@@ -1,0 +1,33 @@
+The error is because your user is not in the `docker` group, so it cannot access the Docker daemon socket. You used `sudo` for `debootstrap` and `tar`, but the `docker import` command itself is running without `sudo`.
+
+## Quick fix
+
+Run the whole pipeline with `sudo`:
+
+```bash
+sudo tar -C xenial -c . | sudo docker import - xenial
+```
+
+Or run it as root:
+
+```bash
+sudo sh -c 'tar -C xenial -c . | docker import - xenial'
+```
+
+## Permanent fix
+
+Add your user to the `docker` group so you don't need `sudo` for Docker commands:
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+Then log out and log back in (or run `newgrp docker`) for the group change to take effect.
+
+After that, you can run:
+
+```bash
+tar -C xenial -c . | docker import - xenial
+```
+
+without `sudo`.

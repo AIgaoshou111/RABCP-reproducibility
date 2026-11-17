@@ -1,0 +1,530 @@
+[
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 0,
+    "params": {
+      "alpha": 0.01,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.760319603474441
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 1,
+    "params": {
+      "alpha": 0.01,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.760432161436657
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 2,
+    "params": {
+      "alpha": 0.01,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.7605837191632727
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 3,
+    "params": {
+      "alpha": 0.01,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.7609035620548906
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 4,
+    "params": {
+      "alpha": 0.01,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.7616431081213787
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 5,
+    "params": {
+      "alpha": 0.01,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.7625326330368823
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 6,
+    "params": {
+      "alpha": 0.05,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.7367788222103817
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 7,
+    "params": {
+      "alpha": 0.05,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.7340973863904989
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 8,
+    "params": {
+      "alpha": 0.05,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.7326265367422659
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 9,
+    "params": {
+      "alpha": 0.05,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.7307750667980661
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 10,
+    "params": {
+      "alpha": 0.05,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.7284565991494174
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 11,
+    "params": {
+      "alpha": 0.05,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.7267234605764702
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 12,
+    "params": {
+      "alpha": 0.1,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.6361257980795655
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 13,
+    "params": {
+      "alpha": 0.1,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.6306134430835983
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 14,
+    "params": {
+      "alpha": 0.1,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.6275398690630923
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 15,
+    "params": {
+      "alpha": 0.1,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.6237418776655942
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 16,
+    "params": {
+      "alpha": 0.1,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.618887271658702
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 17,
+    "params": {
+      "alpha": 0.1,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.6155833186891493
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 18,
+    "params": {
+      "alpha": 0.2,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.46855793810519963
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 19,
+    "params": {
+      "alpha": 0.2,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4642532787606659
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 20,
+    "params": {
+      "alpha": 0.2,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.4629640318245405
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 21,
+    "params": {
+      "alpha": 0.2,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.46289332129379546
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 22,
+    "params": {
+      "alpha": 0.2,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4668537751000299
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 23,
+    "params": {
+      "alpha": 0.2,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.474937314555203
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 24,
+    "params": {
+      "alpha": 0.35,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.38079467119935423
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 25,
+    "params": {
+      "alpha": 0.35,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.38026361471333936
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 26,
+    "params": {
+      "alpha": 0.35,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.3829710308644182
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 27,
+    "params": {
+      "alpha": 0.35,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3905299896753136
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 28,
+    "params": {
+      "alpha": 0.35,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4099801886432648
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 29,
+    "params": {
+      "alpha": 0.35,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4350131234985696
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 30,
+    "params": {
+      "alpha": 0.5,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3686679025596424
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 31,
+    "params": {
+      "alpha": 0.5,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.3716255125072465
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 32,
+    "params": {
+      "alpha": 0.5,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.37810592791383907
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 33,
+    "params": {
+      "alpha": 0.5,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3920523519435635
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 34,
+    "params": {
+      "alpha": 0.5,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.42223047939359115
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 35,
+    "params": {
+      "alpha": 0.5,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4592388888535266
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 36,
+    "params": {
+      "alpha": 0.75,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3938843683563228
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 37,
+    "params": {
+      "alpha": 0.75,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4025945691287856
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 38,
+    "params": {
+      "alpha": 0.75,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.4140517780796022
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 39,
+    "params": {
+      "alpha": 0.75,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4359723603850889
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 40,
+    "params": {
+      "alpha": 0.75,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4798265193688369
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 41,
+    "params": {
+      "alpha": 0.75,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5284254542901776
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 42,
+    "params": {
+      "alpha": 1.0,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.43510082379483866
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 43,
+    "params": {
+      "alpha": 1.0,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4460061567090294
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 44,
+    "params": {
+      "alpha": 1.0,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.46053102626371833
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 45,
+    "params": {
+      "alpha": 1.0,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4865458899769585
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 46,
+    "params": {
+      "alpha": 1.0,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.5421034897483439
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "ewma",
+    "candidate_id": 47,
+    "params": {
+      "alpha": 1.0,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.6026156682027649
+  }
+]

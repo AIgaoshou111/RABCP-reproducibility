@@ -1,0 +1,61 @@
+The error means Docker Compose does not recognize `app` as a valid service key in your `docker-compose.yml`. In the file you posted, the indentation is broken: `app:` is indented under `db:` instead of being a sibling service at the same level as `db:`.
+
+Your current file effectively looks like this:
+
+```yaml
+services:
+  db:
+    container_name: djangy-db
+    image: postgres
+
+    app:                 # <-- this is nested under db, not a top-level service
+      container_name: djangy-app
+      ...
+```
+
+Compose sees `app` as an unknown option inside the `db` service, hence:
+
+```text
+Unsupported config option for services: 'app'
+```
+
+Fix the indentation so `db` and `app` are both direct children of `services`:
+
+```yaml
+version: '3'
+
+services:
+  db:
+    container_name: djangy-db
+    image: postgres
+
+  app:
+    container_name: djangy-app
+    build:
+      context: ./
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    links:
+      - db
+```
+
+A few additional notes for this setup:
+
+- `links` is legacy. In Compose v3, services on the same default network can already reach each other by service name, so you can remove `links` and use `db` as the hostname from the `app` container.
+- If your Django settings use `HOST: db`, make sure PostgreSQL is configured to listen on the Docker network and the database/user exist.
+- The `version` key is optional in newer Compose versions, but adding `version: '3'` is fine for 2019-era Compose.
+
+After correcting the indentation, run:
+
+```bash
+docker-compose config
+```
+
+to validate the file, then:
+
+```bash
+docker-compose up
+```

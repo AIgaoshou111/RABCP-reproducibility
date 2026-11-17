@@ -1,0 +1,149 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2015-01-05 07:30:09
+Title: Why does boot2docker ip fail?
+Tags: <docker><boot2docker>
+Body:
+I am totally confused with this. I have installed boot2docker on Windows. I started it using boot2docker start icon. It has launched successfully. I tried out all the docker commands like pull attach run etc. Everything works fine. But when i try 
+
+boot2docker ip
+
+It says
+
+-sh : boot2docker not found.
+
+What's the problem? Am i in wrong directory? or installation done wrongly? Any suggestions.
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2014-12-18 10:41:23
+Title: Boot2Docker Start up fails
+Tags: <virtual-machine><docker>
+Body:
+I am completely new to docker. I have installed it from Source [链接：https://github.com/boot2docker/windows-installer/releases/tag/v1.4.1]. I am trying to run it from cmd by using boot2docker start. But i get the following
+
+boot2docker start
+     Failed to start machine boot2docker-vm <run again with v for details> 
+
+boot2docker init
+     virtual machine boot2docker-vm already exists
+
+boot2docker start
+     Failed to start machine boot2docker-vm exit status:1
+
+So, For you guys it would be a simple one. I don't know what to do. I tried SO [链接：https://stackoverflow.com/questions/26572112/running-boot2docker-error-in-run-failed-to-get-machine-boot2docker-vm-mac]. But i can't able to understand the solution so i failed to achieve it. Please provide some suggestions
+
+EDIT:
+   I hope it will be helpful. There is some thing disabled in bios.
+
+boot2docker -v start
+Boot2Docker-cli version: v1.4.1
+Git commit: 43241cb
+2014/12/18 16:12:35 executing: C:\Program Files\Oracle\VirtualBox\VBoxManage.exe
+  showvminfo boot2docker-vm --machinereadable
+2014/12/18 16:12:35 executing: C:\Program Files\Oracle\VirtualBox\VBoxManage.exe
+  guestproperty set boot2docker-vm /VirtualBox/GuestAdd/SharedFolders/MountPrefix
+  /
+2014/12/18 16:12:36 executing: C:\Program Files\Oracle\VirtualBox\VBoxManage.exe
+  guestproperty set boot2docker-vm /VirtualBox/GuestAdd/SharedFolders/MountDir /
+2014/12/18 16:12:36 executing: C:\Program Files\Oracle\VirtualBox\VBoxManage.exe
+  sharedfolder add boot2docker-vm --name c/Users --hostpath C:\Users --automount
+  VBoxManage.exe: error: Shared folder named 'c/Users' already exists
+VBoxManage.exe: error: Details: code VBOX_E_OBJECT_IN_USE (0x80bb000c), componen
+  t SessionMachine, interface IMachine, callee IUnknown
+  VBoxManage.exe: error: Context: "CreateSharedFolder(Bstr(name).raw(), Bstr(hostp
+  ath).raw(), fWritable, fAutoMount)" at line 1009 of file VBoxManageMisc.cpp
+  2014/12/18 16:12:36 executing: C:\Program Files\Oracle\VirtualBox\VBoxManage.exe
+  setextradata boot2docker-vm VBoxInternal2/SharedFoldersEnableSymlinksCreate/ c/U
+  sers 1
+2014/12/18 16:12:36 executing: C:\Program Files\Oracle\VirtualBox\VBoxManage.exe
+  startvm boot2docker-vm --type headless
+  Waiting for VM "boot2docker-vm" to power on...
+VBoxManage.exe: error: **VT-x is disabled in the BIOS.** (VERR_VMX_MSR_VMXON_DISABLE
+  D)
+VBoxManage.exe: error: D**etails: code E_FAIL (0x80004005)**, component Console, int
+  erface IConsole
+2014/12/18 16:12:38 executing: C:\Program Files\Oracle\VirtualBox\VBoxManage.exe
+  showvminfo boot2docker-vm --machinereadable
+error in run: Failed to start machine "boot2docker-vm": exit status 1
+
+[H2]
+Date: 2014-12-20 06:49:10
+Title: What does Go Version means?
+Tags: <docker>
+Body:
+docker version
+
+outputs
+
+docker emulating version 0.1.3
+client version: 0.5
+server version: 0.5
+go version: go 1.1
+
+What does go version means?
+
+[H3]
+Date: 2014-12-22 04:12:16
+Title: Boot2Docker start up fails in windows
+Tags: <virtual-machine><docker><boot2docker>
+Body:
+I am trying to start docker from winodws7 enterprise edition.
+
+ boot2docker start
+
+results
+
+ Waiting for VM and Docker daemon to start...
+ ..........................................................................oooooo
+ oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+ Started.
+ Trying to get Docker socket one more time
+ Error requesting socket: exec: "ssh": executable file not found in %PATH%
+ Docker client does not run on Windows for now. Please use
+ "boot2docker" ssh
+ to SSH into the VM instead.
+
+I tried this link [链接：https://stackoverflow.com/questions/25143819/docker-does-not-run-on-windows-error]. But All answers doesn't help me. I have re-installed the boot2docker and powered off boot2docker-vm in Virtual machine and restarted. Virtualisation is enabled in my bios. My Sys has better capabilities.
+
+Using 1.4.1 version.
+
+Please Some Suggestions?
+
+[H4]
+Date: 2014-12-24 05:21:52
+Title: What does -c mean as an argument to bash?
+Tags: <docker><boot2docker>
+Body:
+docker run -d ubuntu:14.04 /bin/bash -c "while true; do echo hello world;done"
+
+  docker run -d ubuntu:14.04 /bin/bash "while true; do echo hello world; done"
+
+I tried both.
+
+In case 2, the container stopped immediately. So docker ps returns nothing. And docker ps -a returns just itself.
+
+In case 1, docker ps lists the container. It is not stopped.
+
+So what does -c flag do?
+
+[H5]
+Date: 2014-12-24 06:11:52
+Title: Stop recently started container in docker?
+Tags: <docker><boot2docker>
+Body:
+docker stop lastContainerName
+
+It works fine. I want to stop it using docker ps -l command
+
+   docker stop | docker ps -l
+
+I tried this. Unfortunately docker stop --help getting executed.
+
+Am i missing something? How to achieve this? Any Suggestions.

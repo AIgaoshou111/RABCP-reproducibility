@@ -1,0 +1,52 @@
+The docs statement you quoted is misleading or outdated. **Dockerfiles do not have a `PUBLISH` directive.** The correct Dockerfile instruction is `EXPOSE`, and the correct runtime flag is `-p` / `--publish` (or `-P` / `--publish-all`).
+
+## What `EXPOSE` actually does
+
+`EXPOSE` in a Dockerfile is **metadata only**. It documents which ports the containerized application is expected to listen on. It does **not** publish the port to the host, does not open any firewall rules, and does not make the service reachable from outside the container.
+
+Example:
+
+```dockerfile
+FROM nginx:alpine
+EXPOSE 80
+```
+
+This tells anyone inspecting the image (and tools like `docker run -P`) that the app uses port 80.
+
+## What `-p` / `--publish` does
+
+Publishing happens at **runtime**, not build time:
+
+```bash
+docker run -p 8080:80 nginx:alpine
+```
+
+This maps host port `8080` to container port `80`. Now the service is reachable at `http://localhost:8080`.
+
+## What `-P` / `--publish-all` does
+
+```bash
+docker run -P nginx:alpine
+```
+
+This publishes **all ports listed with `EXPOSE`** in the image to random high-numbered host ports (e.g., `32768`). You can see the mapping with `docker port <container>`.
+
+## Why there is no `PUBLISH` in a Dockerfile
+
+Publishing ports in the image itself would be a bad idea because:
+
+- Port mappings are **host-specific** — two containers on the same host can’t both bind host port 80.
+- The same image may run on many hosts with different port availability.
+- Publishing is an **operational concern**, not a build-time property of the image.
+
+So the design separates “what the app listens on” (`EXPOSE`) from “how the host reaches it” (`-p` / `-P`).
+
+## Summary
+
+| Directive / Flag | Where | Purpose |
+|------------------|-------|---------|
+| `EXPOSE` | Dockerfile | Documents intended container ports (metadata) |
+| `-p` / `--publish` | `docker run` | Maps a specific host port to a container port |
+| `-P` / `--publish-all` | `docker run` | Publishes all `EXPOSE`d ports to random host ports |
+
+If you see `PUBLISH` mentioned as a Dockerfile keyword, treat it as a documentation error — use `EXPOSE` in the Dockerfile and `-p` / `-P` at runtime.

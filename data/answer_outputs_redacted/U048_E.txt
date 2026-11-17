@@ -1,0 +1,106 @@
+The immediate issue is that PostgreSQL is still asking for a password even though you created the user with an empty password. This is almost always because the server’s `pg_hba.conf` authentication method for that connection is not set to `trust`.
+
+## 1. Fix the `psql` “no password supplied” error
+
+For a polling user with an empty password, the host-based authentication rule must use `trust`, not `md5` or `scram-sha-256`.
+
+With the official `postgres` Docker image, you can set this at container startup using `POSTGRES_HOST_AUTH_METHOD=trust`, but that applies to all connections and is too broad for production.
+
+Better: mount a custom `pg_hba.conf` or append a rule. For example, in `docker-compose.yml`:
+
+```yaml
+services:
+  postgres:
+    image: postgres:9.6
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: [REDACTED]
+      POSTGRES_DB: kong
+    volumes:
+      - ./pg_hba_append.conf:/docker-entrypoint-initdb.d/pg_hba_append.conf
+```
+
+But note: `docker-entrypoint-initdb.d` scripts run only when the data directory is initialized for the first time. If the volume already exists, the change won’t apply.
+
+A more reliable approach is to create the polling user with a password and use `PGPASSWORD` or a `.pgpass` file. That avoids changing `pg_hba.conf`:
+
+```bash
+PGPASSWORD=[REDACTED] psql -h postgres -U polling -w -c '\l'
+```
+
+Or create the user with a password in the Postgres container’s init SQL:
+
+```sql
+CREATE USER polling WITH PASSWORD 'polling';
+```
+
+Then from the Kong container:
+
+```bash
+psql -h postgres -U polling -c '\l'
+```
+
+and set `PGPASSWORD=[REDACTED] in the environment.
+
+If you really want an empty password, you must ensure `pg_hba.conf` has a line like:
+
+```
+host all polling all trust
+```
+
+before any `md5` or `password` rule for that host/database/user.
+
+## 2. `pg_isready` is not in the CentOS 7 `postgresql` client package
+
+On CentOS 7, `pg_isready` is provided by the `postgresql` server package, not the client package. The client package only includes `psql`, `pg_dump`, etc.
+
+You have two practical options:
+
+### Option A: Use `psql` for readiness checks
+
+This is the standard Docker Compose pattern and works fine:
+
+```bash
+until psql -h postgres -U polling -c '\q'; do
+  echo "Postgres is unavailable - sleeping"
+  sleep 1
+done
+```
+
+`psql -c '\q'` connects and exits immediately. If the server is not ready, it returns a non-zero exit code.
+
+### Option B: Install `pg_isready` without the full server
+
+On CentOS 7, the PostgreSQL Yum repository packages `pg_isready` in the server package, so there is no clean client-only way to get it from the default repos.
+
+You could copy the single binary from a temporary build stage:
+
+```dockerfile
+FROM centos:7 AS pg_isready_builder
+RUN yum install -y postgresql-server && yum clean all
+
+FROM kong:latest
+COPY --from=pg_isready_builder /usr/bin/pg_isready /usr/bin/pg_isready
+```
+
+But this is overkill for a readiness check. `psql` is already installed and is the recommended tool for this purpose.
+
+## Recommended final check
+
+Use `psql` with a password set for the polling user:
+
+```bash
+export PGPASSWORD=[REDACTED]
+until psql -h postgres -U polling -c '\q' >/dev/null 2>&1; do
+  echo "Waiting for postgres..."
+  sleep 2
+done
+```
+
+Then run the Kong migrations:
+
+```bash
+kong migrations up
+```
+
+This avoids `pg_hba.conf` changes and works with the official Postgres image defaults.

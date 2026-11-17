@@ -1,0 +1,32 @@
+In the Docker SDK for Python, you can remove a network using the `remove()` method on a network object, not `prune()`.
+
+Here's the correct way:
+
+```python
+def remove_docker_network(network_name: str, client: docker.client.DockerClient):
+    try:
+        network = client.networks.get(network_name)
+        network.remove()
+    except docker.errors.NotFound:
+        print(f"not removing non existing docker network: '{network_name}'")
+    except docker.errors.APIError as ex:
+        print(f"error removing docker network: '{network_name}': {ex}")
+```
+
+**Explanation:**
+
+1. `client.networks.get(network_name)` retrieves the network object by name or ID
+2. `.remove()` deletes that specific network
+3. `docker.errors.NotFound` is raised if the network doesn't exist (this is the correct exception to catch for non-existent networks)
+
+**Why `prune()` didn't work:**
+
+`prune()` removes **unused** networks (networks not connected to any containers). If your network is still in use, or if the filter syntax wasn't matching correctly, it won't be removed. The `prune()` method is meant for cleanup of dangling resources, not for removing a specific network.
+
+**Alternative approach** (if you have the network ID):
+
+```python
+client.networks.get(network_id).remove()
+```
+
+The `remove()` method is documented in the [Network objects section](https://docker-py.readthedocs.io/en/stable/networks.html#docker.models.networks.Network.remove) of the docker-py documentation.

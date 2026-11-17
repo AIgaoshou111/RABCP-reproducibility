@@ -1,0 +1,89 @@
+You're right that Docker Compose only keeps the **last** `command:` key when you repeat it. The YAML parser overwrites earlier values.
+
+The correct approach is to use your `entrypoint.sh` script. Here's how to wire it up:
+
+## 1. Make entrypoint.sh executable
+
+```bash
+chmod +x entrypoint.sh
+```
+
+## 2. Update your Dockerfile
+
+Add these lines at the end:
+
+```dockerfile
+# Copy entrypoint script
+COPY ./entrypoint.sh /code/entrypoint.sh
+
+# Make it executable (in case it's not already)
+RUN chmod +x /code/entrypoint.sh
+
+# Set it as the entrypoint
+ENTRYPOINT ["/code/entrypoint.sh"]
+```
+
+## 3. Update docker-compose.yml
+
+Remove all the `command:` lines from the `web` service:
+
+```yaml
+version: '3'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+  web:
+    build: .
+    env_file: .env
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+```
+
+## How it works
+
+- **ENTRYPOINT** in the Dockerfile runs your script when the container starts.
+- The script executes all three commands in sequence.
+- If you ever need to override the entrypoint, you can use `entrypoint:` in docker-compose.yml.
+
+## Important note about `depends_on`
+
+Your `web` service depends on `db`, but `depends_on` only waits for the container to start, not for PostgreSQL to be ready to accept connections. Your `migrate` command might fail if the database isn't ready yet.
+
+For a simple fix, add a wait loop at the top of your `entrypoint.sh`:
+
+```bash
+#!/bin/bash
+
+# Wait for database
+echo "Waiting for database..."
+while ! nc -z db 5432; do
+  sleep 1
+done
+
+# Collect static files
+echo "Collect static files"
+python manage.py collectstatic --noinput
+
+# Apply database migrations
+echo "Apply database migrations"
+python manage.py migrate
+
+# Start server
+echo "Starting server"
+python manage.py runserver 0.0.0.0:8000
+```
+
+You'll need `netcat` installed in your container. Add this to your Dockerfile:
+
+```dockerfile
+RUN apt-get update && apt-get install -y netcat
+```
+
+Or use a Python-based wait script if you prefer not to install extra packages.

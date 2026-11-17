@@ -1,0 +1,193 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-08-21 09:13:50
+Title: Why does ChromeDriver 2.31 fail to start when run in Docker?
+Tags: <selenium><docker>
+Body:
+I have a Docker container based on ubuntu:xenial. When I try to run selenium with the Chrome webdriver loads endlessly
+
+>>> from selenium import webdriver
+>>> from selenium.webdriver.chrome.options import Options
+>>> chrome_options = Options()
+>>> chrome_options.add_argument("--headless")
+>>> path_to_chromedriver = '/usr/local/bin/chromedriver'
+>>> browser = webdriver.Chrome(path_to_chromedriver, chrome_options=chrome_options)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/local/lib/python2.7/dist-packages/selenium/webdriver/chrome/webdriver.py", line 69, in __init__
+    desired_capabilities=desired_capabilities)
+  File "/usr/local/lib/python2.7/dist-packages/selenium/webdriver/remote/webdriver.py", line 140, in __init__
+    self.start_session(desired_capabilities, browser_profile)
+  File "/usr/local/lib/python2.7/dist-packages/selenium/webdriver/remote/webdriver.py", line 229, in start_session
+    response = self.execute(Command.NEW_SESSION, parameters)
+  File "/usr/local/lib/python2.7/dist-packages/selenium/webdriver/remote/webdriver.py", line 297, in execute
+    self.error_handler.check_response(response)
+  File "/usr/local/lib/python2.7/dist-packages/selenium/webdriver/remote/errorhandler.py", line 194, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: Chrome failed to start: crashed
+  (Driver info: chromedriver=2.31.488763 (092de99f48a300323ecf8c2a4e2e7cab51de5ba8),platform=Linux 4.10.0-32-generic x86_64)
+
+Steps so far
+
+Fix crash
+
+>>> from selenium import webdriver
+>>> browser = webdriver.Chrome()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/local/lib/python2.7/dist-packages/selenium/webdriver/chrome/webdriver.py", line 62, in __init__
+    self.service.start()
+  File "/usr/local/lib/python2.7/dist-packages/selenium/webdriver/common/service.py", line 96, in start
+    self.assert_process_still_running()
+  File "/usr/local/lib/python2.7/dist-packages/selenium/webdriver/common/service.py", line 109, in assert_process_still_running
+    % (self.path, return_code)
+selenium.common.exceptions.WebDriverException: Message: Service chromedriver unexpectedly exited. Status code was: 127
+
+When I tried to find the version of the chromedriver
+
+chromedriver --version
+
+I got the error that the shared library libnss3 was not found. After installing libnss3 [链接：https://packages.ubuntu.com/xenial/libnss3], it worked.
+
+So the line
+
+RUN apt-get install libnss3
+
+should be added to the Dockerfile.
+
+Fix 'chrome binary not found'
+
+Install Chrome. It is not enough to install the chromedriver_installer via pip.
+
+RUN apt-get install wget
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2017-07-22 12:40:59
+Title: Is there a difference between "docker ps" and "docker container ls"?
+Tags: <docker>
+Body:
+The documentation of docker ps [链接：https://docs.docker.com/engine/reference/commandline/ps/] and docker container ls [链接：https://docs.docker.com/engine/reference/commandline/container_ls/] both says "List containers", but does not mention the other command. Is there a difference between those two commands?
+
+The output looks exactly the same:
+
+CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                    NAMES
+bbe3d7158eaa        flaskmysqldockerized_web   "python app.py"          5 hours ago         Up 18 seconds       0.0.0.0:8082->5000/tcp   flaskmysqldockerized_web_1
+4f7d3f0763ad        mysql                      "docker-entrypoint..."   6 hours ago         Up 18 seconds       0.0.0.0:3307->3306/tcp   flaskmysqldockerized_db_1
+
+[H2]
+Date: 2017-07-24 20:33:05
+Title: How can I create a shared volume with non-root access rights and docker-compose?
+Tags: <docker><docker-compose>
+Body:
+Before I decided that it is probably a good idea to run the web service not as root in its Docker container, I simply had
+
+version: '3'
+services:
+  web:
+    build: .
+    ...
+    volumes:
+     - .:/opt/app  # enables hot code reloading
+     - uploads:/opt/app/uploads         
+  ...
+volumes:
+    uploads:
+        driver: local
+
+in order to have the folder /opt/app/uploads within the client being identical to the uploads folder on the host.
+
+Now, having added a new non-root user, I see the problem that the volume directory /opt/app/uploads gets assigned to the root, not to the user.
+
+How can I fix that?
+
+(I know that I can access the container and do it manually ... but I would like to know if there is a simpler solution; e.g. editing the Dockerfile or the docker-compose.yml)
+
+[H3]
+Date: 2017-08-09 14:43:52
+Title: Can I use py.test to test the Docker container?
+Tags: <python><docker><pytest>
+Body:
+I have a Flask application which uses py.test for testing. But some things are not properly covered by usual unittests.
+
+For example, if my requirements.txt contains all necessary modules. Or if the Dockerfile installs all necessary binaries.
+
+Is it possible to cover those error sources with py.test?
+
+(For example, can I run docker build and test if that works? - This takes long, can I have py.test --long for all and py.test for the fast tests only?)
+
+[H4]
+Date: 2017-08-09 15:20:36
+Title: What is pip's `--no-cache-dir` good for?
+Tags: <python><docker><pip>
+Body:
+I've recently seen the --no-cache-dir being used in a Docker file. I've never seen that flag before and the help is not explaining it:
+
+ --no-cache-dir              Disable the cache.
+
+Question: What is cached?
+
+Question: What is the cache used for?
+
+Question: Why would I want to disable it?
+
+[H5]
+Date: 2017-08-16 15:46:21
+Title: Why can't my container find a pip installed package (via git)?
+Tags: <python><git><docker><pip>
+Body:
+I have a Dockerfile
+
+FROM ubuntu:xenial
+LABEL maintainer="[EMAIL_REDACTED]"
+
+# Settings for the local user to create
+ENV APP_USER docker
+ENV APP_USER_UID 9999
+ENV APP_USER_GROUP docker
+ENV APP_USER_GROUP_GID 4711
+ENV PYTHONIOENCODING utf-8
+
+# Install and update software
+RUN apt-get update -y && apt-get install -y --fix-missing git python-pip python-dev build-essential poppler-utils libmysqlclient-dev
+RUN pip install pip --upgrade
+
+# Copy projects code
+COPY . /opt/app
+WORKDIR /opt/app
+RUN pip install -r requirements.txt
+
+# Create user
+RUN groupadd --gid ${APP_USER_GROUP_GID} ${APP_USER_GROUP} \
+ && useradd --uid ${APP_USER_UID} --create-home -g ${APP_USER_GROUP} ${APP_USER} \
+ && chown -R $APP_USER:$APP_USER_GROUP /opt/app
+
+# Start app
+USER docker
+RUN mkdir -p /opt/app/filestorage
+ENTRYPOINT ["python"]
+CMD ["app.py"]
+
+and a requirements.txt
+
+-e git+https://github.com/ecederstrand/exchangelib.git@85eada6d59d0e2c757ef17c6ce143f3c976d2a90#egg=exchangelib
+Flask==0.12.2
+fuzzywuzzy==0.15.1
+
+When I change the exchangelib line to exchangelib (hence not using git, but the version on PyPI) it works (but my code doesn't work as I need some of the recent changes).
+
+When I have this, I get:
+
+web_1  | ImportError: No module named exchangelib
+
+What is the problem? Why can't my container find a pip installed package (via git)? How do I fix it?
+
+My intuition is that the problem is that I install it as the root user, but the application runs as another user. The PyPI packages seem to get installed for all users while the editable is only local. But I still don't know how to fix it.

@@ -1,0 +1,63 @@
+You can absolutely use `docker-compose.yml` to pull from your own private registry. Docker Compose handles pulling images from any registry specified in the image name.
+
+## How to reference your private registry images
+
+In your `docker-compose.yml`, use the full image path including your registry:
+
+```yaml
+version: '2'
+services:
+  redis:
+    image: redis:latest  # from Docker Hub
+  couchdb:
+    image: couchdb:latest  # from Docker Hub
+  nodejs-app:
+    image: your-registry.com:5000/your-app:latest  # from your private registry
+```
+
+## Authentication
+
+Before running `docker-compose up -d`, you need to authenticate with your private registry on the remote system:
+
+```bash
+docker login your-registry.com:5000
+```
+
+Enter your username and password when prompted. This stores credentials that Docker Compose will use when pulling images.
+
+## Deployment steps
+
+1. **On the remote system**, ensure Docker and Docker Compose are installed
+2. **Copy your `docker-compose.yml`** to the remote system
+3. **Login to your private registry** (if required)
+4. **Run:**
+   ```bash
+   docker-compose up -d
+   ```
+
+Docker Compose will automatically pull all images (both from Docker Hub and your private registry) that aren't already present locally.
+
+## Alternative: Use a deployment script
+
+For even easier deployment, create a simple script:
+
+```bash
+#!/bin/bash
+docker login your-registry.com:5000
+docker-compose pull
+docker-compose up -d
+```
+
+This explicitly pulls all images first, which can be useful for seeing any pull errors before starting containers.
+
+## Note on image tags
+
+Make sure your private images are properly tagged with your registry URL when you push them:
+
+```bash
+# On your build machine
+docker build -t your-registry.com:5000/your-app:latest .
+docker push your-registry.com:5000/your-app:latest
+```
+
+The key point is that Docker Compose treats your private registry images just like any other images - it will pull them automatically as long as you're authenticated and the image names are correct.

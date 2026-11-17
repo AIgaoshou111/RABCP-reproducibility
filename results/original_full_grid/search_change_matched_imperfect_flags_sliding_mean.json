@@ -1,0 +1,464 @@
+[
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 0,
+    "params": {
+      "window": 1,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.6026156682027649
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 1,
+    "params": {
+      "window": 1,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.6026156682027649
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 2,
+    "params": {
+      "window": 1,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.6026156682027649
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 3,
+    "params": {
+      "window": 1,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.6026156682027649
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 4,
+    "params": {
+      "window": 1,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.6026156682027649
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 5,
+    "params": {
+      "window": 1,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.6026156682027649
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 6,
+    "params": {
+      "window": 3,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.39497982334869436
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 7,
+    "params": {
+      "window": 3,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.40368405529953916
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 8,
+    "params": {
+      "window": 3,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.41092210105181404
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 9,
+    "params": {
+      "window": 3,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4269697311827957
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 10,
+    "params": {
+      "window": 3,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4554280173160173
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 11,
+    "params": {
+      "window": 3,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.47936777265745
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 12,
+    "params": {
+      "window": 5,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.39744787605433685
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 13,
+    "params": {
+      "window": 5,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4014007387934646
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 14,
+    "params": {
+      "window": 5,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.4063796465024868
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 15,
+    "params": {
+      "window": 5,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4177025084485407
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 16,
+    "params": {
+      "window": 5,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4411325724189506
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 17,
+    "params": {
+      "window": 5,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4626922949308756
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 18,
+    "params": {
+      "window": 7,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.43724066768407
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 19,
+    "params": {
+      "window": 7,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4393258807544747
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 20,
+    "params": {
+      "window": 7,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.4430568397175605
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 21,
+    "params": {
+      "window": 7,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4512944057421074
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 22,
+    "params": {
+      "window": 7,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4698863948661437
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 23,
+    "params": {
+      "window": 7,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4873879262672811
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 24,
+    "params": {
+      "window": 10,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.5085695412383734
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 25,
+    "params": {
+      "window": 10,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5090997407700978
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 26,
+    "params": {
+      "window": 10,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5115279730365334
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 27,
+    "params": {
+      "window": 10,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5174079443361906
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 28,
+    "params": {
+      "window": 10,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.530966700040429
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 29,
+    "params": {
+      "window": 10,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5443614746543779
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 30,
+    "params": {
+      "window": 15,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.628063762841269
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 31,
+    "params": {
+      "window": 15,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.628194186676418
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 32,
+    "params": {
+      "window": 15,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.6297298848931238
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 33,
+    "params": {
+      "window": 15,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.6331768870616036
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 34,
+    "params": {
+      "window": 15,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.6412243893516563
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 35,
+    "params": {
+      "window": 15,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.6495951296875169
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 36,
+    "params": {
+      "window": 40,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.909498153015903
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 37,
+    "params": {
+      "window": 40,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.905473276859884
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 38,
+    "params": {
+      "window": 40,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.9036434064915873
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 39,
+    "params": {
+      "window": 40,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.9015806183579884
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 40,
+    "params": {
+      "window": 40,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.90000690070985
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "sliding_mean",
+    "candidate_id": 41,
+    "params": {
+      "window": 40,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.899450457200655
+  }
+]

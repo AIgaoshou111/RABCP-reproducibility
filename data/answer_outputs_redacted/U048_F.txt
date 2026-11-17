@@ -1,0 +1,27 @@
+For the `psql` issue: the error `fe_sendauth: no password supplied` means PostgreSQL is asking for a password. Even if you created the user with an empty password, PostgreSQL's default `pg_hba.conf` for the official Docker image uses `md5` or `scram-sha-256` authentication for TCP connections (host), not `trust`. An empty password with `md5` auth will still prompt for a password, and `-w` (never prompt) causes it to fail.
+
+**Quick fix for testing:** Use `PGPASSWORD='' psql -h postgres -U polling -w -c '\l'` — but this may still fail depending on how the empty password is stored.
+
+**Better approach:** Don't rely on empty passwords. Instead, use the `postgres` superuser with the `POSTGRES_PASSWORD` you set when starting the container, or create a dedicated healthcheck user with a real password.
+
+For the `pg_isready` issue: `pg_isready` is part of the PostgreSQL server package (`postgresql-server` or `postgresqlXX-server`), not the client package. On CentOS 7, you can install it via:
+
+```dockerfile
+RUN yum install -y postgresql-server && yum clean all
+```
+
+But this pulls in the full server. A lighter alternative is to use `psql` with a simple query that doesn't require a database connection to a specific DB:
+
+```bash
+psql -h postgres -U postgres -d postgres -c 'SELECT 1' >/dev/null 2>&1
+```
+
+Or use a TCP check with `nc` or `bash /dev/tcp`:
+
+```bash
+until nc -z postgres 5432; do sleep 1; done
+```
+
+But note: TCP port open doesn't mean PostgreSQL is fully ready to accept queries. The `psql SELECT 1` check is more reliable.
+
+**Recommended pattern for Kong + Postgres:** Use a wait script that retries `psql` with the actual credentials Kong will use, until it succeeds, then run migrations.

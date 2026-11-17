@@ -1,0 +1,96 @@
+In Docker Compose, when you specify multiple `command:` keys under the same service, only the last one takes effect. That's why only `runserver` executes.
+
+The solution is to use your `entrypoint.sh` script as the container's entrypoint. Here's how to implement it:
+
+## 1. Update your Dockerfile
+
+Add the entrypoint script and make it executable:
+
+```dockerfile
+# Pull base image
+FROM python:3
+
+# Set environment variables
+ENV PYTHONUNBUFFERED 1
+
+# Set work directory
+RUN mkdir /code
+WORKDIR /code
+
+# Install dependencies
+RUN pip install --upgrade pip
+RUN pip install pipenv
+COPY ./Pipfile /code/Pipfile
+RUN pipenv install --deploy --system --skip-lock --dev
+
+# Copy project
+COPY . /code/
+
+# Copy entrypoint script and make it executable
+COPY ./entrypoint.sh /code/entrypoint.sh
+RUN chmod +x /code/entrypoint.sh
+
+# Set entrypoint
+ENTRYPOINT ["/code/entrypoint.sh"]
+```
+
+## 2. Update your docker-compose.yml
+
+Remove the multiple `command:` lines and let the entrypoint handle everything:
+
+```yaml
+version: '3'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+  web:
+    build: .
+    env_file: .env
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+```
+
+## 3. Make sure your entrypoint.sh is correct
+
+Your entrypoint.sh looks good, but make sure it has the proper shebang and execute permissions:
+
+```bash
+#!/bin/bash
+
+# Collect static files
+echo "Collect static files"
+python manage.py collectstatic --noinput
+
+# Apply database migrations
+echo "Apply database migrations"
+python manage.py migrate
+
+# Start server
+echo "Starting server"
+python manage.py runserver 0.0.0.0:8000
+```
+
+## Important Notes:
+
+1. **File permissions**: Make sure `entrypoint.sh` is executable on your host machine:
+   ```bash
+   chmod +x entrypoint.sh
+   ```
+
+2. **Line endings**: If you're on Windows, ensure the file uses Unix line endings (LF), not Windows (CRLF), or you'll get a "no such file or directory" error.
+
+3. **Volume mount consideration**: Since you're mounting `.:/code`, the entrypoint script will be available both from the Dockerfile COPY and the volume mount. The volume mount will override the copied version, so make sure the script exists in your project directory.
+
+4. **Alternative approach**: If you prefer not to use an entrypoint, you can chain commands in a single `command:` line:
+   ```yaml
+   command: sh -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate --noinput && python3 manage.py runserver 0.0.0.0:8000"
+   ```
+
+The entrypoint approach is cleaner and more maintainable, especially as your startup sequence grows more complex.

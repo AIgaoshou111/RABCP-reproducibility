@@ -1,0 +1,86 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2018-10-22 22:21:12
+Title: Docker-Compose + Command
+Tags: <docker>
+Body:
+It seems my docker-compose commands only execute the last command. In this case runserver.
+
+command: python3 manage.py collectstatic --noinput
+command: python3 manage.py migrate --noinput
+command: python3 manage.py runserver 0.0.0.0:8000
+
+I tried to move these commands into an entrypoint.sh file. However, I can't figure out how to implement this into my dockerfile & docker-compose. 
+
+The following is my dockerfile:
+
+# Pull base image
+FROM python:3
+
+# Set environment varibles
+ENV PYTHONUNBUFFERED 1
+
+# Set work directory
+RUN mkdir /code
+WORKDIR /code
+
+# Install dependencies
+RUN pip install --upgrade pip
+RUN pip install pipenv
+COPY ./Pipfile /code/Pipfile
+RUN pipenv install --deploy --system --skip-lock --dev
+
+# Copy project
+COPY . /code/
+
+My docker-compose:
+
+version: '3'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+  web:
+    build: .
+    command: python3 manage.py collectstatic --noinput
+    command: python3 manage.py migrate --noinput
+    command: python3 manage.py runserver 0.0.0.0:8000
+    env_file: .env
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+entrypoint.sh
+
+#!/bin/bash
+
+# Collect static files
+echo "Collect static files"
+python manage.py collectstatic --noinput
+
+# Apply database migrations
+echo "Apply database migrations"
+python manage.py migrate
+
+# Start server
+echo "Starting server"
+python manage.py runserver 0.0.0.0:8000
+
+Selected earlier-question evidence:
+[E1; H3; 2018-10-14 06:37:09] Exact excerpt from the earlier question:
+Dockerfile needed when compose?
+I am trying to install Jekyll [链接：https://github.com/envygeeks/jekyll-docker/blob/master/README.md] with Docker. I created my docker-compose file as explained in their readme. Now I wonder do I need to create additional a Dockerfile, or is the docker-compose sufficient?
+
+[E2; H5; 2018-10-21 22:02:19] Exact excerpt from the earlier question:
+Docker / Django: pipenv x requirements
+I currently setup my Django project in Docker. I used pipenv so far, therefore I don't have a requirements.txt but a pipfile. Anyone knows how I have to adjust my Dockerfile in order to install all dependencies?

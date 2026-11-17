@@ -1,0 +1,72 @@
+The issue is that you're trying to pass build arguments as environment variables, but Docker build arguments and environment variables are separate concepts that work differently.
+
+## The Solution
+
+For Docker 1.12.6, you need to use the `.env` file approach that you discovered in EDIT 2, or pass the variables through the shell environment when using docker-compose.
+
+### Method 1: Using .env file (Recommended for your Docker version)
+
+Create a `.env` file in the same directory as your docker-compose.yml:
+
+```bash
+# .env file
+REP_USER=myusername
+REP_PASS=mypassword
+```
+
+Keep your docker-compose.yml with the args section:
+
+```yaml
+version: "2"
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REP_USER: $REP_USER
+        REP_PASS: $REP_PASS
+```
+
+Then run:
+```bash
+docker-compose build
+```
+
+Docker Compose automatically reads the `.env` file and substitutes the variables.
+
+### Method 2: Export variables before running docker-compose
+
+```bash
+export REP_USER=myusername
+export REP_PASS=mypassword
+docker-compose build
+```
+
+This works because docker-compose reads environment variables from the shell when it processes the `$REP_USER` and `$REP_PASS` references in the compose file.
+
+## Why Your Other Attempts Didn't Work
+
+1. **`REP_USER=myusername REP_PASS=mypassword docker-compose build`**: This sets environment variables for the docker-compose process itself, but docker-compose doesn't automatically pass these to the build args unless they're referenced in the compose file with `$VARIABLE_NAME` syntax.
+
+2. **Using environment variables directly in Dockerfile**: Docker build doesn't inherit environment variables from the host or from docker-compose. Build arguments must be explicitly passed using `ARG` and `--build-arg` (or the `args` section in docker-compose).
+
+3. **`env_file` in docker-compose**: This only affects runtime environment variables in the container, not build-time arguments.
+
+4. **The `args` list syntax without values** (your EDIT 3): This syntax is meant to pass through build args that are already defined in the Dockerfile, but it requires the variables to be available in the environment where docker-compose runs. The issue might be related to using `sudo` which doesn't preserve the exported variables.
+
+## Important Note
+
+Your Dockerfile must keep the `ARG` declarations for this to work:
+
+```dockerfile
+FROM jessie
+MAINTAINER Zeinab Abbasimazar
+#Build Arguments
+ARG REP_USER
+ARG REP_PASS
+# Build
+RUN echo 'REP_USER:'$REP_USER', REP_PASS:'$REP_PASS
+```
+
+The `.env` file solution you found in EDIT 2 is the correct approach for your Docker version 1.12.6.

@@ -1,0 +1,127 @@
+The core issue is that your two Compose files are being merged, but the services are not on a shared user-defined network. In Compose v3, `links` is legacy and generally unnecessary; service discovery by service name works automatically **if the services are on the same network**.
+
+## What to do
+
+### 1. Define a shared network in both Compose files
+
+In your **first** Compose file (`docker-compose.yml`), add:
+
+```yaml
+version: '3'
+
+services:
+    db:
+        image: postgres
+        ports:
+         - "5432:5432"
+        networks:
+          - app_net
+    django:
+        build: ./api
+        command: ["./docker_up.sh"]
+        restart: always
+        volumes:
+          - ./api:/app/api
+          - api-static:/app/api/staticfiles
+        ports:
+          - "8000:8000"
+        depends_on:
+          - db
+        environment:
+          - MODE=DEV
+        networks:
+          - app_net
+
+networks:
+  app_net:
+    driver: bridge
+
+volumes:
+  frontend-build:
+  api-static:
+  certificates:
+```
+
+In your **second** Compose file (`docker-compose.prod.yml`), add the same network definition:
+
+```yaml
+version: '3'
+
+services:
+    django:
+        environment:
+          - MODE=PROD
+        networks:
+          - app_net
+    hosting:
+        build: ./hosting
+        restart: always
+        volumes:
+           - frontend-build:/var/www
+        ports:
+          - "80:80"
+          - "443:443"
+        environment:
+          - MODE=PROD
+        networks:
+          - app_net
+
+networks:
+  app_net:
+    driver: bridge
+
+volumes:
+    frontend-build:
+```
+
+**Important:** When you run multiple Compose files together with `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up`, Compose merges them into one project. The network name will be prefixed with the project name (e.g., `opensrd_app_net`), but that's fine — services on the same network can reach each other by service name.
+
+### 2. Update Nginx to use the service name
+
+In your Nginx config (inside the `hosting` container), replace `example.test:8000` with:
+
+```nginx
+location /api/ {
+    proxy_pass http://django:8000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
+Or if you need to preserve the original host header for Django's `ALLOWED_HOSTS`:
+
+```nginx
+proxy_set_header Host example.test;
+```
+
+### 3. Why your IPAM config failed
+
+Your `ipam` block was malformed. The correct syntax is:
+
+```yaml
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24
+```
+
+But you **don't need static IPs** for service discovery. Docker's embedded DNS resolves service names automatically. Only use static IPs if you have a specific reason (e.g., external tools that need fixed addresses).
+
+### 4. Remove `links` and `network_mode: bridge`
+
+- `links` is deprecated in v3 and causes the error you saw when services aren't on the default network.
+- `network_mode: bridge` forces the container onto the default bridge network, which **does not** provide automatic DNS-based service discovery. Remove it.
+
+## Summary
+
+1. Define a shared `app_net` network in both Compose files.
+2. Attach `django` and `hosting` to that network.
+3. In Nginx, proxy to `http://django:8000` instead of `example.test:8000`.
+4. Remove `links` and `network_mode: bridge`.
+
+This gives you automatic service discovery by container/service name, which is the standard Docker Compose way to handle inter-container communication.

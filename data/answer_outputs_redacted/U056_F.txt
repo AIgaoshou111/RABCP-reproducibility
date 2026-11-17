@@ -1,0 +1,76 @@
+The issue is that your web application is redirecting to the container's internal IP (`172.17.0.2`), which is not reachable from machine C. This is a common Docker networking issue where the application generates absolute URLs based on the container's hostname/IP rather than the external hostname/IP.
+
+## Root Cause
+
+Your application (likely a PHP app with a framework like Magento, Laravel, etc.) is generating redirects using the container's internal IP address. When you access from machine A via `http://192.168.1.11:5000`, the app sees the request coming to `172.17.0.2:80` (after Docker's port forwarding) and generates a redirect to `http://172.17.0.2/...`.
+
+From machine A, this might work if A can route to `172.17.0.2` (since the container runs on A). From machine C, `172.17.0.2` is not routable, hence the timeout.
+
+## Solutions
+
+### 1. Configure the Application's Base URL
+
+Set the application's base URL to the external address (`http://192.168.1.11:5000`). The exact method depends on your application:
+
+**For Magento 2:**
+```bash
+# Inside the container
+php bin/magento setup:store-config:set --base-url="http://192.168.1.11:5000/"
+php bin/magento setup:store-config:set --base-url-secure="https://192.168.1.11:5000/"
+php bin/magento cache:flush
+```
+
+**For Laravel:**
+Set `APP_URL=http://192.168.1.11:5000` in your `.env` file.
+
+**For WordPress:**
+Update `wp_options` table:
+```sql
+UPDATE wp_options SET option_value='http://192.168.1.11:5000' WHERE option_name IN ('siteurl', 'home');
+```
+
+### 2. Use Host Network Mode (Quick Test)
+
+Run the container with host networking to eliminate the IP translation:
+```bash
+docker run --name development-phase -d --network host -v /var/www/public development
+```
+Then access via `http://192.168.1.11` (port 80 directly, no port mapping needed).
+
+### 3. Add Port Mapping for the Redirect
+
+If you can't change the application's base URL, map the container's port 80 directly:
+```bash
+docker run --name development-phase -d -p 80:80 -v /var/www/public development
+```
+Then access via `http://192.168.1.11` (without port 5000). The redirect to `172.17.0.2` will still fail from C, but if you also add a route on C to reach `172.17.0.2` through A, it might work (not recommended for production).
+
+### 4. Use a Reverse Proxy
+
+Run a reverse proxy (like nginx) on machine A that forwards requests to the container while rewriting the Host header:
+```nginx
+server {
+    listen 5000;
+    server_name 192.168.1.11;
+    
+    location / {
+        proxy_pass http://172.17.0.2:80;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_redirect http://172.17.0.2/ http://192.168.1.11:5000/;
+    }
+}
+```
+
+## Recommended Approach
+
+**Option 1** (configuring the base URL) is the cleanest solution. It ensures the application generates correct URLs regardless of how clients access it. Check your application's documentation for the correct way to set the base URL.
+
+If you're unsure which application is running, check inside the container:
+```bash
+docker exec -it development-phase bash
+ls /var/www/public
+# Look for framework-specific files like composer.json, wp-config.php, etc.
+```

@@ -1,0 +1,176 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2018-03-17 08:35:08
+Title: Permission denied while creating image from scratch
+Tags: <docker>
+Body:
+Trying to create image from scratch according manual [链接：https://docs.docker.com/develop/develop-images/baseimages/#create-a-full-image-using-tar].
+
+Command below did needed job
+$ sudo debootstrap xenial xenial > /dev/null
+
+Tried to create image:
+$ sudo tar -C xenial -c . | docker import - xenial
+
+Got error:
+
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Post http://%2Fvar%2Frun%2Fdocker.sock/v1.35/images/create?fromSrc=-&message=&repo=xenial&tag=: dial unix /var/run/docker.sock: connect: permission denied
+
+How to fix that?
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2018-03-15 18:04:17
+Title: List of docker containers in repository
+Tags: <docker>
+Body:
+I have installed Docker containers according manual [链接：https://docs.docker.com/install/linux/docker-ce/ubuntu/#upgrade-docker-ce] 
+
+Command below adds repository with ubuntu containers:
+
+$ sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+Whole container list:
+
+apt-cache madison docker-ce
+
+ docker-ce | 17.12.1~ce-0~ubuntu | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
+ docker-ce | 17.12.0~ce-0~ubuntu | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
+ docker-ce | 17.09.1~ce-0~ubuntu | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
+ docker-ce | 17.09.0~ce-0~ubuntu | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
+ docker-ce | 17.06.2~ce-0~ubuntu | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
+ docker-ce | 17.06.1~ce-0~ubuntu | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
+ docker-ce | 17.06.0~ce-0~ubuntu | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
+ docker-ce | 17.03.2~ce-0~ubuntu-xenial | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
+ docker-ce | 17.03.1~ce-0~ubuntu-xenial | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
+ docker-ce | 17.03.0~ce-0~ubuntu-xenial | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
+
+To test system container hello-world was used
+
+sudo docker run hello-world
+
+But where hello-world came from? I don't see it on the list? How to know list of other 'hidden' containers?
+
+[H2]
+Date: 2018-03-16 08:54:48
+Title: Create new image based on standard one
+Tags: <docker>
+Body:
+I have installed Docker and have running some Ubuntu image with command:
+
+sudo docker run ubuntu
+
+I would like to create some text file on it and find it next time the same image will run. How to achieve that?
+
+UPD.
+
+Got problems with attaching to docker. 
+I have running docker
+
+docker ps -a
+aef01293fdc9        ubuntu              "/bin/bash"         6 hours ago         Up 6 hours                                      priceless_ramanujan
+
+Since it is Up mode, I suppose I don't need to execute command:
+
+docker start priceless_ramanujan
+
+So, I run command attach
+
+docker attach priceless_ramanujan
+
+And got nothing in output while command not returns.
+
+Why I can't get to container's bash?
+
+[H3]
+Date: 2018-03-16 10:02:38
+Title: Attach to container
+Tags: <docker>
+Body:
+I was surprised when command sudo docker ps -a thrown list of containers:
+
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                         PORTS               NAMES
+efd4879e92e0        ubuntu              "/bin/bash"         About an hour ago   Exited (0) 20 minutes ago                          elated_newton
+7db432be894c        ubuntu              "/bin/bash"         About an hour ago   Exited (0) 18 minutes ago                          nervous_meninsky
+aef01293fdc9        ubuntu              "/bin/bash"         About an hour ago   Up About an hour                                   priceless_ramanujan
+87cfd461b465        ubuntu              "/bin/bash"         About an hour ago   Up About an hour                                   festive_bhabha
+1dcb6f9618d8        ubuntu              "/bin/bash"         About an hour ago   Up About an hour                                   mystifying_poitras
+0f1636eb9cc1        hello-world         "/hello"            About an hour ago   Exited (0) About an hour ago                       sharp_murdock
+2a3a1fb03ada        hello-world         "/hello"            About an hour ago   Exited (0) About an hour ago                       admiring_brattain
+77c8e7ef5770        hello-world         "/hello"            16 hours ago        Exited (0) 16 hours ago                            unruffled_shannon
+808805085c59        centos              "6.9"               17 hours ago        Created                                            youthful_aryabhata
+a1438a7811c2        centos              "/bin/bash"         17 hours ago        Exited (0) 17 hours ago                            sleepy_neumann
+fce6a95f8f5a        ubuntu              "/bin/bash"         17 hours ago        Exited (0) 17 hours ago                            cranky_ritchie
+e17b5f98bbc5        ubuntu              "/bin/bash"         17 hours ago        Exited (0) 17 hours ago                            unruffled_ritchie
+cafbbe52dad5        hello-world         "/hello"            17 hours ago        Exited (0) 17 hours ago                            hungry_pike
+d40ac9c16e9c        ubuntu              "/bin/bash"         17 hours ago        Exited (0) 17 hours ago                            brave_babbage
+5efd22250d0e        ubuntu              "/bin/bash"         17 hours ago        Exited (0) 17 hours ago                            confident_lalande
+471e22652bc3        ubuntu              "/bin/bash"         17 hours ago        Exited (0) 17 hours ago                            vigorous_wing
+b68f43ebae50        ubuntu              "bash"              17 hours ago        Exited (127) 17 hours ago                          confident_euler
+a83eae486f76        ubuntu              "bash"              17 hours ago        Exited (0) 17 hours ago                            infallible_murdock
+88b3b4e73e5e        hello-world         "/hello"            17 hours ago        Exited (0) 17 hours ago                            thirsty_bhabha
+deb88e38d347        hello-world         "/hello"            17 hours ago        Exited (0) 17 hours ago                            nervous_ptolemy
+
+I was surprised twice when found that some of them alive. Since festive_bhabha is up I would like attach to it:
+
+sudo docker attach festive_bhabha
+
+But command prints nothing and not returns. Why I can't attach to container?
+
+[H4]
+Date: 2018-03-16 16:58:04
+Title: Search old distribution Linux container
+Tags: <docker>
+Body:
+I need to get old 32 bit version Centos image and run in container on my Ubuntu system.
+
+I do search for Centos:
+
+sudo docker search centos
+
+Found candidate:
+
+NAME                               DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED
+centos                             The official build of CentOS.                   4100                [OK]                
+
+Download and run it:
+
+sudo docker run centos
+Unable to find image 'centos:latest' locally
+latest: Pulling from library/centos
+5e35d10a3eba: Pull complete 
+Digest: sha256:dcbc4e5e7052ea2306eed59563da1fec09196f2ecacbe042acbdcd2b44b05270
+Status: Downloaded newer image for centos:latest
+
+But I don't need latest centos. I would like to get list of available old Centos images.
+
+How to get Centos 6.9 image for container?
+
+[H5]
+Date: 2018-03-17 06:44:08
+Title: Find and get image from hub
+Tags: <docker>
+Body:
+I found needed image of Centos6 32 bit on hub:
+
+https://hub.docker.com/r/i386/centos/ [链接：https://hub.docker.com/r/i386/centos/]
+
+Trying to run on my PC:
+
+sudo docker run -it i386/centos6
+
+Got error:
+
+Unable to find image 'i386/centos6:latest' locally
+docker: Error response from daemon: pull access denied for i386/centos6, repository does not exist or may require 'docker login'.
+
+How to get required image?

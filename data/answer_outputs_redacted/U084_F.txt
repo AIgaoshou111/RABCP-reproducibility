@@ -1,0 +1,47 @@
+The issue is that `-v` is a flag for the `docker run` command, not a `RUN` instruction in a Dockerfile. You're trying to use Docker runtime options during the build phase, which doesn't work that way.
+
+## What's happening
+
+In your Dockerfile, `RUN` executes shell commands inside the container during the build process. The `-v` flag (volume mount) is only available when you run a container with `docker run`, not during the build.
+
+## The correct approach
+
+You have two options depending on what you're trying to achieve:
+
+### Option 1: Mount the socket at runtime (most common)
+
+Remove the `RUN` line from your Dockerfile entirely, and instead mount the socket when you run the container:
+
+```bash
+docker run -v /var/run/docker.sock:/var/run/postgresql/.s.PGSQL.5432 your-image
+```
+
+### Option 2: If you need the socket during build
+
+If you actually need to access the Docker socket during the build process (for example, to run Docker commands inside the build), you need to use BuildKit with the `--mount` flag in your `RUN` instruction:
+
+```dockerfile
+# syntax=docker/dockerfile:1.2
+FROM your-base-image
+
+RUN --mount=type=bind,source=/var/run/docker.sock,target=/var/run/postgresql/.s.PGSQL.5432 \
+    your-command-here
+```
+
+Then build with:
+```bash
+DOCKER_BUILDKIT=1 docker build -t your-image .
+```
+
+## Important note
+
+Mounting `/var/run/docker.sock` to a PostgreSQL socket path (`/var/run/postgresql/.s.PGSQL.5432`) is unusual. The Docker socket and PostgreSQL socket are different things:
+
+- `/var/run/docker.sock` - Docker daemon socket
+- `/var/run/postgresql/.s.PGSQL.5432` - PostgreSQL database socket
+
+If you're trying to connect to PostgreSQL running on the host from inside a container, you should either:
+1. Use the host's IP address and port (e.g., `host.docker.internal:5432`)
+2. Mount the actual PostgreSQL socket directory: `-v /var/run/postgresql:/var/run/postgresql`
+
+If you're trying to give the container access to the Docker daemon, mount it to the standard location: `-v /var/run/docker.sock:/var/run/docker.sock`

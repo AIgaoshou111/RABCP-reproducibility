@@ -1,0 +1,90 @@
+The error `Failed to run command 'up'. null` from minimesos 0.13.0 is a known issue where the CLI wrapper fails silently. The most common causes in 2017 were:
+
+1. **Missing Docker environment variables** when running as root vs. the user who installed minimesos
+2. **The minimesos CLI container can't access the Docker socket**
+3. **Insufficient memory** for the Mesos cluster (minimesos needs ~2GB+)
+
+## Immediate checks and fixes
+
+### 1. Run with verbose/debug output
+
+```bash
+minimesos up --verbose
+```
+
+Or set the log level:
+
+```bash
+export MINIMESOS_LOG_LEVEL=debug
+minimesos up
+```
+
+This often reveals the actual error hidden by the `null` message.
+
+### 2. Check Docker socket permissions
+
+The minimesos CLI runs inside a Docker container that needs access to `/var/run/docker.sock`. Verify:
+
+```bash
+ls -la /var/run/docker.sock
+```
+
+It should be readable/writable by your current user. If you're running as root, this shouldn't be an issue, but check that the socket exists and Docker is running:
+
+```bash
+systemctl status docker
+```
+
+### 3. Check available memory
+
+Mesos master + agent + ZooKeeper need significant memory. Check:
+
+```bash
+free -h
+```
+
+If you have less than 2GB available, minimesos will fail. For Vagrant VMs, increase memory in your Vagrantfile:
+
+```ruby
+config.vm.provider "virtualbox" do |vb|
+  vb.memory = "4096"
+end
+```
+
+### 4. Try running the CLI container directly
+
+This bypasses the wrapper script and shows the actual error:
+
+```bash
+docker run --rm -it \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v ~/.minimesos:/root/.minimesos \
+  containersol/minimesos-cli:0.13.0 up
+```
+
+### 5. Check for stale state
+
+```bash
+minimesos destroy
+rm -rf ~/.minimesos/state
+minimesos up
+```
+
+### 6. Verify the installation path
+
+You exported `PATH=$PATH:/home/USER_REDACTED/.minimesos/bin` but you're running as root. The installer may have installed to `/root/.minimesos/bin` instead. Check:
+
+```bash
+which minimesos
+ls -la ~/.minimesos/bin/
+```
+
+If the binary is in `/root/.minimesos/bin`, update your PATH accordingly:
+
+```bash
+export PATH=$PATH:/root/.minimesos/bin
+```
+
+## Most likely cause for your setup
+
+Since you're running in Vagrant VMs, **insufficient memory** is the most probable cause. The default Vagrant box often has only 512MB-1GB RAM, which is insufficient for Mesos. Increase the VM memory to at least 3-4GB and try again.

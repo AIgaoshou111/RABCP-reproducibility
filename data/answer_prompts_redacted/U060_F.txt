@@ -1,0 +1,48 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-06-26 07:54:18
+Title: Setting PYTHONPATH in Ubuntu 16.04 for a Docker image to run properly
+Tags: <python><ubuntu><docker><gunicorn>
+Body:
+I have a docker image that is running a gunicorn process, but everytime it runs I get the error ImportError: No module named 'crm'.  So I am following this SO post [链接：https://stackoverflow.com/a/39461113/5779280] to solve this issue.
+
+However, when I run 
+
+ENTRYPOINT ["PYTHONPATH=`pwd`/..", "/usr/local/bin/gunicorn", "web_interface:app", "-w 4", "-t 90", "--log-level=debug", "-b 0.0.0.0:8000",  "--reload"]
+
+the container spits back a 
+
+ERROR: for web  Cannot start service web: oci runtime error: container_linux.go:247: starting container process caused "exec: \"PYTHONPATH=`pwd`/.. \": stat PYTHONPATH=`pwd`/.. : no such file or directory"
+
+Any idea how I can run the PYTHONPATH command?
+
+I should state that it works locally on my Mac, but not in the Ubuntu container.
+
+What I have tried:
+
+"PYTHONPATH=pwd/.."
+
+"PYTHONPATH=$(pwd)/.."
+
+"PYTHONPATH=$PWD/.."
+
+Selected earlier-question evidence:
+[E1; H2; 2017-06-19 16:05:01] Exact excerpt from the earlier question:
+Gunicorn is stuck on docker run command with a Flask Application
+I have my container app_container built, exposing port 8000 as per my application code.  The entry point to the container is ENTRYPOINT ["/usr/local/bin/gunicorn", "web_interface:app", "-w 4", "-t 90", "--log-level=info", "-b 127.0.0.1:8000",  "--reload"].
+
+[E2; H3; 2017-06-20 16:12:46] Exact excerpt from the earlier question:
+Nginx docker container not accepting and serving flask from container
+So I have banging my head on this issue for the past  hours, and I have got a docker-compose.yml file
+
+[E3; H4; 2017-06-21 11:56:53] Exact excerpt from the earlier question:
+504 error with nginx and flask docker containers
+Two days of work and I'm still stuck. I'm running separate nginx and application containers. The application container has a flask app that runs a gunicorn process on port 8000.
+
+History-derived overall profile (uncertain estimate, not certified ability):
+Domain: Docker; prior questions: 5; mean level: 3.156 / 5; distribution: level 1: 0.000, level 2: 0.019, level 3: 0.807, level 4: 0.175, level 5: 0.000. Use this only to calibrate explanation depth when useful; specific evidence and the current question take priority.

@@ -1,0 +1,104 @@
+Looking at your configuration, the issue is that you're missing the database connection environment variables in your GitLab deployment. The `sameersbn/gitlab` image requires specific environment variables to connect to PostgreSQL.
+
+## Required Environment Variables
+
+Your GitLab deployment needs these database-related environment variables:
+
+```yaml
+- name: DB_ADAPTER
+  value: postgresql
+- name: DB_HOST
+  value: postgresql
+- name: DB_NAME
+  value: gitlabhq_production
+- name: DB_USER
+  value: gitlab
+- name: DB_PASS
+  value: password
+```
+
+## Updated GitLab Deployment
+
+Here's your corrected `gitlab-deployment.yaml`:
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: gitlab
+  name: gitlab
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: gitlab
+    spec:
+      containers:
+      - env:
+        - name: GITLAB_PORT
+          value: "80"
+        - name: GITLAB_SECRETS_DB_KEY_BASE
+          value: 110Ect4ClClGBH06RSEQm4uKCxbpCyPzxfdLORkkssrStDnrQgpSSV
+        - name: GITLAB_SECRETS_OTP_KEY_BASE
+          value: MWxqmqqQkG1EXz9iz7Up4tEGBIEtFjxr1rL1Ry1rWCTWBjw3qxtvOM
+        - name: GITLAB_SECRETS_SECRET_KEY_BASE
+          value: 2KOeHYHNXB4r2XDZzy3XVrH2r0t6j71MBDUmfx4FxRPqjI5KZ9j4Md
+        - name: GITLAB_SSH_PORT
+          value: "10022"
+        - name: DB_ADAPTER
+          value: postgresql
+        - name: DB_HOST
+          value: postgresql
+        - name: DB_NAME
+          value: gitlabhq_production
+        - name: DB_USER
+          value: gitlab
+        - name: DB_PASS
+          value: password
+        image: sameersbn/gitlab:9.3.9
+        name: gitlab
+        volumeMounts:
+        - name: gluster-vol1
+          mountPath: /home/USER_REDACTED/data
+        ports:
+        - containerPort: 443
+        - containerPort: 80
+        - containerPort: 22
+        resources: {}
+      volumes:
+      - name: gluster-vol1
+        persistentVolumeClaim:
+          claimName: gluster-dyn-pvc
+status: {}
+```
+
+## About Your Update 1
+
+The `psql` command issue you're seeing is normal behavior. When you run `psql -U gitlab`, PostgreSQL defaults to using the username as the database name if no database is specified. That's why it's looking for a database called "gitlab" instead of "gitlabhq_production".
+
+To connect to the correct database, you need to specify it explicitly:
+
+```bash
+psql -U gitlab -d gitlabhq_production -h 10.42.20.99
+```
+
+## Additional Notes
+
+1. **Service Discovery**: Since you're using a headless service (clusterIP: None) named "postgresql", the GitLab pod should be able to resolve "postgresql" to the PostgreSQL pod's IP address. This is working correctly as shown by your successful telnet test.
+
+2. **Gluster Volume**: The Gluster volume shouldn't cause this issue. The problem is purely the missing environment variables for database configuration.
+
+3. **Redis**: Make sure you also have the Redis connection configured if you're using a separate Redis container. The `sameersbn/gitlab` image typically requires:
+   ```yaml
+   - name: REDIS_HOST
+     value: redis
+   - name: REDIS_PORT
+     value: "6379"
+   ```
+
+After adding these environment variables, delete the existing GitLab pod and let the deployment recreate it with the new configuration.

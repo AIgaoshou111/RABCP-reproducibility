@@ -1,0 +1,158 @@
+The actual request is: **how to pass environment/argument values into `docker-compose build` without hardcoding them in `docker-compose.yml`**, given Docker 1.12.6 and Compose file version 2.
+
+The key facts from your question:
+
+- Your first attempt with `args:` in Compose and inline shell variables **should work**, but didn’t.
+- Your second attempt using `RUN echo $REP_USER` without `ARG` **cannot work** — build-time `RUN` does not see host environment variables or Compose `environment:`/`env_file:` values.
+- Your `.env` file attempt worked for `docker-compose config`, which is the correct Compose mechanism for default variable substitution.
+- Your third attempt with `args: - REP_USER` also should work if the variables are exported in the shell where `docker-compose` runs.
+
+So the most likely causes are:
+
+1. **Shell variable expansion not happening** because of how you invoked the command.
+2. **`sudo` dropping the environment** — this is very likely in your EDIT 3 case.
+3. **Compose version behavior** with `args` and `.env`.
+
+---
+
+## What actually works
+
+### Option A: Use `.env` for default values (recommended for your setup)
+
+Create a `.env` file in the same directory as `docker-compose.yml`:
+
+```env
+REP_USER=myusername
+REP_PASS=mypassword
+```
+
+Keep your `docker-compose.yml` as:
+
+```yaml
+version: "2"
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REP_USER: ${REP_USER}
+        REP_PASS: ${REP_PASS}
+```
+
+Then run:
+
+```bash
+docker-compose build
+```
+
+Compose automatically reads `.env` from the project directory and substitutes `${REP_USER}` and `${REP_PASS}`.
+
+This is exactly what your EDIT 2 showed: `docker-compose config` resolved the values from `.env`.
+
+---
+
+### Option B: Pass variables inline without `sudo`
+
+If you want to override `.env` or pass values directly:
+
+```bash
+REP_USER=myusername REP_PASS=mypassword docker-compose build
+```
+
+This works **only if** the shell expands `$REP_USER` and `$REP_PASS` in `docker-compose.yml`. That requires the `args:` section to use `${REP_USER}` syntax, not `$REP_USER` without braces — though both usually work.
+
+If you use `sudo`, the environment is often reset. Use:
+
+```bash
+sudo REP_USER=myusername REP_PASS=mypassword docker-compose build
+```
+
+or better, export first and use `sudo -E`:
+
+```bash
+export REP_USER=myusername
+export REP_PASS=mypassword
+sudo -E docker-compose build --no-cache
+```
+
+`sudo -E` preserves the environment.
+
+---
+
+### Option C: Use `args` without values in Compose
+
+Your EDIT 3 attempt:
+
+```yaml
+args:
+  - REP_USER
+  - REP_PASS
+```
+
+This tells Compose to take the values from the environment where `docker-compose` runs. It works, but again **`sudo` likely stripped the variables**.
+
+Correct invocation:
+
+```bash
+export REP_USER=myusername
+export REP_PASS=mypassword
+docker-compose build --no-cache
+```
+
+or with `sudo -E`:
+
+```bash
+export REP_USER=myusername
+export REP_PASS=mypassword
+sudo -E docker-compose build --no-cache
+```
+
+---
+
+## Why your second attempt could not work
+
+This Dockerfile:
+
+```dockerfile
+FROM jessie
+RUN echo 'REP_USER:'$REP_USER', REP_PASS:'$REP_PASS
+```
+
+without `ARG` declarations will always print empty values. Build-time `RUN` commands do **not** inherit:
+
+- host shell variables
+- Compose `environment:`
+- `env_file:`
+
+They only see:
+
+- `ARG` values declared in the Dockerfile
+- `ENV` values set earlier in the Dockerfile
+- build args passed via `--build-arg` or Compose `build.args`
+
+So the `ARG` version of your Dockerfile was correct:
+
+```dockerfile
+FROM jessie
+ARG REP_USER
+ARG REP_PASS
+RUN echo 'REP_USER:'$REP_USER', REP_PASS:'$REP_PASS
+```
+
+---
+
+## Summary for your Docker 1.12.6 environment
+
+1. Keep `ARG` in the Dockerfile.
+2. Keep `args:` in `docker-compose.yml` with `${REP_USER}` / `${REP_PASS}`.
+3. Put default values in `.env` next to `docker-compose.yml`.
+4. Run `docker-compose build` without `sudo`, or use `sudo -E` if you must use `sudo`.
+
+If it still fails, run:
+
+```bash
+docker-compose config
+```
+
+to see exactly what Compose resolves before building. That will show whether the variables are reaching Compose.

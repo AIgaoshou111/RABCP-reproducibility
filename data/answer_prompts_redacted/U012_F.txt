@@ -1,0 +1,32 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2019-08-05 16:10:41
+Title: Error when trying to run a docker images with Docker Enterprise in Windows Server 2016
+Tags: <docker><windows-server><windows-server-2016>
+Body:
+I recently installed Docker Enterprise on my Windows Server 2016 machine. 
+
+However, when I try to do a docker run hello-world, I get this error
+
+  
+docker: no matching manifest for windows/amd64 10.0.14393 in the
+  manifest list entries.
+
+I think it may be because it's not in experimental mode, but doing the dockerd --experimental command causes it to hang.
+
+Selected earlier-question evidence:
+[E1; H4; 2019-06-17 17:26:12] Exact excerpt from the earlier question:
+Docker Windows Local Registry: received unexpected HTTP status: 500 Internal Server Error
+I am attempting to push an image of a windows container to a "local" repository on a Windows VM, which has it's own IP address.
+
+[E2; H5; 2019-06-19 15:57:22] Exact excerpt from the earlier question:
+TeamCity server in a Linux container, but Build Agent in a Windows container
+Is it possible to run a TeamCity server instance in a Linux container, and then run a Build Agent in a Windows container and have it connect?
+
+History-derived overall profile (uncertain estimate, not certified ability):
+Domain: Docker; prior questions: 5; mean level: 3.083 / 5; distribution: level 1: 0.000, level 2: 0.063, level 3: 0.789, level 4: 0.147, level 5: 0.000. Use this only to calibrate explanation depth when useful; specific evidence and the current question take priority.

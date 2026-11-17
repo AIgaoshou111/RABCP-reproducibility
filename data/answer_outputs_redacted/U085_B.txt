@@ -1,0 +1,42 @@
+In the Docker SDK for Python, you can remove a network using the `remove()` method on a network object, not through `prune()`. The `prune()` method is for removing unused networks in bulk, not for removing a specific network by name.
+
+Here's how to correctly remove a network:
+
+```python
+def remove_docker_network(network_name: str, client: docker.client.DockerClient):
+    try:
+        network = client.networks.get(network_name)
+        network.remove()
+        print(f"Successfully removed docker network: '{network_name}'")
+    except docker.errors.NotFound:
+        print(f"Docker network '{network_name}' does not exist")
+    except docker.errors.APIError as ex:
+        print(f"Error removing docker network '{network_name}': {ex}")
+```
+
+The key steps are:
+
+1. **Get the network object**: Use `client.networks.get(network_name)` to retrieve the network by its name or ID
+2. **Call remove()**: Use the `remove()` method on the network object to delete it
+
+The `remove()` method is available on the `Network` object returned by `get()`. You can also use `client.networks.list(names=[network_name])` to find networks matching a name pattern, but `get()` is more direct when you know the exact name.
+
+If you want to handle the case where the network might be in use by containers, you can check for that:
+
+```python
+def remove_docker_network(network_name: str, client: docker.client.DockerClient):
+    try:
+        network = client.networks.get(network_name)
+        # Check if network has connected containers
+        if network.attrs.get('Containers'):
+            print(f"Network '{network_name}' has connected containers, cannot remove")
+            return
+        network.remove()
+        print(f"Successfully removed docker network: '{network_name}'")
+    except docker.errors.NotFound:
+        print(f"Docker network '{network_name}' does not exist")
+    except docker.errors.APIError as ex:
+        print(f"Error removing docker network '{network_name}': {ex}")
+```
+
+This approach gives you more control and better error handling than using `prune()` with filters.

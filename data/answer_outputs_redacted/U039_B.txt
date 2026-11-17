@@ -1,0 +1,61 @@
+In Debian Jessie with PHP 5.6, the bcmath extension is typically available through the `php5-bcmath` package (not `php5.6-bcmath`). The package naming convention for PHP 5.x on Debian uses `php5-` prefix, not `php5.6-`.
+
+## Solution
+
+Run the following commands in your Docker container:
+
+```bash
+apt-get update
+apt-get install -y php5-bcmath
+```
+
+After installation, you may need to enable the module if it's not automatically enabled:
+
+```bash
+php5enmod bcmath
+```
+
+Then restart Apache (if using Apache) or PHP-FPM:
+
+```bash
+# For Apache
+service apache2 restart
+
+# Or for PHP-FPM
+service php5-fpm restart
+```
+
+## Verify Installation
+
+Check if bcmath is loaded:
+
+```bash
+php -m | grep bcmath
+```
+
+Or create a test PHP file:
+
+```php
+<?php
+phpinfo();
+?>
+```
+
+Look for the bcmath section in the output.
+
+## For Dockerfile
+
+If you're building this into a Dockerfile, add these lines:
+
+```dockerfile
+RUN apt-get update && apt-get install -y php5-bcmath
+RUN php5enmod bcmath
+```
+
+Note: The official PHP Docker images (like the one you're using from docker-library/php) compile PHP from source rather than using Debian packages. If `php5-bcmath` doesn't work because PHP was compiled from source, you may need to use `docker-php-ext-install` instead:
+
+```dockerfile
+RUN docker-php-ext-install bcmath
+```
+
+This is actually the recommended approach for the official PHP Docker images, as they don't use the Debian PHP packages.

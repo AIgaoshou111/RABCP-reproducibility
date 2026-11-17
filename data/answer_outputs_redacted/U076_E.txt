@@ -1,0 +1,93 @@
+The error `Get http://localhost:7073/v1/users/: EOF` indicates Docker is trying to use **HTTP** (not HTTPS) to reach the registry, but the connection is being closed immediately. GitLab's container registry expects HTTPS by default, and Docker refuses to work with insecure registries unless explicitly configured.
+
+## The core issue
+
+You have two problems to solve:
+
+1. **Docker is using HTTP** to `localhost:7073`, but GitLab's registry is configured for HTTPS (or the connection is being terminated).
+2. **The registry port mapping** (7073→4567) may not be correctly exposing the registry service.
+
+## Steps to fix
+
+### 1. Check your GitLab registry configuration
+
+In your `gitlab.rb`, ensure the registry is configured with an external URL that matches what Docker will use:
+
+```ruby
+registry_external_url 'http://localhost:7073'
+```
+
+Or if you want HTTPS (recommended for production, but more complex for local testing):
+
+```ruby
+registry_external_url 'https://localhost:7073'
+```
+
+**Important:** The `registry_external_url` should match the port Docker will connect to (7073), not the internal port (4567).
+
+### 2. Configure Docker to allow insecure registries (for HTTP)
+
+If you're using HTTP (which is fine for local testing), you need to tell Docker this registry is insecure.
+
+**For Docker on Linux:**
+
+Edit `/etc/docker/daemon.json` (create if it doesn't exist):
+
+```json
+{
+  "insecure-registries": ["localhost:7073"]
+}
+```
+
+Then restart Docker:
+
+```bash
+sudo systemctl restart docker
+```
+
+**For Docker on macOS/Windows (Docker Desktop):**
+
+- Open Docker Desktop → Settings → Docker Engine
+- Add the same JSON configuration
+- Apply & Restart
+
+### 3. Verify the registry is actually running
+
+Inside your GitLab container, check if the registry process is listening:
+
+```bash
+docker exec -it <gitlab-container-name> gitlab-ctl status
+```
+
+Look for `registry` in the output. If it's not running, check logs:
+
+```bash
+docker exec -it <gitlab-container-name> gitlab-ctl tail registry
+```
+
+### 4. Test the connection
+
+After making these changes, test with:
+
+```bash
+curl http://localhost:7073/v2/
+```
+
+You should get a response (even an empty `{}` or 401 is fine — it means the registry is reachable).
+
+Then try Docker login again:
+
+```bash
+docker login localhost:7073
+```
+
+## Additional considerations
+
+- **Port mapping:** Ensure your Docker run command maps the registry port correctly: `-p 7073:4567` (or whatever port you've configured internally).
+- **GitLab container restart:** After changing `gitlab.rb`, you need to reconfigure GitLab:
+  ```bash
+  docker exec -it <gitlab-container-name> gitlab-ctl reconfigure
+  ```
+- **Using `localhost` vs container IP:** When Docker is running inside a VM (macOS/Windows), `localhost` from the host may not reach the container directly. In that case, use the Docker host IP (usually `192.168.99.100` for older Docker Toolbox, or `localhost` works for Docker Desktop).
+
+The most likely fix is adding `localhost:7073` to Docker's insecure registries and ensuring `registry_external_url` is set correctly in `gitlab.rb`.

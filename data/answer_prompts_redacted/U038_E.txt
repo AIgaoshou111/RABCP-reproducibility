@@ -1,0 +1,186 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-09-06 15:06:43
+Title: GitLab unable to connect with database
+Tags: <postgresql><docker><kubernetes><docker-compose><gitlab>
+Body:
+I am trying to use separate containers for GitLab, Redis and PostgreSQL in Kubernetes with Gluster. I am launching the three containers in the order PostgreSQL, Redis and then GitLab. First two work fine but when i try launching GitLab, it's somehow not finding the database configuration.
+
+[root@cent-gluster-workstation ~]# kubectl logs gitlab-3743104516-plk3x -p
+Initializing logdir...
+Initializing datadir...
+Installing configuration templates...
+Configuring gitlab...
+Configuring gitlab::database
+ERROR:
+  Please configure the database connection.
+  Refer http://git.io/wkYhyA for more information.
+  Cannot continue without a database. Aborting...
+
+I confirmed that i was able to telnet from within the GitLab pod to PostgreSQL pod on port 5432.
+
+root@gitlab-1182173148-t47fj:/home/USER_REDACTED/gitlab# telnet postgresql 5432
+Trying 10.42.154.36...
+Connected to postgresql.default.svc.cluster.local.
+Escape character is '^]'. 
+
+Deployment and service configuration for GitLab and PostgreSQL:
+
+[root@cent-gluster-workstation ~]# cat postgresql-deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: postgresql
+  name: postgresql
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: postgresql
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          value: gitlabhq_production
+        - name: POSTGRES_PASSWORD
+          value: password
+        - name: POSTGRES_USER
+          value: gitlab
+        image: postgres:9.6.3
+        name: postgresql
+        volumeMounts:
+        - name: gluster-vol1
+          mountPath: /var/lib/postgresql
+        resources: {}
+      volumes:
+      - name: gluster-vol1
+        persistentVolumeClaim:
+          claimName: gluster-dyn-pvc
+status: {}
+
+[root@cent-gluster-workstation ~]# cat postgresql-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: postgresql
+  name: postgresql
+spec:
+  clusterIP: None
+  ports:
+  - name: postgres
+    port: 5432
+    targetPort: 5432
+  selector:
+    io.kompose.service: postgresql
+status:
+  loadBalancer: {}
+
+[root@cent-gluster-workstation ~]# cat gitlab-deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: gitlab
+  name: gitlab
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: gitlab
+    spec:
+      containers:
+      - env:
+        - name: GITLAB_PORT
+          value: "80"
+        - name: GITLAB_SECRETS_DB_KEY_BASE
+          value: 110Ect4ClClGBH06RSEQm4uKCxbpCyPzxfdLORkkssrStDnrQgpSSV
+        - name: GITLAB_SECRETS_OTP_KEY_BASE
+          value: MWxqmqqQkG1EXz9iz7Up4tEGBIEtFjxr1rL1Ry1rWCTWBjw3qxtvOM
+        - name: GITLAB_SECRETS_SECRET_KEY_BASE
+          value: 2KOeHYHNXB4r2XDZzy3XVrH2r0t6j71MBDUmfx4FxRPqjI5KZ9j4Md
+        - name: GITLAB_SSH_PORT
+          value: "10022"
+        image: sameersbn/gitlab:9.3.9
+        name: gitlab
+        volumeMounts:
+        - name: gluster-vol1
+          mountPath: /home/USER_REDACTED/data
+        ports:
+        - containerPort: 443
+        - containerPort: 80
+        - containerPort: 22
+        resources: {}
+      volumes:
+      - name: gluster-vol1
+        persistentVolumeClaim:
+          claimName: gluster-dyn-pvc
+status: {}
+
+When i was using these three containers without Kubernetes and Gluster, i was able to get GitLab up and running by following the steps in the Quick Start section of this [链接：https://github.com/sameersbn/docker-gitlab#quick-start] link. In this case, i was using volume mount path as /srv/docker/gitlab/ for all three containers (GitLab, Redis and PostgreSQL).
+
+In the current case, as you can see in the deployment and service YAMLs above, i am using Gluster volume to map the container paths. Does this has anything to do with the issue or something else is wrong somewhere?
+
+UPDATE 1: I have changed the service port name from 'headless' to 'postgres' in postgresql-service.yaml above. When i tried accessing database from application pod using psql, it's unable to connect:
+
+[rancher@node-c ~]$ docker exec -it 07a05cef7378 /bin/bash
+groups: cannot find name for group ID 2000
+root@gitlab-1182173148-b33z2:/home/USER_REDACTED/gitlab# psql -U postgres -h 10.42.20.99
+Password for user postgres:
+root@gitlab-1182173148-b33z2:/home/USER_REDACTED/gitlab# psql -U gitlab -h 10.42.20.99
+Password for user gitlab:
+psql: FATAL:  database "gitlab" does not exist
+
+However, if i try connecting to psql from within the database pod, i am able to do so.
+
+[root@node-c ~]# docker exec -it 4c968c09bccf /bin/bash
+root@postgresql-1124339636-4377k:/# psql -U gitlab
+psql: FATAL:  database "gitlab" does not exist
+root@postgresql-1124339636-4377k:/# psql -U postgres
+psql (9.6.3)
+Type "help" for help.
+
+postgres=# \l
+                                      List of databases
+        Name         |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
+---------------------+----------+----------+------------+------------+-----------------------
+ gitlabhq_production | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ postgres            | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ template0           | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+                     |          |          |            |            | postgres=CTc/postgres
+ template1           | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+                     |          |          |            |            | postgres=CTc/postgres
+(4 rows)
+
+postgres=# \du
+                                   List of roles
+ Role name |                         Attributes                         | Member of
+-----------+------------------------------------------------------------+-----------
+ gitlab    | Superuser                                                  | {}
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+
+One thing that i'm confused about is that on both app and db pod, when i try accessing the database, don't know why Postgres treats gitlab as database although i explicitly provide -U before it.
+
+Selected earlier-question evidence:
+[E1; H3; 2017-08-21 17:54:17] Exact excerpt from the earlier question:
+GitLab setup using official PostgreSQL and GitLab docker container not working
+I am trying to setup GitLab using separate docker containers for both GitLab and PostgreSQL. I am using RancherOS v1.0.3 with Kubernetes enabled. For now, all i want is to have a single node having both the containers. Later, i will look into configuring them on separate nodes.
+
+[E2; H5; 2017-09-05 17:13:46] Exact excerpt from the earlier question:
+GitLab HA with Kubernetes and Gluster
+I currently have GitLab omnibus setup on Docker. I plan to have HA for the same by adding it to Kubernetes and have persistence using Gluster. I have played around configuring Kubernetes with Gluster. Now it's time to bring GitLab into Kubernetes. GitLab uses PostgreSQL as the default db.

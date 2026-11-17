@@ -1,0 +1,304 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-08-29 07:23:39
+Title: Dockerfile pass environments on docker compose build
+Tags: <docker><arguments><environment-variables><docker-compose><dockerfile>
+Body:
+I have written a Dockerfile which uses two arguments:
+
+FROM jessie
+MAINTAINER Zeinab Abbasimazar
+#Build Arguments
+ARG REP_USER
+ARG REP_PASS
+# Build
+RUN echo 'REP_USER:'$REP_USER', REP_PASS:'$REP_PASS
+
+I wrote a docker-compose.yml for build:
+
+version: "2"
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REP_USER: $REP_USER
+        REP_PASS: $REP_PASS
+
+I don't want to define these arguments directly in the compose file, so I tried to send them during docker compose build:
+
+REP_USER=myusername REP_PASS=mypassword docker-compose build
+
+Which didn't work. I changed my Dockerfile to use these arguments as environment variables; so I removed ARG lines:
+
+FROM jessie
+MAINTAINER Zeinab Abbasimazar
+# Build
+RUN echo 'REP_USER:'$REP_USER', REP_PASS:'$REP_PASS
+
+And docker-compose.yml:
+
+version: "2"
+  services:
+    ui:
+      build:
+        context: .
+        dockerfile: Dockerfile
+
+And ran REP_USER=myusername REP_PASS=mypassword docker-compose build; still no result.
+
+I also tried to save these information into an env file:
+
+version: "2"
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - myenv.env
+
+But it seems env files doesn't affect at build time; they are just take part into run time.
+
+EDIT 1:
+
+Docker version is 1.12.6 which doesn't support passing arguments with --build-arg.
+
+EDIT 2:
+
+I tried using .env file as described here [链接：https://docs.docker.com/compose/environment-variables/#the-env-file]:
+
+cat .env 
+REP_USER=myusername
+REP_PASS=mypassword
+
+I then called docker-compose config which returned:
+
+networks: {}
+services:
+  ui:
+    build:
+      args:
+        REP_PASS: mypassword
+        REP_USER: myusername
+      context: /home/USER_REDACTED/Workspace/ZiZi-Docker/Test/test-exec-1
+      dockerfile: Dockerfile
+version: '2.0'
+volumes: {}
+
+Which means this resolved my issue.
+
+EDIT 3:
+
+I also tried third section of docker-compose arg documentation [链接：https://docs.docker.com/compose/compose-file/#args] in my docker-compose.yml file:
+
+version: "2"
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - REP_USER
+        - REP_PASS
+
+And executed:
+
+export REP_USER=myusername;export REP_PASS=mypassword;sudo docker-compose build --no-cache
+
+Still not getting what I wanted.
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2017-08-13 13:18:22
+Title: Mounting Maven Repository to Docker
+Tags: <java><maven><docker><dockerfile><docker-build>
+Body:
+I am trying to build a Java application and make a package using docker. This builds needs a maven repository which I don't want to include in the image, since it's very large. I wanted to try using volumes and mount my local maven repository to the maven repository in the image. I used apt-get install -y maven in order to have maven available, but I can't find the directory .m2 in the image $HOME. 
+
+I used ls -la $HOME, ls -la and ls -la /root to find the maven home, but there is no .m2 directory there.
+
+EDIT 1:
+
+I have these lines in Dockerfile: 
+
+FROM ubuntu
+MAINTAINER Zeinab Abbasimazar
+# Install and configure required packages
+RUN apt-get update; \
+    apt-get install -y --no-install-recommends apt-utils; \
+    apt-get install -y dialog; \
+    apt-get install -y wget unzip curl maven; \
+    mkdir $HOME/.m2/; \
+    ls -la /usr/share/maven/conf/; \
+    echo \
+    "<settings xmlns='http://maven.apache.org/SETTINGS/1.0.0\' \
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' \
+    xsi:schemaLocation='http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd'> \
+        <localRepository>/root/.m2/repository</localRepository> \
+        <interactiveMode>true</interactiveMode> \
+        <usePluginRegistry>false</usePluginRegistry> \
+        <offline>false</offline> \
+    </settings>" \
+    > /usr/share/maven/conf/settings.xml
+VOLUME ["/home/USER_REDACTED/.m2/", "/root/.m2/"]
+# Build
+RUN mvn  -X clean install -pl components -P profile
+
+Which puts local repository configurations in image's maven configuration file, mounts my local maven repository to a directory in the image and finally performs the build. As I can see in the maven build log that it's using the local repository path I expected:
+
+[DEBUG] Reading global settings from /usr/share/maven/conf/settings.xml
+[DEBUG] Reading user settings from /root/.m2/settings.xml
+[DEBUG] Using local repository at /root/.m2/repository
+
+But still can't detect dependencies.
+
+[H2]
+Date: 2017-08-14 10:11:17
+Title: `curl` command returns nothing in Dockerfile whilst it works in every other linux system
+Tags: <curl><docker><dockerfile>
+Body:
+I have a Docker file containing:
+
+FROM ubuntu
+MAINTAINER Zeinab Abbasimazar
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget unzip curl aptitude
+RUN aptitude search curl
+RUN VERSION=$(curl myURL 2>&1 | grep -o -E 'href="([^"#]+)"' | cut -d'"' -f2 | egrep component-[0-9].[0-9].[0-9]$ | cut -d'-' -f3); echo $VERSION
+
+Last line command echos version as expected in any linux command line if curl is installed, but during docker build no version is returned.
+
+[H3]
+Date: 2017-08-27 05:29:57
+Title: saving docker log files with volumes produces permission denied
+Tags: <docker><permission-denied><docker-volume>
+Body:
+I am trying to test saving log files of docker containers in playing in this site [链接：http://labs.play-with-docker.com/] which gives you a linux root shell with docker installed. I'v used solution provided here [链接：https://stackoverflow.com/questions/42772159/how-to-save-log-files-from-docker-container?answertab=active#tab-top]:
+
+docker run -ti -v /dev/log:/root/data --name zizimongodb mongo
+
+This is what I got in the console:
+
+docker: Error response from daemon: oci runtime error: container_linux.go:262: starting container process caused "process_linux.go:339: container init caused \"rootfs_linux.go:57: mounting \\\"/dev/log\\\" to rootfs \\\"/graph/overlay2/7f1eb83902e3688c0a1204c2fe8dfd8fbf43e1093bc578e4c41028e8b03e4b38/merged\\\" at \\\"/graph/overlay2/7f1eb83902e3688c0a1204c2fe8dfd8fbf43e1093bc578e4c41028e8b03e4b38/merged/root/data\\\" caused \\\"permission denied\\\"\"".
+
+But the container has started:
+
+$ docker ps -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+8adaa75ba6f7        mongo               "docker-entrypoint..."   2 minutes ago       Created                                 zizimongodb
+
+docker logs -f zizimongodb returns nothing. When I stop the container, nothing is saved in the /root/data. Any idea how I can correctly save all logs?
+
+[H4]
+Date: 2017-08-27 10:52:28
+Title: docker add command fails to add the path passed as argument to it
+Tags: <docker><jenkins><arguments><docker-build>
+Body:
+I have a Dockerfile which I want to be built and pushed after jenkins maven build. I have these lines in my Dockerfile:
+
+...
+ARG MAIN_DIR
+ADD $MAIN_DIR .
+...
+
+And I pass MAIN_DIR argument as follows:
+
+docker build -t my.gitlab.com:4567/path/to/my/project/my-image-name:my-image-tag --build-arg MAIN_DIR=Development .
+
+But I get:
+
+ADD failed: stat /var/lib/docker/tmp/docker-builder832988213/Development: no such file or directory
+
+EDIT 1:
+
+COPY $MAIN_DIR . generates the same issue.
+
+EDIT 2:
+
+Current directory actually contains a directory named Development and I'm completely sure there is no .dockerignore file in the whole project.
+
+[H5]
+Date: 2017-08-28 09:48:00
+Title: NotImplementedError while installing jython in dockerfile
+Tags: <docker><dockerfile><jython>
+Body:
+I have a Dockerfile building upon a 1.7.0_45 JAVA which I want to install jython inside it. This is how I implemented this according to this [链接：https://github.com/seansummers/docker-jython/blob/master/Dockerfile]:
+
+FROM java:7.0_45
+MAINTAINER Zeinab Abbasimazar ([EMAIL_REDACTED])
+ENV JYTHON_VERSION=2.7.0
+RUN apt-get update; \
+    apt-get install -y --no-install-recommends apt-utils; \
+    apt-get install -y curl; \
+    curl -Lo jython-installer-$JYTHON_VERSION.jar \
+    "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/$JYTHON_VERSION/jython-installer-$JYTHON_VERSION.jar"; \
+    java -jar jython-installer-$JYTHON_VERSION.jar -s -t minimum -i mod -i ensurepip -d /usr/local/jython-$JYTHON_VERSION; \
+    rm -f jython-installer-$JYTHON_VERSION.jar; \
+    ln -s /usr/local/jython-$JYTHON_VERSION/bin/* /usr/local/bin/
+RUN java -version
+ENTRYPOINT ["bash"]
+
+The java:7.0_45 is downloaded from an internal repository. 
+
+The output of java -version is:
+
+java version "1.7.0_45"
+Java(TM) SE Runtime Environment (build 1.7.0_45-b18)
+Java HotSpot(TM) 64-Bit Server VM (build 24.45-b08, mixed mode)
+
+During build phase, I got this:
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                             Dload  Upload   Total   Spent    Left  Speed
+100   161  100   161    0     0    195      0 --:--:-- --:--:-- --:--:--   195
+100 88.5M  100 88.5M    0     0   113k      0  0:13:22  0:13:22 --:--:--  117k
+Performing silent installation
+ 10 %
+ 20 %
+ 30 %
+ 40 %
+ 50 %
+ 60 %
+Generating start scripts ...
+Installing pip and setuptools
+ 90 %
+Traceback (most recent call last):
+  File "/usr/local/jython-2.7.0/Lib/runpy.py", line 161, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/local/jython-2.7.0/Lib/runpy.py", line 72, in _run_code
+    exec code in run_globals
+  File "/usr/local/jython-2.7.0/Lib/ensurepip/__main__.py", line 4, in <module>
+    ensurepip._main()
+  File "/usr/local/jython-2.7.0/Lib/ensurepip/__init__.py", line 220, in _main
+    bootstrap(
+  File "/usr/local/jython-2.7.0/Lib/ensurepip/__init__.py", line 123, in bootstrap
+    _run_pip(args + [p[0] for p in _PROJECTS], additional_paths)
+  File "/usr/local/jython-2.7.0/Lib/ensurepip/__init__.py", line 45, in _run_pip
+    import pip
+  File "/tmp/tmpt9RVvB/pip-1.6-py2.py3-none-any.whl/pip/__init__.py", line 10, in <module>
+  File "/tmp/tmpt9RVvB/pip-1.6-py2.py3-none-any.whl/pip/util.py", line 17, in <module>
+  File "/tmp/tmpt9RVvB/pip-1.6-py2.py3-none-any.whl/pip/locations.py", line 109, in <module>
+  File "/tmp/tmpt9RVvB/pip-1.6-py2.py3-none-any.whl/pip/locations.py", line 71, in _get_build_prefix
+  File "/tmp/tmpt9RVvB/pip-1.6-py2.py3-none-any.whl/pip/locations.py", line 66, in __get_username
+  File "/usr/local/jython-2.7.0/Lib/pwd.py", line 60, in getpwuid
+    return struct_passwd(entry)
+  File "/usr/local/jython-2.7.0/Lib/pwd.py", line 36, in __new__
+    pwd = [REDACTED], newStringOrUnicode(pwd.password), int(pwd.UID),
+NotImplementedError: passwd.pw_passwd unimplemented
+ 100 %
+Congratulations! You successfully installed Jython 2.7.0 to directory /usr/local/jython-2.7.0.
+
+The jython works fine in run phase though, but I'm curios what causes this error. Any information that can help?
+
+EDIT 1:
+
+I should mention that I have no problem installing it on an ubuntu 16.04 system.

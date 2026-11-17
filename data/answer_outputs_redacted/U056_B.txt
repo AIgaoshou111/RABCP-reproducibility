@@ -1,0 +1,74 @@
+The issue you're experiencing is that your web application is redirecting to the container's internal IP address (172.17.0.2) instead of using the host's IP address. This is a common problem with web applications that generate absolute URLs based on the server's detected IP address.
+
+## The Problem
+
+When you access `http://192.168.1.11:5000` from system C, your web application inside the container sees the request coming to `172.17.0.2` (the container's internal IP) and generates a redirect URL using that internal IP. System C then tries to connect to `172.17.0.2`, which is unreachable from outside the Docker host.
+
+## Solutions
+
+### 1. **Configure the Application's Base URL**
+The most direct fix is to configure your web application to use the correct external URL. Since you're using Magento 2 (based on your earlier questions), you need to:
+
+```bash
+# Access the container
+docker exec -it development-phase bash
+
+# Update Magento's base URLs
+cd /var/www/html
+php bin/magento setup:store-config:set --base-url="http://192.168.1.11:5000/"
+php bin/magento setup:store-config:set --base-url-secure="https://192.168.1.11:5000/"
+php bin/magento cache:flush
+```
+
+### 2. **Set Environment Variables**
+When running the container, you can pass environment variables to override the detected IP:
+
+```bash
+docker run --name development-phase -d -p 5000:80 \
+  -e VIRTUAL_HOST=192.168.1.11 \
+  -e MAGENTO_HOST=192.168.1.11:5000 \
+  -v /var/www/public development
+```
+
+### 3. **Use Host Network Mode**
+For development purposes, you can run the container using the host's network:
+
+```bash
+docker run --name development-phase -d --network=host \
+  -v /var/www/public development
+```
+
+This makes the container use the host's IP directly, so the application will detect `192.168.1.11` instead of `172.17.0.2`.
+
+### 4. **Configure Apache/Nginx in the Container**
+If the application uses Apache, you can set the `ServerName` directive:
+
+```bash
+docker exec -it development-phase bash
+echo "ServerName 192.168.1.11" >> /etc/apache2/apache2.conf
+service apache2 restart
+```
+
+## Verification
+
+After applying any of these solutions, test from system C:
+```bash
+curl -I http://192.168.1.11:5000
+```
+
+You should see a 200 OK response instead of a redirect to 172.17.0.2.
+
+## Additional Check
+
+If the above doesn't work, verify that Docker's port binding is correct:
+```bash
+# On system A
+docker port development-phase
+# Should show: 80/tcp -> 0.0.0.0:5000
+
+# Check if the port is listening on all interfaces
+netstat -tlnp | grep 5000
+# Should show: 0.0.0.0:5000 (not 127.0.0.1:5000)
+```
+
+The key issue is that your application needs to know its external URL, not the container's internal IP.

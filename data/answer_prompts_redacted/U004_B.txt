@@ -1,0 +1,261 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2018-10-22 22:21:12
+Title: Docker-Compose + Command
+Tags: <docker>
+Body:
+It seems my docker-compose commands only execute the last command. In this case runserver.
+
+command: python3 manage.py collectstatic --noinput
+command: python3 manage.py migrate --noinput
+command: python3 manage.py runserver 0.0.0.0:8000
+
+I tried to move these commands into an entrypoint.sh file. However, I can't figure out how to implement this into my dockerfile & docker-compose. 
+
+The following is my dockerfile:
+
+# Pull base image
+FROM python:3
+
+# Set environment varibles
+ENV PYTHONUNBUFFERED 1
+
+# Set work directory
+RUN mkdir /code
+WORKDIR /code
+
+# Install dependencies
+RUN pip install --upgrade pip
+RUN pip install pipenv
+COPY ./Pipfile /code/Pipfile
+RUN pipenv install --deploy --system --skip-lock --dev
+
+# Copy project
+COPY . /code/
+
+My docker-compose:
+
+version: '3'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+  web:
+    build: .
+    command: python3 manage.py collectstatic --noinput
+    command: python3 manage.py migrate --noinput
+    command: python3 manage.py runserver 0.0.0.0:8000
+    env_file: .env
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+entrypoint.sh
+
+#!/bin/bash
+
+# Collect static files
+echo "Collect static files"
+python manage.py collectstatic --noinput
+
+# Apply database migrations
+echo "Apply database migrations"
+python manage.py migrate
+
+# Start server
+echo "Starting server"
+python manage.py runserver 0.0.0.0:8000
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2018-09-29 10:03:02
+Title: Docker Compose + Postgres: Expose port
+Tags: <postgresql><docker><docker-compose>
+Body:
+I am currently trying to use Docker for my new Django/Postgres project. I am working on a Mac and usually use Postico to quickly connect to my database.
+
+I used to connect like here:
+
+[图片1（人工查看原图后整理）：数据库客户端的连接设置使用 127.0.0.1:5432、用户 postgres、数据库 postgres。]
+
+I used the official Docker documentation to setup docker-compose. I now have the issue, that I can't connect via Postico to the postgres db. It seems to me that the problem comes from the ports not being exposed.
+
+[图片2（人工查看原图后整理）：docker ps 中 Web 容器映射 8000:8000；PostgreSQL 容器仅显示 5432/tcp，未显示宿主机端口映射。]
+
+version: '3'
+
+services:
+  db:
+    image: postgres
+  web:
+    build: .
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+[H2]
+Date: 2018-09-30 09:04:16
+Title: Set up Docker for gulp
+Tags: <docker><gulp>
+Body:
+I am currently learning Docker and already managed to set up my Django project. My Bootstrap template uses gulp watch (locally) & gulp build (production).
+
+How can I set up my Dockerfile and docker-compose in order to run these gulp commands? From my current understanding, I need two different docker-compose files.
+
+docker-compose:
+
+version: '3'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+  web:
+    build: .
+    command: python3 manage.py migrate --noinput
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=XYZ
+    depends_on:
+      - db
+
+Dockerfile:
+
+FROM python:3
+ENV PYTHONUNBUFFERED 1
+RUN mkdir /code
+WORKDIR /code
+ADD requirements.txt /code/
+RUN pip install -r requirements.txt
+ADD . /code/
+
+[H3]
+Date: 2018-10-14 06:37:09
+Title: Dockerfile needed when compose?
+Tags: <docker>
+Body:
+I am trying to install Jekyll [链接：https://github.com/envygeeks/jekyll-docker/blob/master/README.md] with Docker. I created my docker-compose file as explained in their readme. Now I wonder do I need to create additional a Dockerfile, or is the docker-compose sufficient?
+
+[H4]
+Date: 2018-10-14 09:25:02
+Title: Netlify deployment of Jekyll fails on using Docker Compose
+Tags: <docker><docker-compose><jekyll><netlify>
+Body:
+I am using docker-compose to build my Jekyll project:
+
+version: "3"
+services:
+  site:
+    command: jekyll serve
+    image: jekyll/jekyll:latest
+    volumes:
+      - $PWD:[REDACTED]
+      - $PWD/vendor/bundle:/usr/local/bundle
+    ports:
+      - 4000:4000
+      - 35729:35729
+      - 3000:3000
+      -   80:4000
+
+The folder structure looks like
+
+[projectname]/
+├── mysite/
+│   ├── .gitignore
+│   ├── Gemfile
+│   ├── vendor
+│   └── [...]
+├── docker-compose.yml
+└── vendor
+
+I am now trying to deploy to Netlify, but the folder structure seems to bring issues, as it's all under mysite and not in the folder above. However, through using docker-compose, I don't know how to change that. The error I am getting when deploying on Netlify is here:
+
+11:08:51 AM: Preparing Git Reference refs/heads/master
+11:08:52 AM: Starting build script
+11:08:52 AM: Installing dependencies
+11:08:54 AM: Downloading and installing node v8.12.0...
+11:08:54 AM: Downloading https://nodejs.org/dist/v8.12.0/node-v8.12.0-linux-x64.tar.xz...
+11:08:54 AM: 
+#
+11:08:54 AM:                                              1.9%
+11:08:54 AM: 
+#########################
+11:08:54 AM:                           35.1%
+11:08:54 AM: 
+######################################
+11:08:54 AM: ################                    76.1%
+11:08:54 AM: 
+##################################################
+11:08:54 AM: ###################### 100.0%
+11:08:54 AM: Computing checksum with sha256sum
+11:08:54 AM: Checksums matched!
+11:08:56 AM: Now using node v8.12.0 (npm v6.4.1)
+11:08:56 AM: Attempting ruby version 2.3.6, read from environment
+11:08:57 AM: Using ruby version 2.3.6
+11:08:57 AM: Using PHP version 5.6
+11:08:57 AM: Started restoring cached go cache
+11:08:57 AM: Finished restoring cached go cache
+11:08:57 AM: unset GOOS;
+11:08:57 AM: unset GOARCH;
+11:08:57 AM: export GOROOT='/opt/buildhome/.gimme/versions/go1.10.linux.amd64';
+11:08:57 AM: export PATH="/opt/buildhome/.gimme/versions/go1.10.linux.amd64/bin:${PATH}";
+11:08:57 AM: go version >&2;
+11:08:57 AM: export GIMME_ENV='/opt/buildhome/.gimme/env/go1.10.linux.amd64.env';
+11:08:57 AM: go version go1.10 linux/amd64
+11:08:57 AM: Installing missing commands
+11:08:57 AM: Verify run directory
+11:08:57 AM: Executing user command: jekyll build
+11:08:57 AM: /usr/local/bin/build: line 32: jekyll: command not found
+11:08:57 AM: Caching artifacts
+11:08:58 AM: Started saving pip cache
+11:08:58 AM: Finished saving pip cache
+11:08:58 AM: Started saving emacs cask dependencies
+11:08:58 AM: Finished saving emacs cask dependencies
+11:08:58 AM: Started saving maven dependencies
+11:08:58 AM: Finished saving maven dependencies
+11:08:58 AM: Started saving boot dependencies
+11:08:58 AM: Finished saving boot dependencies
+11:08:58 AM: Started saving go dependencies
+11:08:58 AM: Finished saving go dependencies
+11:08:58 AM: Cached node version v8.12.0
+11:08:58 AM: Error running command: Build script returned non-zero exit code: 127
+11:08:58 AM: Failing build: Failed to build site
+11:08:58 AM: failed during stage 'building site': Build script returned non-zero exit code: 127
+11:08:58 AM: Finished processing build request in 7.670431208s
+
+[H5]
+Date: 2018-10-21 22:02:19
+Title: Docker / Django: pipenv x requirements
+Tags: <django><docker>
+Body:
+I currently setup my Django project in Docker. I used pipenv so far, therefore I don't have a requirements.txt but a pipfile. Anyone knows how I have to adjust my Dockerfile in order to install all dependencies?
+
+I followed the official tutorial [链接：https://docs.docker.com/compose/django/]. But it doesn't say anything about pipenv, if I don't use requirements.txt - it's my case.
+
+FROM python:3
+ENV PYTHONUNBUFFERED 1
+RUN mkdir /code
+WORKDIR /code
+ADD requirements.txt /code/
+RUN pip install -r requirements.txt
+ADD . /code/

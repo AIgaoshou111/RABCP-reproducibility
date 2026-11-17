@@ -1,0 +1,61 @@
+Looking at your logs, the actual problem isn't the port mapping—it's that your second Meteor app can't connect to MongoDB. The error shows:
+
+```
+MongoError: failed to connect to server [mongo:27017] on first connect
+```
+
+## The Real Issue
+
+Your second app is trying to connect to `mongo:27017`, but there's no MongoDB container in its Docker network. The `mongo` hostname only works if both containers are on the same Docker network.
+
+## The Fix
+
+You need to explicitly define a network in your docker-compose.yml and put both services on it:
+
+```yaml
+version: '2'
+services:
+  app:
+    image: jeromevi/controlcontainersapp
+    ports:
+      - "3003:3003"
+    environment:
+      - ROOT_URL=http://localhost:3003
+      - MONGO_URL=mongodb://mongo:27017/meteor
+    networks:
+      - app-network
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:latest
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+```
+
+## About the Port Confusion
+
+The port display difference you noticed is normal:
+- `0.0.0.0:3000->3000/tcp` means port 3000 is published to all interfaces
+- `3000/tcp, 0.0.0.0:3003->3003/tcp` means the container listens on 3000 internally (the Meteor default), but you've mapped host port 3003 to container port 3003
+
+The issue is that your Meteor app is actually starting on port 3000 (as shown in the logs: "Starting app on port 3000..."), but you're mapping port 3003. You have two options:
+
+**Option 1:** Map the correct port:
+```yaml
+ports:
+  - "3003:3000"  # Map host 3003 to container's 3000
+```
+
+**Option 2:** Set the PORT environment variable:
+```yaml
+environment:
+  - PORT=3003
+  - ROOT_URL=http://localhost:3003
+  - MONGO_URL=mongodb://mongo:27017/meteor
+```
+
+The MongoDB connection error is the critical issue to fix first, then adjust the port mapping accordingly.

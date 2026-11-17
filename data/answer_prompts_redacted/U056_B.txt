@@ -1,0 +1,205 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2016-08-25 13:43:13
+Title: Access Docker Container Webserver
+Tags: <ubuntu><docker><ubuntu-14.04><docker-container>
+Body:
+Short notation of my network setup
+
+A - Fedora23  [ ip 192.168.1.11 ] 
+
+B - Ubuntu Docker Container which runs in A [ ip 172.17.0.2 ]
+
+C - Fedora23 (one more system in my network)  [ ip 192.168.1.10 ]
+
+firewall is disabled in both A and C. 
+
+I have created container using below command
+
+docker run --name development-phase -d -p 5000:80 -v /var/www/public development
+
+note: ubuntu:latest is the parent of development image
+
+I can able to access the container webserver from A 
+
+http://192.168.1.11:5000
+
+but I can't able to access from C.
+
+http://192.168.1.11:5000 it is getting redirect to http://172.17.0.2/?SID=iaumi0rm68nlp1qnb5l0rnfdo5 it throws ERR_CONNECTION_TIMED_OUT
+
+but I can able to access the webserver of A http:/192.168.1.11
+
+in running container I can't able to check firewall status, ufw and iptables bash command not found. I think firewall is not a problem otherwise I can't get success in A.
+
+I am new to docker as well as networking area so if you need any additional info please mention in comment.
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2016-07-13 11:23:16
+Title: pull image from remote registry - docker
+Tags: <docker><docker-registry>
+Body:
+I have installed docker 1.11.2, I am trying to make one private registry for our office.
+
+I followed this link [链接：https://docs.docker.com/registry/deploying/] to make private registry, I have successfully pull from localhost but I stuck trying to pull from remote machine.
+
+Short Description of what I have done
+
+Step1 : 
+
+docker run -d -p 5000:5000 --restart=always --name registry registry:2
+
+step2: 
+
+[root@raj raj]# docker images
+REPOSITORY          TAG                 IMAGE ID                   CREATED             SIZE
+hello-world         latest              c54a2cc56cbb        11 days ago         1.848 kB
+registry            2                   8ff6a4aae657        4 weeks ago         171.5 MB
+
+step3: (for localhost)
+
+[root@raj raj]# docker tag hello-world localhost:5000/hello-world
+
+[root@raj raj]# docker push localhost:5000/hello-world
+The push refers to a repository [localhost:5000/hello-world]
+a02596fdd012: Pushed 
+latest: digest: sha256:a18ed77532f6d6781500db650194e0f9396ba5f05f8b50d4046b294ae5f83aa4 size: 524
+
+step4:
+
+[root@raj raj]# docker pull localhost:5000/hello-world
+Using default tag: latest
+latest: Pulling from hello-world
+
+Digest: sha256:a18ed77532f6d6781500db650194e0f9396ba5f05f8b50d4046b294ae5f83aa4
+Status: Image is up to date for localhost:5000/hello-world:latest
+
+It  is working fine
+
+I am trying to pull the image from private registry from remote machine so I have altered the step 3 like below
+
+step3: 
+
+[root@raj raj]# docker tag hello-world 192.168.1.23:5000/hello-world
+
+[root@raj raj]# docker push 192.168.1.23:5000/hello-world
+The push refers to a repository [192.168.1.23:5000/hello-world]
+Get https://192.168.1.23:5000/v1/_ping: tls: oversized record received with length 20527
+
+but it throws error tls:oversized
+
+I have some links related to this issue link1 [链接：https://docs.docker.com/registry/insecure/], link2 [链接：https://stackoverflow.com/questions/26026931/setting-up-a-remote-private-docker-registry/26800070#26800070] but it does not resolve my problem
+
+I have some doubt about this link
+
+1) I could not found any docker file in that location /etc/sysconfig/docker, /etc/default/docker for changing –insecure-registry
+
+2) docker -d --insecure-registry 10.11.12.0:5000 (this command is not working it throws below error.
+
+[root@raj raj]# docker -d --insecure-registry 192.168.1.23:5000
+flag provided but not defined: -d
+See 'docker –help'.
+
+Please help to get pull request from remote machine to private registry.
+
+[H2]
+Date: 2016-07-14 12:53:37
+Title: How to make sure commands are not repeated in docker
+Tags: <docker><dockerfile>
+Body:
+I am learning about build image using docker file. 
+
+short description of what I have done
+
+step 1
+
+For making testing I have started on build image using below docker file
+
+FROM centos:6.8
+MAINTAINER Bilal Usean "[EMAIL_REDACTED]"
+RUN yum install -y httpd; yum -y clean all
+
+after that I have run the below command
+
+docker build -t httpd/centos:6.8 .
+
+it is successfully install apache in httpd/centos:6.8 image 
+
+step 2
+
+Next I am trying to install jdk in the same existing newly created image
+
+FROM centos:6.8
+MAINTAINER Bilal Usean "xxxxxx@xxx@xx"
+RUN yum install -y httpd; yum -y clean all
+yum install java-1.6.0-openjdk-devel; yum -y clean all
+
+after that I have run the below command
+
+docker build -t httpd/centos:6.8 .
+
+But It will start from again httpd install, I expected it will skip that httpd step for already install.
+
+I think it is not a good practice to make docker file.I have 20 RUN command in docker file, that is download heavy size file from net so I want to make sure about it each command success. otherwise it will fail intermediately and again it will charge more MB.
+
+note: If I am in the wrong way, please describe the best way to deal with image and docker file.
+
+[H3]
+Date: 2016-07-15 04:56:43
+Title: handle local software package in docker
+Tags: <docker><dockerfile>
+Body:
+I have recently installed docker 1.11.2 in fedora 22, I am learning about docker file. I have 10+ software packages locally. 
+
+My question is
+
+what is the best way to handle that local file into docker?
+
+[H4]
+Date: 2016-07-28 13:01:46
+Title: handle docker container data while developing wep application
+Tags: <docker><docker-container>
+Body:
+I pulled this image [链接：https://hub.docker.com/r/ilampirai/docker-magento2/] for magento2 installation. 
+
+Now I am trying to get container /var/www/html data in host after that I can handle with phpstorm.
+
+I tried like this but it overwrite everything in container /var/www/html 
+
+docker run --name development-phase -d -p 5000:80 -v /u01/magento2:/var/www/html magento2
+
+while creating volume
+
+data flows: from  host /u01/magento2 to container /var/www/html
+
+but I am looking
+
+data flow should be from  container /var/www/html to host /u01/magento2
+
+I have referred some stack overflow link all are suggest copy container data to host before creating volume, in my case docker cp command affect some prerequisite setting of magento2 so the page get not load properly.
+
+[H5]
+Date: 2016-07-29 04:52:13
+Title: Change Default Docker Image Download Location in Fedora 23
+Tags: <docker><fedora-23><docker-image>
+Body:
+Can anyone suggest how to change docker image download location?
+
+right now it is stored in /var/lib/docker (500mb only free space).
+
+I referred below links 
+
+How to change the docker image installation directory? [链接：https://stackoverflow.com/questions/24309526/how-to-change-the-docker-image-installation-directory]
+
+https://forums.docker.com/t/how-do-i-change-the-docker-image-installation-directory/1169 [链接：https://forums.docker.com/t/how-do-i-change-the-docker-image-installation-directory/1169]
+
+but it does not match with my configuration eg. /etc/sysconfig/docker I could not find this file. I followed this link [链接：https://docs.docker.com/engine/installation/linux/fedora/] to install (install with dnf method). I am trying to find where it is get install by using linux cli command find / -name -type f "docker" it list /usr/bin/docker. I could not able to open this file in editor it seem like shell script. open that file using VI editor but the file full of junk characters.
+
+Thanks

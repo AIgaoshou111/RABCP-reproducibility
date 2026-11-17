@@ -1,0 +1,191 @@
+To deploy a Dockerized Django app to an AWS EC2 instance using Bitbucket Pipelines, you need to:
+
+1. **Build and push your Docker image** to a registry (Docker Hub, AWS ECR, etc.)
+2. **SSH into your EC2 instance** from the pipeline
+3. **Pull the new image and restart containers** on EC2
+
+Here's a complete setup:
+
+## 1. Create a deployment script for EC2
+
+Create a script (e.g., `deploy.sh`) in your repository that will run on the EC2 instance:
+
+```bash
+#!/bin/bash
+set -e
+
+cd /path/to/your/project  # Adjust to your project location on EC2
+
+# Pull latest images
+docker-compose pull
+
+# Rebuild and restart containers
+docker-compose up -d --build
+
+# Run migrations
+docker-compose exec -T app python manage.py migrate
+
+# Collect static files
+docker-compose exec -T app python manage.py collectstatic --noinput
+```
+
+## 2. Configure Bitbucket Pipelines
+
+Create or update `bitbucket-pipelines.yml` in your repository root:
+
+```yaml
+image: atlassian/default-image:3
+
+pipelines:
+  branches:
+    main:  # or your deployment branch
+      - step:
+          name: Build and Deploy
+          services:
+            - docker
+          script:
+            # Build Docker image
+            - docker build -t your-app-name:latest .
+            
+            # Push to Docker Hub (or ECR)
+            - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+            - docker tag your-app-name:latest $DOCKER_HUB_USERNAME/your-app-name:latest
+            - docker push $DOCKER_HUB_USERNAME/your-app-name:latest
+            
+            # Deploy to EC2 via SSH
+            - pipe: atlassian/ssh-run:0.4.1
+              variables:
+                SSH_USER: $EC2_USER
+                SERVER: $EC2_HOST
+                SSH_KEY: $EC2_SSH_KEY
+                COMMAND: |
+                  cd /path/to/your/project
+                  docker-compose pull
+                  docker-compose up -d --build
+                  docker-compose exec -T app python manage.py migrate
+                  docker-compose exec -T app python manage.py collectstatic --noinput
+```
+
+## 3. Set up repository variables in Bitbucket
+
+Go to **Repository Settings → Pipelines → Repository variables** and add:
+
+- `DOCKER_HUB_USERNAME` - Your Docker Hub username
+- `DOCKER_HUB_PASSWORD` - Your Docker Hub password/token
+- `EC2_USER` - EC2 instance user (usually `ubuntu` or `ec2-user`)
+- `EC2_HOST` - Your EC2 instance public IP or DNS
+- `EC2_SSH_KEY` - Your private SSH key (base64 encoded or as-is)
+
+## 4. Prepare your EC2 instance
+
+On your EC2 instance:
+
+1. **Install Docker and Docker Compose:**
+```bash
+sudo apt update
+sudo apt install docker.io docker-compose -y
+sudo usermod -aG docker $USER
+```
+
+2. **Clone your repository:**
+```bash
+git clone your-repo-url /path/to/your/project
+cd /path/to/your/project
+```
+
+3. **Set up environment files:**
+```bash
+# Create production.env with your production settings
+nano production.env
+```
+
+4. **Update docker-compose.yml for production:**
+
+Modify your `docker-compose.yml` to use the pushed image instead of building locally:
+
+```yaml
+version: "3.8"
+   
+services:
+  db:
+    container_name: db
+    image: "postgres"
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - production.env
+    ports:
+      - "5432:5432"
+
+  app:
+    container_name: app
+    image: $DOCKER_HUB_USERNAME/your-app-name:latest  # Use pushed image
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./data/web:/vol/web
+    env_file:
+      - production.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+```
+
+## 5. Alternative: Using AWS ECR instead of Docker Hub
+
+If you prefer AWS ECR:
+
+```yaml
+image: atlassian/default-image:3
+
+pipelines:
+  branches:
+    main:
+      - step:
+          name: Build and Deploy to ECR
+          services:
+            - docker
+          script:
+            # Install AWS CLI
+            - pip install awscli
+            
+            # Login to ECR
+            - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+            
+            # Build and push
+            - docker build -t your-app .
+            - docker tag your-app:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/your-app:latest
+            - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/your-app:latest
+            
+            # Deploy to EC2
+            - pipe: atlassian/ssh-run:0.4.1
+              variables:
+                SSH_USER: $EC2_USER
+                SERVER: $EC2_HOST
+                SSH_KEY: $EC2_SSH_KEY
+                COMMAND: |
+                  aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+                  cd /path/to/your/project
+                  docker-compose pull
+                  docker-compose up -d
+```
+
+## Important considerations:
+
+1. **Security**: Never commit secrets to your repository. Use Bitbucket repository variables.
+
+2. **Production settings**: Create a separate `production.env` file with production database credentials, Django secret key, etc.
+
+3. **Static files**: Ensure your `run.sh` script handles static files properly in production.
+
+4. **Database migrations**: Always run migrations after deployment to ensure database schema is up to date.
+
+5. **Health checks**: Add health checks to your EC2 instance to monitor the application.
+
+6. **SSL/HTTPS**: Consider using a reverse proxy like Nginx with SSL certificates for production.
+
+This setup will automatically deploy your Django app to EC2 whenever you push to your main branch.

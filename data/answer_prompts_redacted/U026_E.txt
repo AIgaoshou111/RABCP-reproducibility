@@ -1,0 +1,113 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2022-04-29 05:42:49
+Title: Why is my connection refused while connecting to upstream? Nginx Error 502
+Tags: <docker><nginx>
+Body:
+I have 3 docker containers
+
+CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS          PORTS                                                                      NAMES
+543a637e7a5b   ghcr.io/requarks/wiki:2   "docker-entrypoint.s…"   57 minutes ago   Up 8 seconds    0.0.0.0:3000->3000/tcp, :::3000->3000/tcp, 3443/tcp                        wiki_wiki_1
+83bf032cace2   nginx:alpine              "/docker-entrypoint.…"   57 minutes ago   Up 57 minutes   0.0.0.0:80->80/tcp, :::80->80/tcp, 0.0.0.0:443->443/tcp, :::443->443/tcp   wiki_webserver_1
+06ca7cf8095f   postgres:11-alpine        "docker-entrypoint.s…"   57 minutes ago   Up 57 minutes   5432/tcp 
+
+I have also looked at my main app wiki container and its logs show that it can not connect to database(it seems they are n server though)
+
+2022-04-29T07:29:16.005Z [MASTER] error: Database Initialization Error: password authentication failed for user "wikijs"
+
+Nginx in docker-compose.yml
+
+services:
+
+  db:
+    image: postgres:11-alpine
+    environment:
+      POSTGRES_DB: wiki
+      POSTGRES_PASSWORD: [REDACTED]
+      POSTGRES_USER: wikijs
+    logging:
+      driver: "none"
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  wiki:
+    image: ghcr.io/requarks/wiki:2
+    depends_on:
+      - db
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: wikijs
+      DB_PASS: quantoxrocks
+      DB_NAME: wiki
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    
+  webserver:
+    image: nginx:alpine
+    restart: unless-stopped
+    tty: true
+    ports:
+       - "443:443"
+       - "80:80"            
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./ssl:/etc/nginx/ssl        
+volumes:
+  db-data:
+
+My conf file
+
+server {
+  listen 443 ssl http2;
+  server_name wiki.mycomp;
+  ssl_certificate /etc/nginx/ssl/mycomp.pem;
+  ssl_certificate_key /etc/nginx/ssl/mycomp.key;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers HIGH:!aNULL:!MD5;
+
+  location / {
+    proxy_set_header X-Real-IP  $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme; # scheme: https
+    proxy_set_header Host $host;
+    proxy_redirect off;
+
+    proxy_pass http://wiki;
+  }
+}
+
+I tried everything and I again get error.
+
+172.68.50.35 - - [29/Apr/2022:05:29:00 +0000] "GET / HTTP/2.0" 502 157 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:99.0) Gecko/20100101 Firefox/99.0" "178.222.69.104"
+2022/04/29 05:29:00 [error] 22#22: *12 connect() failed (111: Connection refused) while connecting to upstream, client: 172.68.50.35, server: wiki.mycomp, request: "GET /favicon.ico HTTP/2.0", upstream: "http://172.22.0.4:80/favicon.ico", host: "wiki.mycomp", referrer: "https://wiki.mycomp/"
+
+My server is Amazon Linux Ec2 instance. I am adding cat audit.log | grep nginx,I can not see that nginx failed.
+
+ype=SERVICE_START msg=audit(1651154547.708:1254): pid=1 uid=0 auid=4294967295 ses=4294967295 msg='unit=nginx comm="systemd" exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=? res=failed'
+type=SERVICE_START msg=audit(1651154574.080:1267): pid=1 uid=0 auid=4294967295 ses=4294967295 msg='unit=nginx comm="systemd" exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=? res=failed'
+type=DEL_GROUP msg=audit(1651157144.425:1378): pid=11420 uid=0 auid=1000 ses=18 msg='op=delete-group grp="nginx" acct="nginx" exe="/usr/sbin/userdel" hostname=wikijs addr=? terminal=pts/0 res=success'
+type=GRP_MGMT msg=audit(1651157144.425:1379): pid=11420 uid=0 auid=1000 ses=18 msg='op=delete-shadow-group grp="nginx" acct="nginx" exe="/usr/sbin/userdel" hostname=wikijs addr=? terminal=pts/0 res=success'
+type=USER_CMD msg=audit(1651206496.737:14035): pid=564 uid=1000 auid=1000 ses=114 msg='cwd="/home/USER_REDACTED/wiki/nginx/conf.d" cmd=79756D202D7920696E7374616C6C2074636D7064756D70 terminal=pts/0 res=success'
+type=USER_CMD msg=audit(1651206572.593:14120): pid=1102 uid=1000 auid=1000 ses=114 msg='cwd="/home/USER_REDACTED/wiki/nginx/conf.d" cmd=79756D202D7920696E7374616C6C207463707064756D70 terminal=pts/0 res=success'
+type=USER_CMD msg=audit(1651206580.297:14126): pid=1108 uid=1000 auid=1000 ses=114 msg='cwd="/home/USER_REDACTED/wiki/nginx/conf.d" cmd=79756D202D7920696E7374616C6C2074637064756D70 terminal=pts/0 res=success'
+type=USER_CMD msg=audit(1651206845.945:14359): pid=2396 uid=1000 auid=1000 ses=114 msg='cwd="/home/USER_REDACTED/wiki/nginx/conf.d" cmd=74637064756D70202D41202D76767676202D732039393939202D69206574683020706F7274203830 terminal=pts/0 res=success'
+
+What does res=failed' mean?
+
+How should the proxy_pass look like?
+Why is it forwarding to 80?
+
+Selected earlier-question evidence:
+[E1; H5; 2022-04-28 08:39:36] Exact excerpt from the earlier question:
+Why does Docker container keeps restarting? ERROR: getaddrinfo EAI_AGAIN
+This is my docker-compose.yml file

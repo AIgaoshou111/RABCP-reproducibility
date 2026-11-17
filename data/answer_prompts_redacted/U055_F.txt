@@ -1,0 +1,26 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2019-01-27 04:38:34
+Title: Install ssl on Kubernetes digital ocean load balancer
+Tags: <docker><ssl><kubernetes>
+Body:
+I am having a website running on container port 80 and 443. I am using ready docker image from docker hub.
+
+I have enabled SSL on Kubernetes using ingress.
+
+I can not generate a certificate inside the pod. If I create cert inside the pod manually then at the time of service Apache restart then the container will restart and the whole pod will be created again. The WHOLE setup will change as default in docker image.
+
+So how to install SSL on this website. Currently, it is giving an error of self-signed certificate.
+
+Selected earlier-question evidence:
+[E1; H4; 2019-01-17 10:35:10] Exact excerpt from the earlier question:
+snipeit on kubernetes not running
+i am trying to deploy snipe-it on k8s cluster
+
+History-derived overall profile (uncertain estimate, not certified ability):
+Domain: Docker; prior questions: 5; mean level: 3.128 / 5; distribution: level 1: 0.000, level 2: 0.035, level 3: 0.803, level 4: 0.162, level 5: 0.000. Use this only to calibrate explanation depth when useful; specific evidence and the current question take priority.

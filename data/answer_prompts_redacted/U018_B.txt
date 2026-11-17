@@ -1,0 +1,118 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2018-09-30 16:44:00
+Title: How does Java application know it is running within a Docker container
+Tags: <java><docker><dockerfile>
+Body:
+I have written a DockerFile for my application primarily  to allow it to be run within a NAS machine (via Docker). The web interface allows the user to traverse the filesystem tree  looking for Music files, but when using Docker the filesystem tree is irrelevant except for the /Music volume which is the mount point for the users actual Music folder on the NAS. 
+
+So I only want to display the /Music folder instead of the whole filesystem tree and to do that the application needs to be aware it is actually running within a Docker rather than an actual native Linux OS.
+
+What is the correct way for the application to know it is in docker, the application is written in Java.
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2018-09-26 14:23:32
+Title: Can I install Docker on arm8 based Synology Nas
+Tags: <docker><synology>
+Body:
+I have a Synology Disk Station 118 (appears it is using Arm8 processor)
+
+There is no Docker package found by searching within Package Manager
+I found this article [链接：https://tylermade.net/2017/09/28/how-to-install-docker-on-an-unsupported-synology-nas/] but the link to Synology packages only has X64 packages and article says Docker does not work from Arm
+
+But it does seem from various articles Docker is available from arm8 platforms 
+
+https://github.com/docker-library/official-images#architectures-other-than-amd64 [链接：https://github.com/docker-library/official-images#architectures-other-than-amd64]
+
+and there is a link to unofficial 
+
+https://hub.docker.com/u/arm64v8/ [链接：https://hub.docker.com/u/arm64v8/]
+
+but aren't these just containers rather than than the actual docker itself ?
+
+So it is possible to install on my Synology Nas 118. This is required to test a docker file for my application.
+
+[H2]
+Date: 2018-09-26 17:47:34
+Title: Do Docker Containers work equally well on Windows/Mac/linux
+Tags: <docker><virtualization>
+Body:
+I'm not clear if a Docker container will work on any environment that has Docker running, or if some are aimed at Linux, some at Windows ectera.
+
+[H3]
+Date: 2018-09-27 10:13:43
+Title: How do I create default tag for my automated DockerFile build
+Tags: <docker><dockerfile>
+Body:
+I have create a Bitbucket Repo called songkongdocker, and create a DockerFile
+
+https://bitbucket.org/ijabz/songkongdocker/src/master/ [链接：https://bitbucket.org/ijabz/songkongdocker/src/master/]
+
+This is linked as an automated build to my http://docker.com [链接：http://docker.com] account
+
+I then tried to use it within Docker and I got 
+
+C:\Users\Paul>docker pull ijabz/songkongdocker
+Using default tag: latest
+Error response from daemon: manifest for ijabz/songkongdocker:latest not found
+
+So I then tried using default and that didn't work either
+
+C:\Users\Paul>docker pull ijabz/songkongdocker:default
+Error response from daemon: manifest for ijabz/songkongdocker:default not found
+
+What do I have to do, sorry if this is a stupid question, (first time using Docker).
+
+[H4]
+Date: 2018-09-27 11:58:04
+Title: What is naming convention for hub.docker.com builds
+Tags: <docker><dockerfile>
+Body:
+So I have an application called SongKong, I wanted to build a Docker image for it. Within hub.docker.com you can link to a repository containing Dockerfile and build from it, I do not want to call this repos songkong because I already have a songkong repo for the actual application code. So I called the repo songkongdocker but now my hub.docker.com repo is called songkongdocker, it would seem that hub.docker repos are usually named after the application so ideally should just be songkong
+
+So, what is the correct way to name and can my Bitbucket code repository have a different name then the hub.docker.com repository ?
+
+[H5]
+Date: 2018-09-29 18:30:27
+Title: How do I make Synology Diskstation port visible to computer for Docker app
+Tags: <docker><dockerfile><synology>
+Body:
+I have a Docker [链接：https://hub.docker.com/r/ijabz/songkongdocker/~/dockerfile/] app running on a Synology DS218+
+
+But the app runs on port 4567 not visible from my PC (I can access Synology DSM on port 5000 from my PC okay).
+
+How do I resolve this, I am not clear whether I have to configure something in the Docker container or within Synology DSM Control Panel itself. The Synology is brand new, with only the defaults and Docker installed, I have not enabled the Synology Firewall.
+
+The DockerFile is 
+
+FROM openjdk:8-jre-alpine
+
+RUN apk add --no-cache ca-certificates curl tini \
+ && mkdir -p /opt \
+ && curl http://www.jthink.net/songkong/downloads/current/songkong-linux-headless-novm.tgz?val=77 | tar -C /opt -xzf - \
+ && find /opt/songkong -perm /u+x -type f -print0 | xargs -0 chmod a+x
+
+RUN addgroup -S songkong \
+ && adduser -S -G songkong songkong
+
+USER songkong:songkong
+
+EXPOSE 4567
+
+ENTRYPOINT ["/sbin/tini"]
+
+# VOLUME /opt/songkong/songkong.properties
+
+# preferences and match database are stored here
+VOLUME /home/USER_REDACTED/.songkong
+
+WORKDIR /opt/songkong
+
+CMD /opt/songkong/songkongremote8.sh

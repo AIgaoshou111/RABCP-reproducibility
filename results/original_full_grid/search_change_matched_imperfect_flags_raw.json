@@ -1,0 +1,10 @@
+[
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "raw",
+    "candidate_id": 0,
+    "params": {},
+    "development_MAE": 0.6026156682027649
+  }
+]

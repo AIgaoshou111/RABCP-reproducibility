@@ -1,0 +1,37 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2019-01-07 17:03:38
+Title: Define local variable in docker-compose.yml?
+Tags: <docker><docker-compose>
+Body:
+Is it possible to define local variable in docker-compose.yml?
+
+Something like this for example:
+
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: $APP_NAME
+    container_name: $APP_NAME
+
+Can I define the value of $APP_NAME on this same docker-compose.yml file?
+
+Selected earlier-question evidence:
+[E1; H2; 2019-01-03 20:13:41] Exact excerpt from the earlier question:
+Volumes in docker-compose not working on Windows 7
+Here's a sample docker-compose.yml file.
+
+[E2; H4; 2019-01-05 11:20:45] Exact excerpt from the earlier question:
+Map Docker instance on Windows hosts file (where Docker lives inside a Vagrant VM)
+I'm aware of this approach [链接：https://www.vagrantup.com/docs/provisioning/docker.html] but I was already able to run Docker fine using the "traditional" way.
+
+History-derived overall profile (uncertain estimate, not certified ability):
+Domain: Docker; prior questions: 5; mean level: 2.905 / 5; distribution: level 1: 0.001, level 2: 0.176, level 3: 0.740, level 4: 0.083, level 5: 0.000. Use this only to calibrate explanation depth when useful; specific evidence and the current question take priority.

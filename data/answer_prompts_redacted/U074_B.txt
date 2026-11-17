@@ -1,0 +1,150 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2019-01-07 17:03:38
+Title: Define local variable in docker-compose.yml?
+Tags: <docker><docker-compose>
+Body:
+Is it possible to define local variable in docker-compose.yml?
+
+Something like this for example:
+
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: $APP_NAME
+    container_name: $APP_NAME
+
+Can I define the value of $APP_NAME on this same docker-compose.yml file?
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2019-01-01 20:01:47
+Title: Do I need Vagrant to use a Docker Linux image if I'm on a Windows host?
+Tags: <docker><vagrant><containers><virtual-machine>
+Body:
+I use Vagrant to run a CentOS VM so that my dev machine is identical to production.
+
+I want to "switch" to Docker as it appears to do the same job and it's more lightweight.
+
+However, my impression is that Docker makes a container using the host's resources (in my case, Windows). Meaning if I run Docker on my Windows machine, it will use Windows' resources. Therefore, it's not going to be identical to production (which uses "pure" CentOS).
+
+That said, for dev and prod to be truly identical, I need to use a Linux VM (via Vagrant) then install Docker from there, is this correct?
+
+[H2]
+Date: 2019-01-03 20:13:41
+Title: Volumes in docker-compose not working on Windows 7
+Tags: <docker><windows-7><virtualbox><virtualization>
+Body:
+Here's a sample docker-compose.yml file.
+
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: docker-test
+    container_name: docker-test
+    ports:
+      - 80:80
+    volumes:
+      - .:/srv/app
+
+Here's the Dockerfile
+
+FROM php:7.3-apache-stretch
+
+COPY . /srv/app
+COPY docker/vhost.conf /etc/apache2/sites-available/000-default.conf
+
+RUN chown -R www-data:www-data /srv/app \
+    && a2enmod rewrite
+
+There are no errors in running this except file changes in . are not reflected in realtime inside the container /src/app. Any ideas what's wrong  with it?
+
+[H3]
+Date: 2019-01-04 20:31:17
+Title: Does the filesize of my Docker apps' image going to be more than the base image?
+Tags: <windows><docker><containers><virtual-machine>
+Body:
+If I dockerize 10 apps that all use this base image from Docker hub: php:7.3-apache-stretch (which is about 378MB), will they essentially occupy 3.8GB+ (378MB base image x 10 different apps) of diskspace in my host machine?
+
+Edit: Reason I ask is because if I type docker image, this shows up:
+
+REPOSITORY          TAG                  IMAGE ID            CREATED             SIZE
+docker-test         latest               f941ae2a70f1        31 hours ago        378MB
+<none>              <none>               4c71598a1098        31 hours ago        378MB
+<none>              <none>               5255a13a71c7        32 hours ago        378MB
+<none>              <none>               4979b0dc765c        32 hours ago        378MB
+<none>              <none>               97c2190de3d5        32 hours ago        378MB
+<none>              <none>               d2e33f282127        32 hours ago        378MB
+<none>              <none>               e38ef642324e        32 hours ago        378MB
+php                 7.3-apache-stretch   1e9efd9f6779        7 days ago          378MB
+
+[H4]
+Date: 2019-01-05 11:20:45
+Title: Map Docker instance on Windows hosts file (where Docker lives inside a Vagrant VM)
+Tags: <windows><docker><vagrant><virtual-machine><virtualization>
+Body:
+I'm aware of this approach [链接：https://www.vagrantup.com/docs/provisioning/docker.html] but I was already able to run Docker fine using the "traditional" way.
+
+Basically, I installed Docker in 3 layers:
+
+Docker (Container living inside of Vagrant/CentOS)
+
+Vagrant (CentOS) (Guest OS on Windows 7)
+
+Windows 7 ("Mother" Host OS)
+
+I can access a Docker container instance on the host OS (Windows) just fine via <vagrant IP>:<port> e.g., 192.168.1.200:9000.
+
+How can I map this ip:port combination on the Windows hosts file so I can access the docker container via docker-app.test? E.g., Putting 192.168.1.200:9000 docker-app.test on the hosts file doesn't work.
+
+I'm also open to other ideas to achieve what I'm trying to do.
+
+[H5]
+Date: 2019-01-06 13:54:59
+Title: Docker MariaDB volume not found in container?
+Tags: <mysql><docker><containers><mariadb><virtualization>
+Body:
+This docker-compose.yml file works fine:
+
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: docker-test
+    container_name: docker-test
+    ports:
+      - 9000:80
+    volumes:
+      - '/var/www/docker-test/:/srv/app/'      
+  db:
+    image: mariadb:10.4
+    container_name: docker-test-db
+    ports:
+      - 33061:3306
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: [REDACTED]
+    volumes:
+      - '/docker-db-data/docker-test/:/var/lib/mysql/'
+
+The volume in the host is created fine (/docker-db-data/docker-test/) but when I "SSH" to the container, I can't seem to find /var/lib/mysql E.g.,
+
+[root@localhost docker]# docker exec -it docker-test bash
+root@2d03e775f531:# ls /var/lib/mysql
+ls: cannot access '/var/lib/mysql': No such file or directory
+
+Is this expected? If not, where is it actually located?

@@ -1,0 +1,81 @@
+You’re right: in `docker-compose.yml`, duplicate `command:` keys just overwrite each other, so only the last one runs.
+
+The correct approach is to use your `entrypoint.sh` script. Here’s how to wire it up:
+
+## 1. Make `entrypoint.sh` executable
+
+On your host machine:
+
+```bash
+chmod +x entrypoint.sh
+```
+
+## 2. Update your Dockerfile
+
+Add the entrypoint script to the image and set it as the container’s entrypoint:
+
+```dockerfile
+# Pull base image
+FROM python:3
+
+# Set environment variables
+ENV PYTHONUNBUFFERED 1
+
+# Set work directory
+RUN mkdir /code
+WORKDIR /code
+
+# Install dependencies
+RUN pip install --upgrade pip
+RUN pip install pipenv
+COPY ./Pipfile /code/Pipfile
+RUN pipenv install --deploy --system --skip-lock --dev
+
+# Copy project
+COPY . /code/
+
+# Copy entrypoint script and make it executable
+COPY ./entrypoint.sh /code/entrypoint.sh
+RUN chmod +x /code/entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/code/entrypoint.sh"]
+```
+
+## 3. Simplify your docker-compose.yml
+
+Remove the multiple `command:` lines entirely — the entrypoint script now handles everything:
+
+```yaml
+version: '3'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+  web:
+    build: .
+    env_file: .env
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+```
+
+## How it works
+
+- `ENTRYPOINT` in the Dockerfile tells Docker to run `/code/entrypoint.sh` when the container starts.
+- The script runs `collectstatic`, then `migrate`, then `runserver` in sequence.
+- Since you’re using a volume mount (`.:/code`), the script is also available from your host directory, but copying it into the image ensures it works even without the volume.
+
+## Important note about the volume mount
+
+Because you have `volumes: - .:/code`, the host directory **overwrites** `/code` in the container. That means the `entrypoint.sh` you copied into the image during build will be replaced by the one from your host. This is fine as long as:
+
+1. The file exists on your host.
+2. It’s executable (`chmod +x entrypoint.sh`).
+
+If you forget to make it executable on the host, you’ll get a “permission denied” error when the container starts.

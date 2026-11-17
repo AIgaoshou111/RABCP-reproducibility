@@ -1,0 +1,107 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2018-05-04 07:00:36
+Title: Docker Compose Nginx Link containers
+Tags: <docker><nginx><proxy><docker-compose>
+Body:
+I have a docker compose container that runs Nginx.  The site hosted is just a .test domain, like example.test.
+
+Also in the container Nginx runs a location proxy and redirects it to example.test:8000.  But it's not able to connect to that because that's actually being hosted from a different container on the same system (all bridged networks).
+
+How can I let the containers communicate using example.test domain?
+
+Or if I can't get them to communicate via example.test then how can I link them so they can use their docker-compose service name such as api or frontend?
+
+Docker compose:
+
+version: '3'
+
+services:
+    db:
+        image: postgres
+        ports:
+         - "5432:5432"
+    django:
+        build: ./api
+        command: ["./docker_up.sh"]
+        restart: always
+        volumes:
+          - ./api:/app/api
+          - api-static:/app/api/staticfiles
+        ports:
+          - "8000:8000"
+        depends_on:
+          - db
+        environment:
+          - MODE=DEV
+
+volumes:
+  frontend-build:
+  api-static:
+  certificates:
+
+2nd compose file (run together):
+
+version: '3'
+
+services:
+    django:
+        environment:
+          - MODE=PROD
+        #links:
+        #  - hosting
+    hosting:
+        build: ./hosting
+        restart: always
+        network_mode: bridge
+        volumes:
+           - frontend-build:/var/www
+        ports:
+          - "80:80"
+          - "443:443"
+        environment:
+          - MODE=PROD
+        #links:
+        #  - django
+
+volumes:
+    frontend-build:
+
+With these current settings I get an error when I run it
+
+ERROR: for 92b89f848637_opensrd_hosting_1  Cannot start service hosting: Cannot link to /opensrd_django_1, as it does not belong to the default network
+
+Edit:  Altered docker-compose.prod.yml:
+
+networks:
+    app_net:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+              -
+                subnet: 172.16.238.0/24
+
+services:
+    django:
+        environment:
+          - MODE=PROD
+        networks:
+            app_net:
+            ipv4_address: 172.16.238.10    
+
+But this gives me an error.
+
+ERROR: The Compose file './docker-compose.prod.yml' is invalid because:
+
+networks.app_net value Additional properties are not allowed ('config' was unexpected)
+
+networks.app_net.ipam contains an invalid type, it should be an object
+
+Selected earlier-question evidence:
+No relevant historical evidence selected.

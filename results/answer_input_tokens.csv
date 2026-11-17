@@ -1,0 +1,4 @@
+﻿group,n,total_prompt_tokens,mean_prompt_tokens,median_prompt_tokens,mean_completion_tokens,paired_mean_relative_F_vs_B_prompt_reduction,F_prompt_shorter_than_B_cases
+B,40,108370,2709.25,2274.5,627.5,,
+E,40,31198,779.95,570.0,658.4,,
+F,40,35238,880.95,671.0,655.425,0.64977,40

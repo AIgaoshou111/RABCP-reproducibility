@@ -1,0 +1,67 @@
+No, `docker-compose.yml` itself does not have a “local variable” declaration block. Compose variable substitution only reads from:
+
+- the shell environment where you run `docker-compose`
+- an `.env` file in the project directory (for `docker-compose` v1/v2, not `docker compose` v2’s stricter default in some cases)
+
+So you cannot define `APP_NAME` inside the same YAML file and have Compose substitute it into `image:` or `container_name:`.
+
+For your example, the practical options are:
+
+### 1. Use an `.env` file in the same directory
+
+Create `.env`:
+
+```env
+APP_NAME=myapp
+```
+
+Then in `docker-compose.yml`:
+
+```yaml
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${APP_NAME}
+    container_name: ${APP_NAME}
+```
+
+Run:
+
+```bash
+docker-compose up --build
+```
+
+Compose will read `.env` automatically.
+
+### 2. Export it in the shell
+
+```bash
+export APP_NAME=myapp
+docker-compose up --build
+```
+
+### 3. Use YAML anchors/aliases for repeated literal values
+
+YAML anchors are not variables, but they can avoid repeating a literal value in the same file:
+
+```yaml
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: &app_name myapp
+    container_name: *app_name
+```
+
+This only helps when the value is hard-coded in the file. It will not make `image:` and `container_name:` read from an environment variable.
+
+### Important note for your example
+
+`container_name` must be unique across all Compose projects on the same Docker host. If you set it from `.env`, changing the value later can cause conflicts with old containers. Also, if you only need a stable name for networking, prefer the Compose service name (`app`) instead of `container_name`.
+
+So the direct answer is: no, you cannot define the variable in `docker-compose.yml`; use `.env` or the shell environment.

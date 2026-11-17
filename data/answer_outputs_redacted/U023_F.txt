@@ -1,0 +1,61 @@
+Yes, `docker-compose` can pull from your own private registry. You do **not** need to manually `docker pull` each image first.
+
+In your `docker-compose.yml`, reference the image using the full registry path:
+
+```yaml
+services:
+  redis:
+    image: redis:latest          # pulled from Docker Hub
+
+  myapp:
+    image: myregistry.example.com:5000/myapp:latest   # pulled from your private registry
+```
+
+Then on the remote system, just run:
+
+```bash
+docker-compose up -d
+```
+
+Compose will automatically pull any images that are not present locally, including those from your private registry.
+
+## Important: authentication
+
+If your private registry requires authentication, the remote Docker daemon must be logged in **before** running `docker-compose up`:
+
+```bash
+docker login myregistry.example.com:5000
+```
+
+Enter your username/password when prompted. After that, Compose can pull from the registry without further prompts.
+
+## If your registry uses TLS/HTTPS
+
+No extra setup is needed as long as the certificate is valid and trusted.
+
+## If your registry uses plain HTTP (no TLS)
+
+Docker treats HTTP registries as insecure by default. You must configure the remote Docker daemon to allow it.
+
+On the remote host, edit or create `/etc/docker/daemon.json`:
+
+```json
+{
+  "insecure-registries": ["myregistry.example.com:5000"]
+}
+```
+
+Then restart Docker:
+
+```bash
+sudo systemctl restart docker
+```
+
+After that, `docker login` and `docker-compose up -d` should work.
+
+## Summary
+
+1. Use full image paths in `docker-compose.yml` for your private images.
+2. Run `docker login <registry>` on the remote host.
+3. Run `docker-compose up -d`.
+4. If using HTTP registry, add it to `insecure-registries` first.

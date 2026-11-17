@@ -1,0 +1,238 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2015-07-14 07:49:38
+Title: How to use docker remote api to create container In java?
+Tags: <java><docker>
+Body:
+I want to using docker remote api in this [链接：http://docs.docker.com/reference/api/docker_remote_api_v1.19/].
+I have succeed in this command to create container:
+
+curl -v -X POST -H "Content-Type: application/json" -d '{"Image": " registry:2",}' http://192.168.59.103:2375/containers/create?name=test_remote_reg
+
+Then,I use HttpClient(4.3.1) in java to try to create container via this code:
+
+    String containerName = "test_remote_reg";
+    String imageName = "registry:2";
+    String url = DockerConfig.getValue("baseURL")+"/containers/create?name="+containerName;
+    List<NameValuePair> ls = new ArrayList<NameValuePair>();
+    ls.add(new BasicNameValuePair("Image",imageName));
+    UrlEncodedFormEntity fromEntity = new UrlEncodedFormEntity(ls, "uTF-8");
+    HttpPost post = new HttpPost(url);
+    post.setHeader("Content-Type", " application/json");
+    if(null!=fromEntity) post.setEntity(fromEntity);
+    HttpClient client = new DefaultHttpClient();
+    client.execute(post);
+
+It didn't work, and throw error:
+
+invalid character 'I' looking for beginning of value
+
+I just add header information and add param pair about "Image:test_remote_reg".
+
+What is wrong about my java code? What difference is between they? What should I edit for my java code?
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2015-07-02 09:49:26
+Title: How to connect docker container via ssh?
+Tags: <ssh><docker><boot2docker>
+Body:
+I use the tutorial in this：
+https://docs.docker.com/examples/running_ssh_service/ [链接：https://docs.docker.com/examples/running_ssh_service/]
+and I have finish above step, and I use the docker ps to find the port ,and assume my port is 32769 when I input this command:
+
+  
+ssh root@192.168.1.2 -p 32769
+
+it just show me :
+
+  
+ssh root@localhost -p 32769 ssh: connect to host localhost port 32769:
+  Connection refused
+
+this is information about command that "docker ps":
+
+bash-3.2$ docker ps
+CONTAINER ID        IMAGE               COMMAND                CREATED             STATUS              PORTS                    NAMES
+5e22e16a7742        liuxin/centos:ssh   "/bin/sh -c '/usr/sb   40 minutes ago      Up 40 minutes       0.0.0.0:32769->22/tcp    c_ssh_centos        
+eaa412773bb2        registry            "docker-registry"      2 hours ago         Up 2 hours          0.0.0.0:5000->5000/tcp   registry            
+
+I use the Mac OS X and have opened remote login.
+I don't know how to make connect successed.
+Thanks
+
+[H2]
+Date: 2015-07-03 08:13:54
+Title: How to use docker-java API to connect docker?
+Tags: <java><docker><boot2docker>
+Body:
+I'm new to docker, and I want to use java api to print my docker information. Then I find the Api in this link [链接：https://github.com/docker-java/docker-java] about docker-java. And I found my boot2docker ip is 196.168.59.103:2376. And I use this command:
+
+docker -H tcp://192.168.59.103:2376 version
+
+It can succeed and show me this information:
+
+Client version: 1.7.0
+Client API version: 1.19
+Go version (client): go1.4.2
+Git commit (client): 0baf609
+OS/Arch (client): darwin/amd64
+Server version: 1.7.0
+Server API version: 1.19
+Go version (server): go1.4.2
+Git commit (server): 0baf609
+OS/Arch (server): linux/amd64
+
+Then, I new a maven project in eclipse, and run this code:
+
+public static void main(String[] args) {
+        DockerClient dockerClient = DockerClientBuilder.getInstance("http://192.168.59.103:2376").build();
+        Info info = dockerClient.infoCmd().exec();
+        System.out.print(info);
+    }
+
+But, it didn't work at all, and throw the exception about this:
+
+The server failed to respond with a valid HTTP response
+
+And,I use command curl to connect:
+
+curl -v http://192.168.59.103:2376/info
+
+It show me information is below:
+
+* Hostname was NOT found in DNS cache
+*   Trying 192.168.59.103...
+* Connected to 192.168.59.103 (192.168.59.103) port 2376 (#0)
+> GET /info HTTP/1.1
+> User-Agent: curl/7.37.1
+> Host: 192.168.59.103:2376
+> Accept: */*
+> 
+
+* Connection #0 to host 192.168.59.103 left intact
+
+How should I do in this case? I want to use this to show some docker information and do something to docker using java code.
+more java exception detail is:
+
+Exception in thread "main" javax.ws.rs.ProcessingException: org.apache.http.client.ClientProtocolException
+    at org.glassfish.jersey.apache.connector.ApacheConnector.apply(ApacheConnector.java:513)
+    at org.glassfish.jersey.client.ClientRuntime.invoke(ClientRuntime.java:246)
+    at org.glassfish.jersey.client.JerseyInvocation$2.call(JerseyInvocation.java:683)
+    at org.glassfish.jersey.internal.Errors.process(Errors.java:315)
+    at org.glassfish.jersey.internal.Errors.process(Errors.java:297)
+    at org.glassfish.jersey.internal.Errors.process(Errors.java:228)
+    at org.glassfish.jersey.process.internal.RequestScope.runInScope(RequestScope.java:424)
+    at org.glassfish.jersey.client.JerseyInvocation.invoke(JerseyInvocation.java:679)
+    at org.glassfish.jersey.client.JerseyInvocation$Builder.method(JerseyInvocation.java:408)
+    at org.glassfish.jersey.client.JerseyInvocation$Builder.get(JerseyInvocation.java:308)
+    at com.github.dockerjava.jaxrs.InfoCmdExec.execute(InfoCmdExec.java:26)
+    at com.github.dockerjava.jaxrs.InfoCmdExec.execute(InfoCmdExec.java:12)
+    at com.github.dockerjava.jaxrs.AbstrDockerCmdExec.exec(AbstrDockerCmdExec.java:57)
+    at com.github.dockerjava.core.command.AbstrDockerCmd.exec(AbstrDockerCmd.java:29)
+    at org.v11.dm.docker.Demo.main(Demo.java:15)
+Caused by: org.apache.http.client.ClientProtocolException
+    at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:188)
+    at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:72)
+    at org.glassfish.jersey.apache.connector.ApacheConnector.apply(ApacheConnector.java:465)
+    ... 14 more
+Caused by: org.apache.http.ProtocolException: The server failed to respond with a valid HTTP response
+    at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:151)
+    at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:57)
+    at org.apache.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:260)
+    at org.apache.http.impl.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:161)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:497)
+    at org.apache.http.impl.conn.CPoolProxy.invoke(CPoolProxy.java:138)
+    at com.sun.proxy.$Proxy19.receiveResponseHeader(Unknown Source)
+    at org.apache.http.protocol.HttpRequestExecutor.doReceiveResponse(HttpRequestExecutor.java:271)
+    at org.apache.http.protocol.HttpRequestExecutor.execute(HttpRequestExecutor.java:123)
+    at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:253)
+    at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:194)
+    at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:85)
+    at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:108)
+    at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:186)
+    ... 16 more
+
+[H3]
+Date: 2015-07-06 06:25:33
+Title: How to enable docker remote api in mac OS X?
+Tags: <docker><boot2docker>
+Body:
+I'm new to docker, and I want to use java api to print my docker information. I read this tutorial [链接：http://docs.docker.com/reference/api/docker_remote_api/].I use boot2docker and print this command "boot2docker ip" to find my docker machine ip is 
+
+bash-3.2$ boot2docker ip
+192.168.59.103
+
+So,I use rest to connect docker.I input http://192.168.59.103:2376/info [链接：http://192.168.59.103:2376/info]
+and it can connect to it,but show nothing.So I guess it maybe I should make my docker enable rest. How should I do for it? I'm also new to mac OS X. please give more detail for me. Thanks
+
+I use command:
+
+curl -v http://192.168.59.103:2376/info
+
+it show information :
+
+* Hostname was NOT found in DNS cache
+*   Trying 192.168.59.103...
+* Connected to 192.168.59.103 (192.168.59.103) port 2376 (#0)
+> GET /info HTTP/1.1
+> User-Agent: curl/7.37.1
+> Host: 192.168.59.103:2376
+> Accept: */*
+> 
+
+* Connection #0 to host 192.168.59.103 left intact
+
+[H4]
+Date: 2015-07-07 09:09:22
+Title: How to enable docker remote api rest in mac OS X with boot2docker?
+Tags: <java><docker><boot2docker>
+Body:
+I'm new to docker. I want to use docker remote api, But I failed. Firstly, I use the docker-java [链接：https://github.com/docker-java/docker-java] that is Remote API client libraries. It throws Exception is:
+
+The server failed to respond with a valid HTTP response
+
+more detail is here [链接：https://stackoverflow.com/questions/31201846/how-to-use-docker-java-api-to-connect-docker].So, I want to know what is wrong about it. I use the remote rest api to connect my docker from this tutorial [链接：http://docs.docker.com/reference/api/docker_remote_api/]. But it didn't work yet. I use the command:
+
+curl -v http://192.168.59.103:2376/info
+
+and show me this information:
+
+* Hostname was NOT found in DNS cache
+*   Trying 192.168.59.103...
+* Connected to 192.168.59.103 (192.168.59.103) port 2376 (#0)
+> GET /info HTTP/1.1
+> User-Agent: curl/7.37.1
+> Host: 192.168.59.103:2376
+> Accept: */*
+> 
+
+* Connection #0 to host 192.168.59.103 left intact
+
+I think it can connect to this ip, But not valid response. Who can understand what this means? Then I find the question in google. Some people said that it need to add ip:2376 to virtualBox. I have done it. But, it still didn't work. I just want to use rest api to request my docker. When I use this command :
+
+curl -v http://192.168.59.103:2376/info
+
+I hope it can show me normal information. Someone told me I need make it without TLS. But, I don't know how to do. Please teach me step by step. I'm really new to docker. Thanks. I use Mac OS X. And docker Api is 1.19, and client version is 1.7.0.
+
+[H5]
+Date: 2015-07-13 11:19:15
+Title: How to use docker remote api to create container?
+Tags: <docker>
+Body:
+I'm new to docker. I have read the tutorial [链接：http://docs.docker.com/reference/api/docker_remote_api_v1.19/] in docker remote API . In aspect of creating container. It show me too many param to fill. I want to know what is equivalent to this command :
+
+  
+docker run -d -p 5000:5000 --restart=always --name registry
+  registry:2.
+
+I have no idea about it. Can anyone tell me? Thanks!

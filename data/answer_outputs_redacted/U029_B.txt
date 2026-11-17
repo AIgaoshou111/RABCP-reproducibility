@@ -1,0 +1,56 @@
+In Docker Swarm mode, you should use the **service name** instead of an IP address. Swarm has built-in DNS service discovery that resolves service names to container IPs automatically.
+
+## Solution
+
+1. **Name your Logstash service** in your stack file (docker-compose.yml):
+
+```yaml
+version: '3'
+services:
+  logstash:
+    image: docker.elastic.co/logstash/logstash:6.0.0
+    # ... other config
+    
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:6.0.0
+    # ... other config
+```
+
+2. **Use the service name in your Filebeat config**:
+
+```yaml
+output.logstash:
+  hosts: ["logstash:5044"]
+```
+
+The `logstash` hostname will automatically resolve to the correct container IP within the Swarm overlay network, regardless of which node the container is running on.
+
+## Important considerations
+
+- **Ensure both services are on the same network**: In Swarm mode, services need to be on the same overlay network to communicate via service names.
+
+```yaml
+version: '3'
+services:
+  logstash:
+    image: docker.elastic.co/logstash/logstash:6.0.0
+    networks:
+      - elk-net
+    # ...
+    
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:6.0.0
+    networks:
+      - elk-net
+    # ...
+
+networks:
+  elk-net:
+    driver: overlay
+```
+
+- **Update your Ansible variable**: Change `in_filebeat_dict.filebeat.output.logstash` from an IP to the service name (e.g., "logstash").
+
+- **Port mapping**: The port in your config (5044 in this example) should be the container port where Logstash is listening, not a published host port.
+
+This approach works because Docker Swarm's embedded DNS automatically resolves service names to the appropriate container IPs, handling the dynamic nature of container placement in Swarm mode.

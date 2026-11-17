@@ -1,0 +1,68 @@
+The error occurs during the VMDK conversion/creation step, before VirtualBox even finishes creating the VM. The most common causes in 2015 with Docker Toolbox on Windows were:
+
+1. **Insufficient free disk space** — the default VM disk is 20 GB (20000 MB), and the conversion needs temporary space as well.
+2. **Antivirus or security software interfering** with `VBoxManage` writing to `C:\Users\<you>\`.
+3. **A leftover/corrupt `default` machine** from the failed attempt.
+4. **Path or permissions issues** in `C:\Users\<you>\.docker\machine\machines\default`.
+
+## Actionable steps
+
+### 1. Check free disk space
+Make sure the drive containing `C:\Users\<you>` has at least **25–30 GB free**, since the raw image is converted to a 20 GB dynamic VMDK and temporary files are also written.
+
+### 2. Remove the failed machine completely
+Run:
+
+```bat
+docker-machine rm -f default
+```
+
+Then also remove any leftover folder manually:
+
+```bat
+rmdir /s /q "%USERPROFILE%\.docker\machine\machines\default"
+```
+
+### 3. Temporarily disable antivirus/real-time scanning
+Some 2015-era AV products blocked `VBoxManage.exe` from creating large files or writing to the user profile. Disable real-time protection temporarily and retry.
+
+### 4. Retry creation with explicit paths and lower disk size
+Try a smaller disk first to isolate whether the 20 GB conversion is the problem:
+
+```bat
+docker-machine create -d virtualbox --virtualbox-disk-size 10000 --virtualbox-memory 2048 default
+```
+
+If that works, the issue was likely disk space or timeouts during the larger conversion.
+
+### 5. Check VirtualBox is the Toolbox-bundled version
+Docker Toolbox 2015 expected its bundled VirtualBox. If you have a different or newer VirtualBox installed, there can be VBoxManage incompatibilities. Verify with:
+
+```bat
+"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" --version
+```
+
+and compare it with the version expected by your Docker Toolbox release.
+
+### 6. Run the underlying VBoxManage conversion manually to see the real error
+The `-D` flag already gave debug output, but you can also test conversion directly:
+
+```bat
+echo test > "%TEMP%\test.raw"
+"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" convertfromraw "%TEMP%\test.raw" "%TEMP%\test.vmdk" --format VMDK
+```
+
+If this fails, the problem is with VirtualBox itself, not Docker Machine.
+
+### 7. For importing the old boot2docker VM
+The syntax you used is incorrect. The correct form is:
+
+```bat
+docker-machine create -d virtualbox --virtualbox-import-boot2docker-vm boot2docker-vm docker-vm
+```
+
+But if the old VM was created by the original `boot2docker` installer, it may not be compatible with the Toolbox-era `docker-machine` import. It is usually simpler to create a fresh `default` machine and rebuild any containers/images you need.
+
+---
+
+**Most useful next check:** run the manual `VBoxManage convertfromraw` test above and check free disk space. Those two will identify the cause in nearly all cases matching your error.

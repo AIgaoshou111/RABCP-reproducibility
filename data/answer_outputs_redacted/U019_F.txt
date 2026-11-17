@@ -1,0 +1,47 @@
+The error is not about `tar` or `debootstrap`; it is a Docker daemon socket permission problem:
+
+```
+dial unix /var/run/docker.sock: connect: permission denied
+```
+
+Your non-root user cannot access `/var/run/docker.sock`.
+
+## Fix
+
+Add your user to the `docker` group, then log out and back in, or apply the group in the current shell:
+
+```bash
+sudo usermod -aG docker "$USER"
+```
+
+Then either:
+
+```bash
+newgrp docker
+```
+
+or log out and log back in.
+
+Verify:
+
+```bash
+docker info
+```
+
+Then rerun the import:
+
+```bash
+sudo tar -C xenial -c . | docker import - xenial
+```
+
+Because `sudo tar` only affects the `tar` side of the pipe, `docker import` still runs as your normal user, so your user must have Docker socket access.
+
+## If you cannot or do not want to add the user to the `docker` group
+
+Run the whole pipeline with `sudo`:
+
+```bash
+sudo sh -c 'tar -C xenial -c . | docker import - xenial'
+```
+
+But the preferred fix is adding your user to the `docker` group.

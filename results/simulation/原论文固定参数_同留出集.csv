@@ -1,0 +1,19 @@
+﻿regime,method,condition,params_json,test_MAE,n_sequences
+no_flags,rabcp_original_fixed,,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.408818,9600
+no_flags,rabcp_original_fixed,symmetric_mixed,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.264188,1200
+no_flags,rabcp_original_fixed,asymmetric_high,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.353147,1200
+no_flags,rabcp_original_fixed,heavy_tail_bursts,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.232719,1200
+no_flags,rabcp_original_fixed,persistent_late_bias,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.226598,1200
+no_flags,rabcp_original_fixed,abrupt_up,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.583578,1200
+no_flags,rabcp_original_fixed,abrupt_down,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.584081,1200
+no_flags,rabcp_original_fixed,gradual_up,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.514702,1200
+no_flags,rabcp_original_fixed,transient_up,"{""gamma"": 0.0, ""sigma"": 0.8, ""window"": 5}",0.511528,1200
+matched_imperfect_flags,rabcp_original_fixed,,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.397431,9600
+matched_imperfect_flags,rabcp_original_fixed,symmetric_mixed,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.244068,1200
+matched_imperfect_flags,rabcp_original_fixed,asymmetric_high,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.305489,1200
+matched_imperfect_flags,rabcp_original_fixed,heavy_tail_bursts,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.223794,1200
+matched_imperfect_flags,rabcp_original_fixed,persistent_late_bias,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.217429,1200
+matched_imperfect_flags,rabcp_original_fixed,abrupt_up,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.582783,1200
+matched_imperfect_flags,rabcp_original_fixed,abrupt_down,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.582918,1200
+matched_imperfect_flags,rabcp_original_fixed,gradual_up,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.512970,1200
+matched_imperfect_flags,rabcp_original_fixed,transient_up,"{""gamma"": 0.0, ""low_weight"": 0.35, ""sigma"": 0.8, ""window"": 5}",0.509999,1200

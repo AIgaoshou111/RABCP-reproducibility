@@ -1,0 +1,100 @@
+Looking at your error, the issue is that Docker Toolbox's `docker-machine` is failing to create the VirtualBox VM. The key error is:
+
+```
+Converting from raw image file="stdin" to file="C:\Users\disk.vmdk"...
+Creating dynamic image with size 20971520000 bytes (20000MB)...
+Error creating machine: exit status 1
+```
+
+This indicates the VM creation process is failing during the disk image conversion step. Here are the most likely causes and solutions:
+
+## 1. **Check for existing VMs and clean up**
+
+First, remove any partially created VMs:
+
+```bash
+# List existing machines
+docker-machine ls
+
+# Remove the default machine if it exists in a broken state
+docker-machine rm default
+
+# Also check VirtualBox for any leftover VMs
+```
+
+Open VirtualBox Manager and delete any VMs named "default" or "boot2docker-vm" that might be in a broken state.
+
+## 2. **Clear Docker Machine cache**
+
+Docker Machine caches the boot2docker ISO. A corrupted cache can cause this issue:
+
+```bash
+# Remove the Docker Machine cache
+rm -rf ~/.docker/machine/cache/
+
+# On Windows, this is typically:
+# C:\Users\<username>\.docker\machine\cache\
+```
+
+## 3. **Check disk space**
+
+The error shows it's trying to create a 20GB disk. Ensure you have enough free space on your C: drive:
+
+- Check available space on C:\Users\pmandayam\
+- You need at least 20-25GB free
+
+## 4. **Run with explicit VirtualBox settings**
+
+Try creating the machine with more verbose output and specific settings:
+
+```bash
+docker-machine -D create -d virtualbox --virtualbox-memory 2048 --virtualbox-disk-size 20000 default
+```
+
+## 5. **Reset VirtualBox**
+
+Sometimes VirtualBox itself gets into a bad state:
+
+1. Close all VirtualBox windows
+2. Kill any VBox processes in Task Manager
+3. Restart VirtualBox
+4. Try creating the machine again
+
+## 6. **For importing your old boot2docker VM**
+
+The import command syntax appears incorrect. Try:
+
+```bash
+# First, make sure the old VM is stopped in VirtualBox
+# Then try:
+docker-machine create -d virtualbox --virtualbox-import-boot2docker-vm boot2docker-vm docker-vm
+```
+
+Note: The flag is `--virtualbox-import-boot2docker-vm` (with "vm" at the end), not `--virtualbox-import-boot2docker`.
+
+## 7. **Complete reset (if nothing else works)**
+
+```bash
+# Remove all docker machines
+docker-machine rm -f $(docker-machine ls -q)
+
+# Remove Docker Machine configuration
+rm -rf ~/.docker/machine
+
+# Uninstall and reinstall Docker Toolbox
+```
+
+After reinstall, try creating a fresh machine:
+
+```bash
+docker-machine create -d virtualbox default
+```
+
+## Most likely solution
+
+Based on the error, I'd recommend starting with steps 1-3. The issue is most commonly caused by:
+- A corrupted cached boot2docker ISO
+- Insufficient disk space
+- A leftover broken VM from the boot2docker to Docker Toolbox transition
+
+Try clearing the cache and removing any broken VMs first, then attempt to create a fresh machine.

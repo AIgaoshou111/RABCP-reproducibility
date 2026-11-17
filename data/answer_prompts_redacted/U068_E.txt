@@ -1,0 +1,200 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2019-02-16 14:06:21
+Title: WARN Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+Tags: <java><docker><apache-zookeeper><mesos><marathon>
+Body:
+I have two nodes that each one has docker with Mesos,marathon,and zookeeper have been installed on it. This is my docker compose file on master node:
+
+version: '3.7'
+ services:
+  zookeeper:
+   image: ubuntu_mesos_home_marzieh
+   command: /home/USER_REDACTED/bin/zkServer.sh restart
+  environment:
+    ZOOKEEPER_SERVER_ID: 1
+    ZOOKEEPER_CLIENT_PORT: 2190
+    ZOOKEEPER_TICK_TIME: 2000
+    ZOOKEEPER_INIT_LIMIT: 10
+    ZOOKEEPER_SYNC_LIMIT: 5
+    ZOOKEEPER_SERVERS: 150.20.11.133:2888:3888;150.20.11.136:2888:3888
+  network_mode: host
+  expose:
+    - 2190
+    - 2888
+    - 3888
+  ports:
+    - 2190:2190
+    - 2888:2888
+    - 3888:3888
+
+ master-mesos:
+  image: ubuntu_mesos_home_marzieh
+  command: bash -c "sleep 30; /home/USER_REDACTED/build/bin/mesos- 
+    master.sh --ip=150.20.11.133 --work_dir=/var/run/mesos 
+    --hostname=150.20.11.133" 
+  privileged: true
+  restart: always
+  network_mode: host
+  depends_on:
+    - zookeeper
+  environment:
+    - LIBPROCESS_IP=150.20.11.133
+    - MESOS_HOSTNAME="150.20.11.133"
+    - MESOS_QUORUM=1
+    - MESOS_LOG_DIR=/var/log/mesos
+    - MESOS_WORK_DIR=/var/run/mesos
+  expose:
+    - 5050
+    - 4040
+    - 7077
+    - 8080
+  ports:
+    - 5050:5050
+    - 4040:4040
+    - 7077:7077
+    - 8080:8080
+
+ marathon:
+  image: ubuntu_mesos_home_marzieh
+  command: bash -c "sleep 60; /usr/share/marathon/bin/marathon"
+  privileged: true
+  network_mode: host
+  depends_on:
+    - zookeeper
+    - master-mesos
+  environment:
+    - HOSTNAME="150.20.11.133"
+    - MARATHON_ZK=zk://150.20.11.133:2190/marathon
+    - MARATHON_MASTER=zk://150.20.11.133:2190/mesos
+    - MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so
+    - MARATHON_HTTP_PORT=8080
+  expose:
+    - 8080
+    - 2190
+  ports:
+    - 8080:8080
+    - 2190:2190
+
+This is docker compose for slave node:
+
+ version: '3.7'
+  services:
+   zookeeper:
+     image: ubuntu_mesos_home_marzieh
+     command: /home/USER_REDACTED/bin/zkServer.sh start
+     environment:
+       ZOOKEEPER_SERVER_ID: 2
+       ZOOKEEPER_CLIENT_PORT: 2190
+       ZOOKEEPER_TICK_TIME: 2000
+       ZOOKEEPER_INIT_LIMIT: 10
+       ZOOKEEPER_SYNC_LIMIT: 5
+       ZOOKEEPER_SERVERS: 
+       150.20.11.133:2888:3888;150.20.11.136:2888:3888
+    network_mode: host
+    expose:
+     - 2190
+     - 2888
+     - 3888
+    ports:
+     - 2190:2190
+     - 2888:2888
+     - 3888:3888
+
+  slave-mesos:
+     image: ubuntu_mesos_home_marzieh
+     command: bash -c "sleep 40; /home/USER_REDACTED/build/bin/mesos- 
+     slave.sh --master=150.20.11.133:5050 --work_dir=/var/run/mesos
+     --systemd_enable_support=false"
+     privileged: true
+     restart: always
+     privileged: true
+     network_mode: host
+     depends_on:
+      - zookeeper
+     environment:
+       - MESOS_RESOURCES=ports(*):[11000-11999]
+       - LIBPROCESS_IP=150.20.11.136
+       - MESOS_HOSTNAME="150.20.11.136"
+       - MESOS_EXECUTOR_REGISTRATION_TIMEOUT=5mins 
+       - MESOS_LOG_DIR=/var/log/mesos
+       - MESOS_WORK_DIR=/var/run/mesos
+       - MESOS_LOGGING_LEVEL=INFO
+     expose:
+       - 5051
+     ports:
+       - 5051:5051
+
+   marathon:
+    image: ubuntu_mesos_home_marzieh
+    command: bash -c "sleep 60; /usr/share/marathon/bin/marathon"
+    privileged: true
+    network_mode: host
+    depends_on:
+      - zookeeper
+      - slave-mesos
+    environment:
+      - MARATHON_ZK=zk://150.20.11.133:2190/marathon
+      - MARATHON_MASTER=zk://150.20.11.133:2190/mesos
+      - MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so
+      - MARATHON_HTTP_PORT=8080
+    expose:
+      - 8080
+      - 2190
+    ports:
+      - 8080:8080
+      - 2190:2190
+
+I configured Zookeeper on "zoo.cfg" and made "myid" file for every node. Also I configured Mesos and Marathon. But when I ran docker compose on master node (150.20.11.133), I got this error:
+
+  
+marathon_1      | java.net.ConnectException: Connection refused
+  marathon_1      |   at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+
+  
+  
+marathon_1      |  at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+  marathon_1      |   at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+
+  
+  
+marathon_1      |  at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1144)
+  marathon_1      | [2019-02-16 13:38:14,087] INFO  Opening socket connection to server 172.28.10.133/172.28.10.133:2190. Will not attempt to authenticate using SASL (unknown error) (org.apache.zookeeper.ClientCnxn:main-SendThread(172.28.10.133:2190))
+
+  
+  
+marathon_1      | [2019-02-16 13:38:14,087] WARN  Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect (org.apache.zookeeper.ClientCnxn:main-SendThread(172.28.10.133:2190))
+
+  
+  
+marathon_1      | java.net.ConnectException: Connection refused
+  marathon_1      |   at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+
+  
+  
+marathon_1      |  at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+
+  
+  
+marathon_1      |  at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+
+  
+  
+marathon_1      |  at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1144)
+  marathon_1      | [2019-02-16 13:38:14,173] ERROR Failed to connect to ZK. Marathon will exit now. (mesosphere.marathon.core.storage.store.impl.zk.RichCuratorFramework:main)
+
+I don't know what happen. I tried to open every port with ufw or I disabled firewall, but error did not go away. Would you please tell me what is wrong with docker compose file? 
+
+Any help would be appreciated. 
+
+Thanks.
+
+Selected earlier-question evidence:
+[E1; H1; 2019-01-16 14:05:36] Exact excerpt from the earlier question:
+ERROR Invalid config, exiting abnormally in Kafka cluster
+I have three different nodes that every one has docker with Ubuntu on it. I can run zookeeper server on docker locally (I mean without any configuration for cluster), but I want to make kafka cluster with these three nodes; In fact, I installed docker on each node with loading Ubuntu with on them. I configure "zookeeper.properties" in docker environment for "150.20.11.157"

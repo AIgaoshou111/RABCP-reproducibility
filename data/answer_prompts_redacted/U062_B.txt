@@ -1,0 +1,112 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-03-18 03:04:52
+Title: How to install "ifconfig" command in my ubuntu docker image?
+Tags: <image><ubuntu><docker><ifconfig>
+Body:
+I've just installed ubuntu docker image, when I execute "ifconfig" it says there's no such command, I tried apt-get install by there's no package named "ifconfig"(I can install some other images).
+
+So how to do this?
+Thanks.
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2017-03-13 02:11:24
+Title: I just installed docker, but running "hello world" failed, it doesn't download image?
+Tags: <image><docker><download>
+Body:
+I've just downloaded latest doc on my mac, and docker --version shows 
+
+Docker version 17.03.0-ce, build 60ccb22
+
+No problem. Then I tried docker to run hello world, as the user guide:
+
+$docker run hello-world
+Unable to find image 'hello-world:latest' locally
+docker: Error response from daemon: Get https://registry-1.docker.io/v2/library/hello-world/manifests/latest: EOF.
+See 'docker run --help'.
+
+Well it doesn't automatically download the helloworld image for me, seems it met some errors. How to fix it?
+
+Thanks!
+
+[H2]
+Date: 2017-03-13 08:55:02
+Title: docker daemon doesn't start in my ubuntu vm, "service start" ok by "ps" gives no result
+Tags: <ubuntu><docker><service><process>
+Body:
+I got a ubuntu 16.04 docker image started by docker already. I am trying the "embedded" docker, which means I tried to install docker inside this ubuntu. Seems the ubuntu docker image(latest) has some "bus" problem, as below:
+
+root@xxxxxx:/# service docker start
+ * Starting Docker: docker                                        [ OK ]
+root@xxxxxx:/# ps -ef
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         1     0  0 03:28 ?        00:00:00 bash
+root     31797     1  0 08:53 ?        00:00:00 ps -ef
+root@xxxxxx:/# docker --version
+Docker version 17.03.0-ce, build 60ccb22
+
+Why no process 
+How to fix it and make it work?
+
+[H3]
+Date: 2017-03-13 09:23:42
+Title: Ubuntu docker image doesn't contain any /dev/sdX block devices?
+Tags: <linux><ubuntu><docker><device>
+Body:
+On normal linux machine or VM, "ls /dev" will show a lot of sdX or hdX hard disk information.
+
+But today I just tried latest docker and ubuntu image. ls shows this:
+
+console  core  fd  full  mqueue  null  ptmx  pts  random  shm  stderr  stdin  stdout  tty  urandom  zero
+
+I don't see anything called sdX or hdX.
+
+Why is this? How docker ubuntu store anything without having a /dev/sdX?
+
+[H4]
+Date: 2017-03-13 09:27:55
+Title: docker restart container failed: "already in use", but there's no more docker image
+Tags: <list><nginx><docker><containers>
+Body:
+I first got my nginx docker image:
+
+docker pull nginx
+
+Then I started it:
+
+docker run -d -p 80:80 --name webserver nginx
+
+Then I stopped it:
+
+docker stop webserver
+
+Then I tried to restart it:
+
+$docker run -d -p 80:80 --name webserver nginx
+docker: Error response from daemon: Conflict. The container name "/webserver" is already in use by container 036a0bcd196c5b23431dcd9876cac62082063bf62a492145dd8a55141f4dfd74. You have to remove (or rename) that container to be able to reuse that name..
+See 'docker run --help'.
+
+Well, it's an error. But in fact there's nothing in container list now:
+
+docker container list
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+
+Why I restart nginx image failed? How to fix it?
+
+[H5]
+Date: 2017-03-18 02:55:21
+Title: Does docker stores all its files as "memory image", as part of image, not disk file?
+Tags: <image><file><docker><save>
+Body:
+I was trying to add some files inside a docker container like "touch". I found after I shutdown this container, and bring it up again, all my files are lost. Also, I'm using ubuntu image, after shutdown-restart the same image, all my software that has been installed by apt-get is gone! Just like running a new image. So how can I save any file that I created?
+
+My question is, does docker "store" all its file systems like "/tmp" as memory file system, so nothing is actually saved to disk?
+
+Thanks.

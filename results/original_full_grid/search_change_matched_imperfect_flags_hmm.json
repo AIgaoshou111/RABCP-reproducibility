@@ -1,0 +1,4538 @@
+[
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 0,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.25,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.5562570530338825
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 1,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.25,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5866517633643442
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 2,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.25,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5949425633934392
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 3,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.25,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.6001803784203423
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 4,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.25,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.6022449993428314
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 5,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.25,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.6025294345393782
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 6,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.4,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.5089243843108979
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 7,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.4,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5501884403758067
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 8,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.4,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.56225759636787
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 9,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.4,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5740258547709248
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 10,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.4,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.5857263548645137
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 11,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.4,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5917932379877727
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 12,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.4581828934206413
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 13,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4956547512585615
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 14,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5118557164469248
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 15,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5268046934201353
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 16,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.5417124260718924
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 17,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5513843374977229
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 18,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.8,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.44774725434246726
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 19,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.8,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.45340083712253887
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 20,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.8,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.4737112779914129
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 21,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.8,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4926786040808261
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 22,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.8,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.5110187281094145
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 23,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 0.8,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5224061059417071
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 24,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.0,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.4500674257310386
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 25,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.0,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4516281636382087
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 26,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.0,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.4529463857819509
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 27,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.0,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4712314916887613
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 28,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.0,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.49337510829606007
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 29,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.0,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5069147989805718
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 30,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.2,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.4598951059671831
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 31,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.2,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4605656825475072
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 32,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.2,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.4614572793624991
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 33,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.2,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.46283929479159747
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 34,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.2,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4835482342164115
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 35,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.2,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.49938032205785193
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 36,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.4831508107792673
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 37,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.48318678467572806
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 38,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.48343504054262654
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 39,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.48405186649724213
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 40,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4853027481548127
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 41,
+    "params": {
+      "stay_probability": 0.2,
+      "sigma": 1.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4892514927906526
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 42,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.25,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.5466385188961297
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 43,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.25,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5816908239105082
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 44,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.25,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5918934574095902
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 45,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.25,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5990696050568696
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 46,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.25,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.6021033289472574
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 47,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.25,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.6025313248500381
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 48,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.4,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.48821001910033024
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 49,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.4,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5396947846115324
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 50,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.4,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5543278682736168
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 51,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.4,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5680482127890351
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 52,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.4,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.5822894841737873
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 53,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.4,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5905126283916854
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 54,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.42693820715206765
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 55,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.47450668100785903
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 56,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.49595838793686214
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 57,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5158359711738476
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 58,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.534941975324705
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 59,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5470812936667813
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 60,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.8,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.4029488186331725
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 61,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.8,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.427830451617692
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 62,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.8,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.4470395792459396
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 63,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.8,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4715518981753785
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 64,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.8,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.49681546671160937
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 65,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 0.8,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5121527499132733
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 66,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.0,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.39368220181798586
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 67,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.0,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4034513884076276
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 68,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.0,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.41448142676364513
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 69,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.0,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.433415731735011
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 70,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.0,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4609052236060923
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 71,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.0,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.47963288833147466
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 72,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.2,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.39381024059008807
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 73,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.2,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.39794997977720137
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 74,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.2,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.4028342718185107
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 75,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.2,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.41351233971695434
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 76,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.2,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4348169298261427
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 77,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.2,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.45371072639329013
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 78,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.4231995495426468
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 79,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4245491784955285
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 80,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.42648538411020986
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 81,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4297592027930917
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 82,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.43658321272647094
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 83,
+    "params": {
+      "stay_probability": 0.5,
+      "sigma": 1.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.448089805888229
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 84,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.25,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.537417994071084
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 85,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.25,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5759513147361007
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 86,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.25,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5872614161062636
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 87,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.25,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5969105920130506
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 88,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.25,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.6017810454728806
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 89,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.25,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.602514324163747
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 90,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.4,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.46232759950183616
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 91,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.4,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5200255344421891
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 92,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.4,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5369403887023837
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 93,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.4,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5519895551918448
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 94,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.4,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.5682144648017056
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 95,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.4,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5794219194007316
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 96,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.38065150646072776
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 97,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4307005606018284
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 98,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.45657031972835815
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 99,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4817857892650535
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 100,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.5049662612780732
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 101,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5194845392015057
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 102,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.8,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.35842361164744635
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 103,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.8,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.387133561097378
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 104,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.8,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.40827219888496297
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 105,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.8,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4358603581805513
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 106,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.8,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.46967055804563346
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 107,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 0.8,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.48955404243479733
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 108,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.0,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.352668108679969
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 109,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.0,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.36753512568871577
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 110,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.0,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.3812786038027411
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 111,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.0,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.40250221351146526
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 112,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.0,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.43408814053849415
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 113,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.0,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.46028967148541966
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 114,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.2,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.35168054339278465
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 115,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.2,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.3587872317318054
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 116,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.2,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.3670182185345915
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 117,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.2,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3816777327196314
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 118,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.2,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.40662906794371145
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 119,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.2,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.42885565494416844
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 120,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3776630525415261
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 121,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.3803346765569256
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 122,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.38372243619372204
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 123,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3901286844571618
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 124,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4033015652471612
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 125,
+    "params": {
+      "stay_probability": 0.7,
+      "sigma": 1.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4182245900131075
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 126,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.25,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.5241685575122343
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 127,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.25,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5700719784539326
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 128,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.25,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5809063989909694
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 129,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.25,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5925949048679793
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 130,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.25,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.6009008631744607
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 131,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.25,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.6024227828233816
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 132,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.4,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.4150541331312176
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 133,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.4,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.48163368161853815
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 134,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.4,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5027614168187643
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 135,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.4,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5204952786580744
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 136,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.4,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.5382223468810102
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 137,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.4,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5521062137329259
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 138,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3206200855704459
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 139,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.36746826270844146
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 140,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.3981670166488833
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 141,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.43299454783482455
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 142,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4639588074538865
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 143,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.48225872093390904
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 144,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.8,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3117055454653274
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 145,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.8,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.332860189839281
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 146,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.8,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.35221010749517534
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 147,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.8,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3821529502135174
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 148,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.8,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.42636179704511834
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 149,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 0.8,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.45669497320633684
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 150,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.0,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3177525165663408
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 151,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.0,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.3286976575276517
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 152,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.0,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.3395735685020954
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 153,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.0,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3584333463581663
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 154,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.0,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.39144990539158814
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 155,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.0,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4228105748444967
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 156,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.2,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3312185991002108
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 157,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.2,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.33804371395916744
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 158,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.2,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.34529277339910636
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 159,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.2,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3581849078571566
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 160,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.2,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.382123220749834
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 161,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.2,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.40632740036496945
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 162,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.37037847213985114
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 163,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.37442927491048295
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 164,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.3784990832068332
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 165,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.38578537842411165
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 166,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.3995615251931739
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 167,
+    "params": {
+      "stay_probability": 0.85,
+      "sigma": 1.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.41419453751161917
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 168,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.25,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.5181562353591143
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 169,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.25,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5672779414003075
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 170,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.25,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5775492951905415
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 171,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.25,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.589368794190271
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 172,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.25,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.5999633718182236
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 173,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.25,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.6022458582054667
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 174,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.4,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.38465356681390267
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 175,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.4,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4573930858166257
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 176,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.4,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.4810001261286238
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 177,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.4,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5010070078864144
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 178,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.4,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.5196864812377938
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 179,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.4,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5340473701014652
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 180,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.2950996593553224
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 181,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.33659577658737705
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 182,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.3684432692990454
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 183,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.40823715401469096
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 184,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4452239315980255
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 185,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.46563399391758836
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 186,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.8,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.29591826127825505
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 187,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.8,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.31168092319783414
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 188,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.8,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.32815435262705434
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 189,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.8,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3568230454873908
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 190,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.8,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.40285240837542446
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 191,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 0.8,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.43953827132226353
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 192,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.0,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.31088432215990075
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 193,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.0,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.3186665158750893
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 194,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.0,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.32720617756423837
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 195,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.0,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.34315445248284615
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 196,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.0,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.37424300747525946
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 197,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.0,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4058013887748416
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 198,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.2,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.33646179908656837
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 199,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.2,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.34182895013499115
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 200,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.2,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.34750272802598176
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 201,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.2,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.35786478069999905
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 202,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.2,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.3783273930657011
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 203,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.2,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.40079409892970913
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 204,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.39155956207210696
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 205,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.3957478172022353
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 206,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.39944462166376876
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 207,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.40568377800574695
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 208,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.41696305787539584
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 209,
+    "params": {
+      "stay_probability": 0.9,
+      "sigma": 1.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.42875378520045265
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 210,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.25,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.5093426696615844
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 211,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.25,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5623137142484362
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 212,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.25,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5720420705154338
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 213,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.25,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5829204470369471
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 214,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.25,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.5970879042341921
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 215,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.25,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.6013816751695035
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 216,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.4,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3364030623987013
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 217,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.4,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4172082987452507
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 218,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.4,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.44566509316316216
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 219,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.4,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.47008184016749305
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 220,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.4,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4914626611322525
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 221,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.4,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5056908667294968
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 222,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.2675277044869686
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 223,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.29754070708656594
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 224,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.32864134472407286
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 225,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.37220705108953367
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 226,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4207318382043329
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 227,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.44500017795502456
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 228,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.8,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.28573266932767616
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 229,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.8,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.294014139455106
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 230,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.8,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.30519181987244076
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 231,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.8,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.32859994440673995
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 232,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.8,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.37335531171031405
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 233,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 0.8,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.41430875117308996
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 234,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.0,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3192821940370028
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 235,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.0,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.32383806061427395
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 236,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.0,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.32909610776683307
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 237,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.0,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3398520491816963
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 238,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.0,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.36391094160764625
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 239,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.0,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.39305344365693984
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 240,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.2,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3652806648286436
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 241,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.2,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.3688522270606059
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 242,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.2,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.3724860347140368
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 243,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.2,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.37902441365953243
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 244,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.2,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.39219803982115503
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 245,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.2,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4087322622196553
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 246,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.4506845668697327
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 247,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.45444235377724296
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 248,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.45725216826873616
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 249,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4613921274530525
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 250,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4680339842388665
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 251,
+    "params": {
+      "stay_probability": 0.95,
+      "sigma": 1.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4743118419748226
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 252,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.25,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.5065068170315875
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 253,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.25,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5604083367249818
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 254,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.25,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5701712726312393
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 255,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.25,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.580630903631344
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 256,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.25,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.595697387559436
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 257,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.25,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.6008782716422234
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 258,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.4,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3229920883708935
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 259,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.4,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.4052226451929127
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 260,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.4,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.43539507442340447
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 261,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.4,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.46130784936656233
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 262,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.4,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4837150486152132
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 263,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.4,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.49789432786769494
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 264,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.26241502776703873
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 265,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.2886358933304048
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 266,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.31856113534298325
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 267,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.36256684142396284
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 268,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.41419097888600864
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 269,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4402576090685752
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 270,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.8,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.28589888779677564
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 271,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.8,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.29238169578837014
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 272,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.8,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.30207060577278944
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 273,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.8,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.32336749708091544
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 274,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.8,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.3672582656334632
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 275,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 0.8,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.40819929335198146
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 276,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.0,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3255586666616231
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 277,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.0,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.3294961429078894
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 278,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.0,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.33398197279602443
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 279,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.0,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.34326787216961185
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 280,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.0,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.3646236683499201
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 281,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.0,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.39209253006820743
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 282,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.2,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.37750689832483797
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 283,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.2,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.38070844086939076
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 284,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.2,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.38386969458519504
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 285,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.2,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3895059176687881
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 286,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.2,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4006488006513414
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 287,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.2,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4149899570568567
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 288,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.472457482126621
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 289,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.47599741427816
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 290,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.4785127536227003
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 291,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4820537327964117
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 292,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4873872082550557
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 293,
+    "params": {
+      "stay_probability": 0.96,
+      "sigma": 1.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4922318266113625
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 294,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.25,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.47972248832391495
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 295,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.25,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.5426302901275452
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 296,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.25,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.5542370443430853
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 297,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.25,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.5629396402519132
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 298,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.25,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.579685368505326
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 299,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.25,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.5929177197676679
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 300,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.4,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.26665240070283597
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 301,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.4,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.34142002141149397
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 302,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.4,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.3823400320963246
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 303,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.4,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.41952578837067606
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 304,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.4,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4485500119065755
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 305,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.4,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.46582245469197575
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 306,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.25629932069820993
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 307,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.264554584456995
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 308,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.28177891158574764
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 309,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3220772834216773
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 310,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.37904194138176955
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 311,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4224565642045577
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 312,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.8,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3071239691545602
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 313,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.8,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.30838428073747115
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 314,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.8,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.3118852568840518
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 315,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.8,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.3213700132976786
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 316,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.8,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.35055115434041934
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 317,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 0.8,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.38946756552209794
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 318,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.0,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.3797200414230323
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 319,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.0,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.3819043272961901
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 320,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.0,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.3842212752386107
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 321,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.0,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.38815667726579806
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 322,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.0,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.3974331752292102
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 323,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.0,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4114959310553133
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 324,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.2,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.46177198917185003
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 325,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.2,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.463621211455991
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 326,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.2,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.465127307212279
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 327,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.2,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.4675615232805248
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 328,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.2,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.4716059572998466
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 329,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.2,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.4763077244533319
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 330,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.6100103097726571
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 331,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.6118849047573595
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 332,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.612647147784658
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 333,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.6129352125503207
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 334,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.6119044523100113
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 335,
+    "params": {
+      "stay_probability": 0.99,
+      "sigma": 1.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.6094853330773943
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 336,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.25,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.8500946333214672
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 337,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.25,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.8465444144499534
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 338,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.25,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.8447878336571014
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 339,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.25,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.8420508433474075
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 340,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.25,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.840235917232443
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 341,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.25,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.8407432854246868
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 342,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.4,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.850165305761444
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 343,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.4,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.8464302560091472
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 344,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.4,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.8446019168462207
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 345,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.4,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.8419798929909582
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 346,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.4,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.84011169764502
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 347,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.4,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.8406868935098548
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 348,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.8504709519514935
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 349,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.8466428457109492
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 350,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.8447195605756458
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 351,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.8421227749505935
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 352,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.840104557782382
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 353,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.8405768942658034
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 354,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.8,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.851692657823427
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 355,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.8,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.8475332767983438
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 356,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.8,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.8454208408657028
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 357,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.8,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.8428452506176685
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 358,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.8,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.8407195539605736
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 359,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 0.8,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.8409456433128832
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 360,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.0,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.8541983710526008
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 361,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.0,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.8496243470916381
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 362,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.0,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.8473115768875772
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 363,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.0,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.8447028618644332
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 364,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.0,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.8424713060313938
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 365,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.0,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.8424274497987988
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 366,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.2,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.8582745111461105
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 367,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.2,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.8533254225578194
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 368,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.2,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.8508596814746152
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 369,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.2,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.8481350105992127
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 370,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.2,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.8457711155575317
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 371,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.2,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.8455044758942465
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 372,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.6,
+      "low_weight": 0.1
+    },
+    "development_MAE": 0.8711315693576187
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 373,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.6,
+      "low_weight": 0.25
+    },
+    "development_MAE": 0.8655932546692011
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 374,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.6,
+      "low_weight": 0.35
+    },
+    "development_MAE": 0.8628818488229258
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 375,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.6,
+      "low_weight": 0.5
+    },
+    "development_MAE": 0.859833226265863
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 376,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.6,
+      "low_weight": 0.75
+    },
+    "development_MAE": 0.8570684192751123
+  },
+  {
+    "suite": "change",
+    "regime": "matched_imperfect_flags",
+    "method": "hmm",
+    "candidate_id": 377,
+    "params": {
+      "stay_probability": 1.0,
+      "sigma": 1.6,
+      "low_weight": 1.0
+    },
+    "development_MAE": 0.8562497326594314
+  }
+]

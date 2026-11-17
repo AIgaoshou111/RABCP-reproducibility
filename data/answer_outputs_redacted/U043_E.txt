@@ -1,0 +1,59 @@
+The core issue is that your port mapping is wrong. The MongoDB container listens on port **27017** inside the container, but you mapped it as `"27018:27018"`, which tells Docker to map host port 27018 to container port 27018 — but nothing is listening on 27018 inside the container.
+
+## Fix the port mapping
+
+Change your `docker-compose.yml` to:
+
+```yaml
+version: "2"
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    links:
+      - mongo
+  mongo:
+    image: mongo
+    volumes:
+      - /data/mongodb/db:/data/db
+    ports:
+      - "27018:27017"   # host:container
+```
+
+The format is `HOST_PORT:CONTAINER_PORT`. MongoDB inside the container listens on 27017 (as shown in your logs: `waiting for connections on port 27017`), so you map host port 27018 to container port 27017.
+
+## Connect with RoboMongo
+
+After fixing the mapping and running `docker-compose up -d`:
+
+1. Open RoboMongo (now called Robo 3T)
+2. Create a new connection
+3. Set:
+   - **Address:** `localhost`
+   - **Port:** `27018`
+4. Connect — you should see the Docker MongoDB databases.
+
+## About your second error
+
+The error `failed to connect to server [mongo:27017]` is actually **correct behavior** for your web app. Inside the Docker network, your web container reaches the MongoDB container using the hostname `mongo` on port `27017` (the container's internal port). The port mapping `27018:27017` only affects access from your host machine, not container-to-container communication.
+
+So your web app should connect to `mongodb://mongo:27017` — that's the internal Docker network address. The error you're seeing suggests either:
+
+1. The MongoDB container wasn't ready when the web app tried to connect (race condition on startup)
+2. The `links` directive isn't working as expected (though it should with Compose v2)
+
+**Checks to run:**
+
+```bash
+# Verify both containers are running
+docker-compose ps
+
+# Check if web can reach mongo
+docker-compose exec web ping mongo
+
+# Check MongoDB is listening inside its container
+docker-compose exec mongo mongo --eval "db.runCommand({ ping: 1 })"
+```
+
+If the ping works but your app still fails, it's likely a startup timing issue. Add a restart policy or health check to your web service, or ensure your app retries the connection.

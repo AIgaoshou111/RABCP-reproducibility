@@ -1,0 +1,82 @@
+In 2015, the Docker best practice is to run **one process per container**, not one “service” per container where a service bundles Nginx + PHP-FPM + app code together.
+
+So for your example, the recommended layout is:
+
+- `nginx` container
+- `php-fpm` container (with the application code)
+- `redis` container
+- `mysql` container
+- `elasticsearch` container
+
+The “app” itself is not a separate long-running process in PHP-FPM; it is the code executed by PHP-FPM. You would typically mount or copy the application code into the PHP-FPM container, and Nginx talks to PHP-FPM over the Docker network or a shared socket volume.
+
+## Why one process per container
+
+Docker’s own guidance at the time, including the Dockerfile best practices document, says each container should have one concern or one process. The main reasons are:
+
+- Containers are meant to be ephemeral and replaceable.
+- A container’s lifecycle should match the lifecycle of its main process.
+- Logs, health checks, signals, and restart policies work cleanly when PID 1 is the actual service process.
+- Scaling becomes clearer: you can scale PHP-FPM workers independently from Nginx or Redis.
+- Updating one component does not force rebuilding or restarting unrelated components.
+
+## How to manage the “many containers” concern
+
+You are right that managing many discrete containers manually is cumbersome. The standard answer in 2015 is to use **Docker Compose** to define and run them together.
+
+Example `docker-compose.yml` structure for that period:
+
+```yaml
+nginx:
+  build: ./nginx
+  ports:
+    - "80:80"
+  links:
+    - php
+
+php:
+  build: ./php
+  volumes:
+    - ./app:/var/www/html
+  links:
+    - redis
+    - mysql
+    - elasticsearch
+
+redis:
+  image: redis:3.0
+
+mysql:
+  image: mysql:5.7
+  environment:
+    MYSQL_ROOT_PASSWORD: [REDACTED]
+
+elasticsearch:
+  image: elasticsearch:2.1
+```
+
+Then the whole stack is started with:
+
+```bash
+docker-compose up -d
+```
+
+This gives you the maintainability of a “service” view while keeping the runtime separation that Docker expects.
+
+## Important nuance for Nginx + PHP-FPM
+
+Do not put Nginx and PHP-FPM in the same container just because they are part of the same application. They are separate processes with different lifecycles and scaling behavior.
+
+The normal pattern is:
+
+1. Nginx container serves static files directly if needed.
+2. Nginx forwards PHP requests to the PHP-FPM container using `fastcgi_pass php:9000;`.
+3. The PHP-FPM container contains the application code and has access to Redis, MySQL, and Elasticsearch containers.
+
+If you need to scale PHP workers, you can run more PHP-FPM containers behind the same Nginx container or use a load balancer.
+
+## What to avoid
+
+Avoid creating a container that runs multiple services using a process manager such as Supervisord unless you have a very specific reason. That was sometimes used for convenience, but it was not considered best practice for production Docker deployments in 2015.
+
+So the direct answer is: use **process containers**, and use Docker Compose to keep them manageable.

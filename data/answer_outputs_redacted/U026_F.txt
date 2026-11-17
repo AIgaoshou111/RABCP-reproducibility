@@ -1,0 +1,54 @@
+The actual issue is two separate problems:
+
+## 1. Database authentication failure
+
+Your wiki container log shows:
+```
+Database Initialization Error: password authentication failed for user "wikijs"
+```
+
+In your `docker-compose.yml`, the database password is set to `[REDACTED]` in the `db` service, but the `wiki` service has `DB_PASS: quantoxrocks`. These don't match. The wiki container is trying to connect with password `quantoxrocks`, but the database was initialized with a different password.
+
+**Fix:** Make both passwords match. Either:
+- Change `DB_PASS` in the wiki service to match the actual `POSTGRES_PASSWORD` in the db service, or
+- Change `POSTGRES_PASSWORD` to `quantoxrocks` and recreate the database volume (since Postgres only sets the password on first initialization).
+
+If you change the password, you'll need to remove the existing volume:
+```bash
+docker-compose down -v
+docker-compose up -d
+```
+
+## 2. Nginx proxy_pass pointing to wrong port
+
+Your nginx error shows:
+```
+upstream: "http://172.22.0.4:80/favicon.ico"
+```
+
+Nginx is trying to connect to port 80, but your wiki container listens on port 3000. The `proxy_pass http://wiki;` directive resolves the `wiki` hostname to the container IP, but uses the default port 80.
+
+**Fix:** Change your proxy_pass to explicitly use port 3000:
+```nginx
+proxy_pass http://wiki:3000;
+```
+
+## Why is it forwarding to port 80?
+
+When you use `proxy_pass http://wiki;` without specifying a port, nginx defaults to port 80 for HTTP. The `wiki` hostname resolves correctly to the container IP (172.22.0.4), but nginx doesn't know that the wiki service actually listens on port 3000 inside the container.
+
+## About the audit log
+
+The `res=failed` entries for nginx in the audit log are from the **host system's** nginx service (systemd), not your Docker container. These are unrelated to your Docker setup - it appears someone tried to start the system nginx service on the EC2 instance, which failed (possibly because port 80/443 is already in use by your Docker nginx container, or nginx isn't properly installed/configured on the host).
+
+## Summary of fixes needed:
+
+1. **Fix the database password mismatch** in docker-compose.yml
+2. **Change proxy_pass to `http://wiki:3000`** in your nginx config
+3. **Restart the containers:**
+```bash
+docker-compose down
+docker-compose up -d
+```
+
+After these changes, the wiki container should successfully connect to the database, and nginx should correctly proxy requests to the wiki container on port 3000.

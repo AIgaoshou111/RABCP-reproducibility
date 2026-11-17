@@ -1,0 +1,203 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2015-08-12 23:41:11
+Title: Unable to create docker virtual machine
+Tags: <docker><virtualbox><boot2docker><dockerfile><docker-toolbox>
+Body:
+I was using boot2docker previously and everything was working fine. Now when I upgraded to using Docker Toolbox, I am unable to create a new virtual machine.
+
+I am even unable to import the virtual machine that was used with boot2docker.
+
+I get this error when trying to create a new machine:
+
+C:\Program Files\Docker Toolbox\kitematic\resources\resources\docker-machine.exe -D create -d virtualbox --virtualbox-memory 2048 default returned non zero exit code. Stderr: Converting from raw image file="stdin" to file="C:\Users\disk.vmdk"... Creating dynamic image with size 20971520000 bytes (20000MB)... Error creating machine: exit status 1 You will want to check the provider to make sure the machine and associated resources were properly removed.
+
+And I get this when trying to import the old vm that boot2docker used:'
+
+C:\Users\pmandayam>docker-machine create -d virtualbox --virtualbox-import-boot2 
+docker-vm boot2docker-vm docker-vm 
+Creating VirtualBox VM... 
+Error creating machine: exit status 1 
+You will want to check the provider to make sure the machine and associated reso 
+urces were properly removed.
+
+Assistance, is greatly appreciated.
+
+Thank you,
+
+Prithvi
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2015-08-06 18:50:22
+Title: Docker log in command does not work
+Tags: <docker><boot2docker><dockerfile><dockerhub><docker-registry>
+Body:
+I have installed boot2docker on on my windows machine and have created a repository on docker hub. I am trying to log in with the following command in the linux shell:
+
+docker login --username=myusername --password=[REDACTED] --email=[EMAIL_REDACTED]
+
+But I am getting this in the shell: 
+
+[图片1（人工查看原图后整理）：Windows 终端中 Docker 镜像推送失败，随后 docker login 要求输入用户名和密码。]
+ 
+
+The password field appears asking me to enter my password, but when I do and press enter, nothing happens. 
+
+Ideas?
+
+[H2]
+Date: 2015-08-10 18:37:04
+Title: Docker maven build fails to download JARs
+Tags: <maven><jar><docker><boot2docker><dockerfile>
+Body:
+I am using Docker to run a maven build but it stops downloading some JAR files after a while. It stops downloading jars after a while.
+
+And it also stops at a different JAR on every run!
+
+The build works on eclipse and my local machine but not on Docker.
+
+I am using this image: https://hub.docker.com/_/maven/ [链接：https://hub.docker.com/_/maven/]
+
+[H3]
+Date: 2015-08-11 14:09:41
+Title: Docker how to run mongodb in dockerfile
+Tags: <mongodb><docker><boot2docker><dockerfile><docker-compose>
+Body:
+I have a dockerfile that runs a maven build. I am following this guide: https://hub.docker.com/_/maven/ [链接：https://hub.docker.com/_/maven/]
+
+So far in my dockerfile I have this: FROM maven:3-jdk-8-onbuild
+
+It runs the build and fails as expected because the integration tests require that the mongodb server on the localhost is running.
+
+My question is, what do I write in the dockerfile to create an image that has mongodb, start it before the integration tests, and stop the mongodb server after the integration tests?
+
+Thanks
+
+[H4]
+Date: 2015-08-11 19:21:28
+Title: Docker supervisor - unable to find supervisor.conf file
+Tags: <docker><dockerfile><supervisord><boot2docker>
+Body:
+I am following this tutorial [链接：https://docs.docker.com/articles/using_supervisord/].
+
+In that tutorial there is this step:
+
+Now let’s add a configuration file for Supervisor. The default file is called supervisord.conf and is located in /etc/supervisor/conf.d/.
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+Let’s see what is inside our supervisord.conf file.
+
+But when I try to build my image I get this error:
+
+Step 7 : COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+supervisord.conf: no such file or directory
+
+Doesn't make any sense, that's what the tutorial told me to do.
+
+[H5]
+Date: 2015-08-12 18:21:58
+Title: Why does "docker run" error with "no such file or directory"?
+Tags: <bash><shell><docker><containers><dockerfile>
+Body:
+I am trying to run a container which runs an automated build. Here is the dockerfile:
+
+   FROM ubuntu:14.04
+    MAINTAINER pmandayam
+
+    # update dpkg repositories
+    RUN apt-get update
+
+    # install wget
+    RUN apt-get install -y wget
+
+    # get maven 3.2.2
+    RUN wget --no-verbose -O /tmp/apache-maven-3.2.2.tar.gz http://archive.apache.or
+    g/dist/maven/maven-3/3.2.2/binaries/apache-maven-3.2.2-bin.tar.gz
+
+    # verify checksum
+    RUN echo "87e5cc81bc4ab9b83986b3e77e6b3095 /tmp/apache-maven-3.2.2.tar.gz" | md5
+    sum -c
+
+    # install maven
+    RUN tar xzf /tmp/apache-maven-3.2.2.tar.gz -C /opt/
+    RUN ln -s /opt/apache-maven-3.2.2 /opt/maven
+    RUN ln -s /opt/maven/bin/mvn /usr/local/bin
+    RUN rm -f /tmp/apache-maven-3.2.2.tar.gz
+    ENV MAVEN_HOME /opt/maven
+
+    # remove download archive files
+    RUN apt-get clean
+
+    # set shell variables for java installation
+    ENV java_version 1.8.0_11
+    ENV filename jdk-8u11-linux-x64.tar.gz
+    ENV downloadlink http://download.oracle.com/otn-pub/java/jdk/8u11-b12/$filename
+
+    # download java, accepting the license agreement
+    RUN wget --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie
+    " -O /tmp/$filename $downloadlink
+
+    # unpack java
+    RUN mkdir /opt/java-oracle && tar -zxf /tmp/$filename -C /opt/java-oracle/
+    ENV JAVA_HOME /opt/java-oracle/jdk$java_version
+    ENV PATH $JAVA_HOME/bin:$PATH
+
+    # configure symbolic links for the java and javac executables
+    RUN update-alternatives --install /usr/bin/java java $JAVA_HOME/bin/java 20000 &
+    & update-alternatives --install /usr/bin/javac javac $JAVA_HOME/bin/javac 20000
+
+    # install mongodb
+    RUN echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen
+    ' | sudo tee /etc/apt/sources.list.d/mongodb.list && \
+            apt-get update && \
+                apt-get --allow-unauthenticated install -y mongodb-org mongodb-org-s
+    erver mongodb-org-shell mongodb-org-mongos mongodb-org-tools && \
+
+                    echo "mongodb-org hold" | dpkg --set-selections && \
+                        echo "mongodb-org-server hold" | dpkg --set-selections && \
+                            echo "mongodb-org-shell hold" | dpkg --set-selections &&
+     \
+                                echo "mongodb-org-mongos hold" | dpkg --set-selectio
+    ns && \
+                                    echo "mongodb-org-tools hold" | dpkg --set-selec
+    tions
+
+    RUN mkdir -p /data/db
+    VOLUME /data/db
+
+    EXPOSE 27017
+
+    COPY build-script /build-script
+
+    CMD ["/build-script"]
+
+I can build the image successfully but when I try to run the container I get this error: 
+
+$ docker run mybuild
+no such file or directory
+Error response from daemon: Cannot start container 3e8aa828909afcd8fb82b5a5ac894
+97a537bef2b930b71a5d20a1b98d6cc1dd6: [8] System error: no such file or directory
+
+what does it mean 'no such file or directory'? 
+
+Here is my simple script:
+
+#!/bin/bash
+
+sudo service mongod start
+
+mvn clean verify
+
+sudo service mongod stop
+
+I copy it like this: COPY build-script /build-script
+
+and run it like this: CMD ["/build-script"] not sure why its not working

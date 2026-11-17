@@ -1,0 +1,242 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2020-01-26 19:06:40
+Title: Connect Docker-container by Unit-socket
+Tags: <docker><sockets><dockerfile>
+Body:
+I try to connect Docker-container with inner-resource by Unit-socket.
+
+For this purpose I add to Dockerfile the following command:
+
+ RUN -v /var/run/docker.sock:/var/run/postgresql/.s.PGSQL.5432
+
+But on the stage of docker build I receive: /bin/sh: illegal option - 
+ERROR: Service 'webapp' failed to build: The command '/bin/sh -c -v /var/run/docker.sock:/var/run/postgresql/.s.PGSQL.5432' returned a non-zero code: 2
+
+What am I doing wrong?
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2020-01-09 22:33:40
+Title: Docker add no such file or directory
+Tags: <docker><dockerfile><docker-copy>
+Body:
+The following is my root-directory:
+
+andrej:
+  - docker/CodeExperiments.jar
+  - docker2/Dockerfile
+
+Here are the contents of my Dockerfile:
+
+FROM java:8
+ADD docker/CodeExperiments.jar docker/
+RUN javac BirthDayTask.java
+
+And this is the command I am running:
+
+docker build -t newfile docker2
+
+Which results in the following error message:
+
+  
+ADD failed: stat /var/lib/docker/tmp/docker-builder946291442/docker/CodeExperiments.jar: no such file or directory
+
+What am I doing wrong?
+
+[H2]
+Date: 2020-01-10 15:48:39
+Title: upload Docker-image to Plesk
+Tags: <docker><plesk>
+Body:
+I have 2 repositories in hub.docker.com.
+One (rep1) created from hub by pressing "Create repository".
+Second (rep2)- by pushing from local. And I can pull the second successfully. 
+
+But, using Docker extention in Plesk, I cant find an image from second repository. I can find only rep1.
+
+[H3]
+Date: 2020-01-13 15:05:16
+Title: Tomcat manager app: not authorized to view page
+Tags: <docker><tomcat><war><plesk>
+Body:
+I try to deploy my app from Docker.
+In Dockerfile:
+
+  FROM tomcat:9-jre8-alpine
+  ADD config/tomcat-users.xml  /usr/local/tomcat/conf/tomcat-users.xml
+  ADD config/settings.xml /usr/local/tomcat/conf/settings.xml
+  ADD config/context.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
+  ADD target/author.war /usr/local/tomcat/webapps/ROOT.war
+  EXPOSE 8080
+  CMD ["catalina.sh","run"]
+
+so, in tomcat-users.xml:
+
+ <tomcat-users xmlns="http://tomcat.apache.org/xml"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd
+http://tomcat.apache.org/xml "
+          version="1.0">
+
+<role rolename="manager-gui"/>
+<user username="tomcat" password=[REDACTED] roles="manager-gui"/>
+
+in settings.xml:
+
+    <servers>
+          <server>
+              <id>TomcatServer</id>
+              <username>tomcat</username>
+              <password>s3cret</password>
+          </server>
+      </servers>
+
+and in context.xml:
+
+<Context antiResourceLocking="false" privileged="true" >
+    <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+     allow=".*" />
+</Context>
+
+But, trying to access Tomcat manager app remotely (domain in plesk), I have got:
+"You are not authorized to view this page.By default the Manager is only accessible from a browser running on the same machine as Tomcat. If you wish to modify this restriction, you'll need to edit the Manager's context.xml file...."
+
+Additionally: for localhost-connection its work well! The problem in remote-connection
+
+[H4]
+Date: 2020-01-17 15:22:13
+Title: docker-compose-maven-plugin Failed to execute goal up
+Tags: <docker><docker-compose><maven-plugin>
+Body:
+I use the following plugin:
+
+         <plugin>
+              <groupId>com.dkanejs.maven.plugins</groupId>
+              <artifactId>docker-compose-maven-plugin</artifactId>
+              <version>2.4.0</version>
+              <executions>
+                <execution>
+                  <id>up</id>
+                  <phase>pre-integration-test</phase>
+                  <goals>
+                    <goal>up</goal>
+                  </goals>
+                  <configuration>
+                    <composeFile>${project.basedir}/docker-compose.yml</composeFile>
+                    <detachedMode>true</detachedMode>
+                  </configuration>
+                </execution>
+                <execution>
+                <configuration>
+                  <build>true</build>
+                </configuration>
+                </execution>
+              </executions>
+         </plugin>
+
+docker-compose
+
+version: '3'
+ services:
+   webapp:
+     container_name: test_db
+     build: src/
+     depends_on:
+        - psql
+   psql:
+      container_name: docker_db
+      build: database/
+      expose:
+       - 5432
+      ports:
+       - 5432:5432
+
+Dockerfile_tk:
+
+FROM tomcat:9-jre8-alpine
+
+ENV PATH_TOMCAT_USERS /usr/local/tomcat/conf/
+ENV PATH_MANAGER /usr/local/tomcat/webapps/manager/
+ADD config/tomcat-users.xml  /usr/local/tomcat/conf/tomcat-users.xml
+ADD config/context.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
+ADD test.war /usr/local/tomcat/webapps/ROOT.war
+EXPOSE 8080
+CMD ["catalina.sh","run"] 
+
+Dockerfile_db:
+
+FROM postgres:latest
+
+ENV POSTGRES_USER andrej
+ENV POSTGRES_PASSWORD password
+ENV POSTGRES_DB test_db  
+
+But I receive: Failed to execute goal up
+
+When I run only  Dockerfile_tk  or Dockerfile_db separetly, docker works successfuly. Problem in docker-compose.
+
+When I run it from terminal, using "docker-compose up" it returns: 
+Building psql
+ERROR: Cannot locate specified Dockerfile: Dockerfile
+
+What am I doing wrong?
+
+[H5]
+Date: 2020-01-20 12:16:38
+Title: One Docker-container runned instead of other. Docker-compose
+Tags: <docker><docker-compose>
+Body:
+Docker-compose.yml:
+
+version: '3'
+services:
+   psql:
+    container_name: docker_db
+    build: database/
+    image: andrey1981spb/docker_db
+
+ webapp:
+     container_name: docker_test
+     build: src/
+    image: andrey1981spb/docker_test
+    depends_on:
+      - psql
+
+Dockerfile for psql:
+
+FROM postgres:latest
+
+ENV POSTGRES_DB_PORT : "5432"
+ENV POSTGRES_USER dreamwhite
+ENV POSTGRES_PASSWORD Password2020#
+ENV POSTGRES_DB test_psql
+
+EXPOSE 5432
+
+Dockerfile for wewapp:
+
+FROM tomcat:9-jre8-alpine
+
+ENV PATH_TOMCAT_USERS /usr/local/tomcat/conf/
+ENV PATH_MANAGER /usr/local/tomcat/webapps/manager/
+ADD config/tomcat-users.xml  /usr/local/tomcat/conf/tomcat-users.xml
+ADD config/context.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
+ADD test.war /usr/local/tomcat/webapps/ROOT.war
+EXPOSE 8080
+CMD ["catalina.sh","run"]
+
+All 2 containers run successfully.
+But container docker_db contains data from docker_test.
+In particular, I see it by docker inspect docker_db. It return environment variables for docker_test.
+And on the server uploaded environment variables and other settings for docker_test (instead of docker_db)
+
+Project-structure:
+
+[图片1（人工查看原图后整理）：IDE 项目树显示 database 目录和项目根目录各有一个 Dockerfile，另有 test.war、docker-compose.yml、pom.xml。]

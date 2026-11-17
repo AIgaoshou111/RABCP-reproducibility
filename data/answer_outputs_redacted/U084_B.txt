@@ -1,0 +1,38 @@
+The issue is that you're using `RUN -v ...` in your Dockerfile, but `-v` is a flag for the `docker run` command, not a Dockerfile instruction.
+
+**What's happening:**
+- `RUN` executes shell commands inside the container during build
+- `-v` is being interpreted as a shell option, hence the error `/bin/sh: illegal option -`
+- Volume mounting (`-v`) is a runtime operation, not a build-time operation
+
+**The correct approach:**
+
+1. **Remove the `RUN -v` line from your Dockerfile entirely**
+
+2. **Use volume mounting when running the container:**
+```bash
+docker run -v /var/run/docker.sock:/var/run/postgresql/.s.PGSQL.5432 your-image-name
+```
+
+3. **Or if using docker-compose, add it to your docker-compose.yml:**
+```yaml
+version: '3'
+services:
+  webapp:
+    build: src/
+    volumes:
+      - /var/run/docker.sock:/var/run/postgresql/.s.PGSQL.5432
+    depends_on:
+      - psql
+  psql:
+    build: database/
+    volumes:
+      - /var/run/docker.sock:/var/run/postgresql/.s.PGSQL.5432
+```
+
+**Important note about your specific use case:**
+You're trying to mount the Docker socket (`/var/run/docker.sock`) to a PostgreSQL socket path (`/var/run/postgresql/.s.PGSQL.5432`). This is unusual because:
+- `/var/run/docker.sock` is the Docker daemon socket
+- `/var/run/postgresql/.s.PGSQL.5432` is where PostgreSQL expects its Unix socket
+
+If you're trying to connect to PostgreSQL running in another container, you should use Docker networking instead of socket mounting. The containers can communicate using the service name as hostname (e.g., `psql:5432`).

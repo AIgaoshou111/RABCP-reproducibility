@@ -1,0 +1,269 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-01-05 07:34:11
+Title: How to start multiple containers that use tcp with Docker
+Tags: <docker><tcp><port><docker-container>
+Body:
+I'm trying to run a second Meteor app in a Docker's container. The first (who is running as I want) is accessible with localhost:3000and I want to run a second one in a other port like localhost:3003. When I try to access the second I got this 
+
+  
+This website is not accessible. Localhost don't allow the connexion. Do a research about localhost 3003 on Google.
+
+And If I look into Docker I can see that my containers are running:
+
+[图片1（人工查看原图后整理）：docker ps 显示：第二个应用容器列出未发布的 3000/tcp，以及宿主机 3003 到容器 3003 的映射；第一个应用容器映射宿主机 3000 到容器 3000。]
+
+but I noticed a difference between the port, the one who is accessible is 0.0.0.0:3000->3000/tcpand the one who isn't accessible is 3000/tcp, 0.0.0.0:3003->3003/tcpso I think there is something wrong here.
+
+And in my docker-compose.yml I did :  
+
+app:
+  image: jeromevi/controlcontainersapp
+  ports:
+    - "3003:3003"
+  environment:
+    - ROOT_URL=http://localhost:3003
+    - MONGO_URL=mongodb://mongo:27017/meteor
+mongo:
+  image: mongo:latest
+
+Thank you for the help 
+
+[EDIT] there are the logs : 
+
+=> Starting app on port 3000...
+
+/opt/meteor/dist/bundle/programs/server/node_modules/fibers/future.js:313
+                        throw(ex);
+                        ^
+MongoError: failed to connect to server [mongo:27017] on first connect
+    at Object.Future.wait (/opt/meteor/dist/bundle/programs/server/node_modules/fibers/future.js:449:15)
+    at new MongoConnection (packages/mongo/mongo_driver.js:219:27)
+    at new MongoInternals.RemoteCollectionDriver (packages/mongo/remote_collection_driver.js:4:16)
+    at Object.<anonymous> (packages/mongo/remote_collection_driver.js:38:10)
+    at Object.defaultRemoteCollectionDriver (packages/underscore.js:784:19)
+    at new Mongo.Collection (packages/mongo/collection.js:103:40)
+    at meteorInstall.both.collections.infosContainers.js (both/collections/infosContainers.js:2:14)
+    at fileEvaluate (packages/modules-runtime.js:181:9)
+    at require (packages/modules-runtime.js:106:16)
+    at /opt/meteor/dist/bundle/programs/server/app/app.js:217:1
+    - - - - -
+    at [object Object].<anonymous> (/opt/meteor/dist/bundle/programs/server/npm/node_modules/meteor/npm-mongo/node_modules/mongodb-core/lib/topologies/server.js:313:35)
+    at emitOne (events.js:77:13)
+    at [object Object].emit (events.js:169:7)
+    at [object Object].<anonymous> (/opt/meteor/dist/bundle/programs/server/npm/node_modules/meteor/npm-mongo/node_modules/mongodb-core/lib/connection/pool.js:271:12)
+    at [object Object].g (events.js:260:16)
+    at emitTwo (events.js:87:13)
+    at [object Object].emit (events.js:172:7)
+    at Socket.<anonymous> (/opt/meteor/dist/bundle/programs/server/npm/node_modules/meteor/npm-mongo/node_modules/mongodb-core/lib/connection/connection.js:165:49)
+    at Socket.g (events.js:260:16)
+    at emitOne (events.js:77:13)
+
+[EDIT2] With the new config the errors are : 
+
+[图片2（人工查看原图后整理）：docker-compose up -d 报配置无效：services 下 app 和 networks 下 testNtw 被判定为不支持的配置项。]
+
+But I have the network testNtw: 
+
+NETWORK ID          NAME                DRIVER              SCOPE
+6767c4bf208f        bridge              bridge              local
+c69fbc3a59cf        host                host                local
+f6f5083df32e        none                null                local
+3d0aacdbb757        testNtw             bridge              local
+
+And I did the same docker-compose.yml as in the answer
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2016-12-21 07:32:10
+Title: '/bin/sh -c bash $METEORD_DIR/on_build.sh' returned a non-zero code: 1
+Tags: <meteor><docker><docker-build>
+Body:
+I'm pretty new to docker and what I want to do is to create a docker image of my Meteor App then run it in a container. (I'm working on OSX) 
+
+Correct me if I'm wrong but the steps are:
+
+1)cd /myMeteorApp
+
+2)create a file Dockerfile containing in my case FROM meteorhacks/meteord:onbuild
+
+3) docker build --tag jeromevi:mycoolmeteorapp .
+
+4) docker images and here I have that:
+
+[图片1（人工查看原图后整理）：docker images 列表显示一个未命名、未打标签的镜像，大小约 497.7 MB。]
+
+Someone can help me to figure out what I'm doing wrong please ?
+
+[EDIT] The screenshot bellow is what happened when I created my image
+
+[图片2（人工查看原图后整理）：Meteor 镜像构建日志提示以 root 用户运行 Meteor，需设置 METEOR_ALLOW_SUPERUSER；构建命令最终返回状态码 1。]
+
+[H2]
+Date: 2016-12-21 13:51:36
+Title: Where mongoimport store the document in a Docker container
+Tags: <mongodb><meteor><docker>
+Body:
+So I'm searching where the files are stored after this command   
+
+mongoimport --db meteor --collection articles --type csv --headerline --file /data/seeds/articles.csv  
+
+I'm using a Docker container from the image mongo:latest
+
+I thought it would be in the /data/db but there isn't my db 'meteor' or my collection 'articles' so I think I'm not in the right folder...
+(The application is working perfectly, the data are displayed on the website)
+
+Someone can help me ?
+
+[H3]
+Date: 2016-12-22 14:10:46
+Title: How to manage Docker container with dockerode
+Tags: <javascript><meteor><docker>
+Body:
+I'm trying to do a Meteor app to start/stop my Docker containers. I founded dockerode [链接：https://github.com/apocas/dockerode]  
+
+So I have installed it with meteor add ongoworks:dockerode and with meteor npm install dockerode and if I check in the package file there is dockerode.
+
+But I'm facing a problem and I think it's pretty basic.
+
+I open a consol and I start my 2 containers with:  
+
+docker start 6684787338a7 (it contains a Meteor blog running on localhost:3000)
+docker start 513cfc090925 (it contains MongoDB)
+
+Then on my computer I start my Meteor app "controlContainers" on localhost:3001 and I this is my JS + HTML.  
+
+Am I creating the docker object wrong ? Or someone could help me to figure out what I'm doing wrong ? Because nothing happend when I start or stop I can do docker ps -aand there still has my 2 containers.. 
+
+import { Template } from 'meteor/templating';
+
+import './controlPanel.html';
+
+Template.controlPanel.onCreated(function controlPanelOnCreated() {
+    console.log("controlPanel is ready to work for you Mister Wayne");
+    Docker = require('dockerode');
+/* create Docker object */
+   docker = new Docker({host: 'http://127.0.0.1', port: 3000});
+/* create 2 var that are my containers running in docker */
+   meteorCtn = docker.getContainer('6684787338a7');
+   mongoCtn = docker.getContainer('513cfc090925');
+/* I don't really understand but it's on the Dockerode page */
+   meteorCtn.defaultOptions.start.Binds = ["/tmp:/tmp:rw"];
+   mongoCtn.defaultOptions.start.Binds = ["/tmp:/tmp:rw"];
+});
+
+Template.controlPanel.events({
+  'click #stopAll'(event){
+    /* Display object containers */
+      console.log("docker:"); console.log(docker);
+      console.log("meteorCtn:"); console.log(meteorCtn);
+/* list all container and show the length  */
+    docker.listContainers(function (err, containers) {
+  /*    containers.forEach(function (containerInfo) {
+        docker.getContainer(containerInfo.Id).stop(cb);
+      }); */
+      console.log("containers:  " + containers.length);
+      console.log("err: " + err);
+    });
+  },
+});
+
+<template name="controlPanel">
+  <p>Start, stop and pause containers from this website</p>
+  <input type="button" id="stopAll" value="Stop all containers">
+</template>
+
+[H4]
+Date: 2017-01-03 12:57:43
+Title: How to get all containers using Dockerode and Javascript
+Tags: <javascript><meteor><docker><containers>
+Body:
+I'm trying to display on a Meteor app all running containers and all stopped containers that I have in Docker. For the moment I can only display the running containers when I stop one he's deleted from the DB automatically. 
+
+There is my code where I get the containers (and where I need a little bit help to got the stopped containers too):  
+
+    infosContainers.initContainers': function() {
+    /* create Docker object */
+    docker = new Docker({socketPath: '/var/run/docker.sock'});
+    /* create 2 var that are my containers running in docker */
+    meteorCtn = docker.getContainer('vialfeedmaclecturearticle_app_1');
+    mongoCtn = docker.getContainer('vialfeedmaclecturearticle_mongo_1');
+    /* I don't really understand but it's on the Dockerode page */
+    meteorCtn.defaultOptions.start.Binds = ["/tmp:/tmp:rw"];
+    mongoCtn.defaultOptions.start.Binds = ["/tmp:/tmp:rw"];
+
+    /* Add the id in the collection */
+    docker.listContainers(Meteor.bindEnvironment(function (err, containers) {
+      containers.forEach(function (containerInfo) {
+        InfosContainers.insert({
+          idContainer: containerInfo.Id,
+          nameContainer: containerInfo.Names[0],
+          stateContainer: containerInfo.State
+        });
+      });
+    }));
+  },
+
+Someone has already done that ? Thank you for the help
+
+[H5]
+Date: 2017-01-04 12:02:34
+Title: Why my array suddenly lose all its content
+Tags: <javascript><arrays><docker>
+Body:
+I have read some posts that are related with my question but I'm a bit lost. What I'm trying to do is to add values of a collection in a Array and value of Docker in an other one. I can put the values in the 2 arrays but suddently the seconde one lose all his data.
+
+There is my code:  
+
+triggerState = Meteor.bindEnvironment(function() {
+  console.log("Start triggerState");
+
+  //clean the 2 arrays
+  stateLastCheck.length = 0;
+  stateDockerLastCheck.length = 0;
+
+  //add the collection value in the array
+  InfosContainers.find().forEach(Meteor.bindEnvironment(function(ctn) {
+    stateLastCheck.push(ctn.stateContainer);
+    console.log("stateLastCheck " + stateLastCheck.length);
+  }));
+  console.log("end stateLastchek");
+
+  //take the actual values
+  docker.listContainers({
+    all: true
+  }, Meteor.bindEnvironment(function(err, containers) {
+    containers.forEach(function(containerInfo) {
+      stateDockerLastCheck.push(containerInfo.State);
+      console.log("stateDockerLastCheck" + stateDockerLastCheck.length);
+    });
+  }));
+  console.log("end stateDockerLastCheck");
+
+  //compare last with actual
+  for (var i = 0; i < stateLastCheck.length; i++) {
+    console.log("Size of last and docker: " + stateLastCheck.length + " et " + stateDockerLastCheck.length);
+    if (stateLastCheck[i].includes(stateDockerLastCheck[i])) {
+      console.log("no problemos")
+    } else {
+      console.log("there is a changement of state:  " + stateLastCheck[i] + stateDockerLastCheck[i]);
+      break;
+    }
+  }
+  setTimeout(triggerState, 7000);
+});
+
+Then if I use my logs I can see that suddently the docker array is empty and that the loop is made again: 
+
+[图片1（人工查看原图后整理）：Meteor 日志第一次记录两个数组长度分别为 2 与 0，并出现 runningundefined。]
+
+I think I should use some wait but I'm really lost so if someone could help me ?
+
+After adding some '---' in my code I noticed that the input is really strange : 
+[图片2（人工查看原图后整理）：同一 Meteor 程序的另一时刻日志再次显示数组长度 2 与 0、状态 runningundefined。]

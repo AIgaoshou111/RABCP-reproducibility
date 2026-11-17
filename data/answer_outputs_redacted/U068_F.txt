@@ -1,0 +1,162 @@
+The error is clear: Marathon cannot connect to ZooKeeper at `172.28.10.133:2190` — connection refused. This means either ZooKeeper is not listening on that address/port, or it hasn't started yet when Marathon tries to connect.
+
+## Main issues in your setup
+
+### 1. ZooKeeper is not actually starting correctly
+
+Your ZooKeeper command is:
+
+```yaml
+command: /home/USER_REDACTED/bin/zkServer.sh restart
+```
+
+The `restart` command expects ZooKeeper to already be running. On a fresh container, use `start-foreground` instead so the process stays in the foreground and the container doesn't exit:
+
+```yaml
+command: /home/USER_REDACTED/bin/zkServer.sh start-foreground
+```
+
+If the container exits immediately, Marathon will get "connection refused" because nothing is listening on port 2190.
+
+### 2. ZooKeeper is binding to the wrong interface
+
+The log shows Marathon trying to connect to `172.28.10.133`, not `150.20.11.133`. This suggests ZooKeeper is advertising/binding to a Docker bridge IP (172.28.x.x) rather than the host IP.
+
+Since you're using `network_mode: host`, ZooKeeper should bind to all interfaces by default. But check your `zoo.cfg` — if you have something like:
+
+```
+clientPortAddress=172.28.10.133
+```
+
+or if the container's hostname resolves to `172.28.10.133`, ZooKeeper may bind only to that address.
+
+**Fix:** In `zoo.cfg`, either remove `clientPortAddress` entirely (binds to 0.0.0.0) or set it explicitly to `0.0.0.0`:
+
+```
+clientPort=2190
+# clientPortAddress=0.0.0.0
+```
+
+### 3. Marathon's `sleep 60` may not be enough
+
+Even if ZooKeeper starts correctly, Marathon waits only 60 seconds. If ZooKeeper takes longer (especially with `restart` failing first), Marathon will fail. Increase the sleep or add a health check.
+
+### 4. Marathon on the slave node is unnecessary
+
+You have Marathon running on both master and slave. Marathon should typically run only on the master node. The slave node only needs the Mesos agent. Running Marathon on the slave with `MARATHON_HTTP_PORT=8080` will also cause a port conflict if both nodes use host networking and the same port.
+
+## Recommended fixes
+
+### Master node `docker-compose.yml`:
+
+```yaml
+version: '3.7'
+services:
+  zookeeper:
+    image: ubuntu_mesos_home_marzieh
+    command: /home/USER_REDACTED/bin/zkServer.sh start-foreground
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2190
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 10
+      ZOOKEEPER_SYNC_LIMIT: 5
+      ZOOKEEPER_SERVERS: 150.20.11.133:2888:3888;150.20.11.136:2888:3888
+    network_mode: host
+
+  master-mesos:
+    image: ubuntu_mesos_home_marzieh
+    command: bash -c "sleep 30; /home/USER_REDACTED/build/bin/mesos-master.sh --ip=150.20.11.133 --work_dir=/var/run/mesos --hostname=150.20.11.133"
+    privileged: true
+    restart: always
+    network_mode: host
+    depends_on:
+      - zookeeper
+    environment:
+      - LIBPROCESS_IP=150.20.11.133
+      - MESOS_HOSTNAME=150.20.11.133
+      - MESOS_QUORUM=1
+      - MESOS_LOG_DIR=/var/log/mesos
+      - MESOS_WORK_DIR=/var/run/mesos
+
+  marathon:
+    image: ubuntu_mesos_home_marzieh
+    command: bash -c "sleep 90; /usr/share/marathon/bin/marathon"
+    privileged: true
+    network_mode: host
+    depends_on:
+      - zookeeper
+      - master-mesos
+    environment:
+      - MARATHON_ZK=zk://150.20.11.133:2190/marathon
+      - MARATHON_MASTER=zk://150.20.11.133:2190/mesos
+      - MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so
+      - MARATHON_HTTP_PORT=8080
+```
+
+### Slave node `docker-compose.yml`:
+
+```yaml
+version: '3.7'
+services:
+  zookeeper:
+    image: ubuntu_mesos_home_marzieh
+    command: /home/USER_REDACTED/bin/zkServer.sh start-foreground
+    environment:
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 2190
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 10
+      ZOOKEEPER_SYNC_LIMIT: 5
+      ZOOKEEPER_SERVERS: 150.20.11.133:2888:3888;150.20.11.136:2888:3888
+    network_mode: host
+
+  slave-mesos:
+    image: ubuntu_mesos_home_marzieh
+    command: bash -c "sleep 40; /home/USER_REDACTED/build/bin/mesos-slave.sh --master=zk://150.20.11.133:2190/mesos --work_dir=/var/run/mesos --systemd_enable_support=false"
+    privileged: true
+    restart: always
+    network_mode: host
+    depends_on:
+      - zookeeper
+    environment:
+      - MESOS_RESOURCES=ports(*):[11000-11999]
+      - LIBPROCESS_IP=150.20.11.136
+      - MESOS_HOSTNAME=150.20.11.136
+      - MESOS_EXECUTOR_REGISTRATION_TIMEOUT=5mins
+      - MESOS_LOG_DIR=/var/log/mesos
+      - MESOS_WORK_DIR=/var/run/mesos
+      - MESOS_LOGGING_LEVEL=INFO
+```
+
+Note: I changed the slave's `--master` to use ZooKeeper (`zk://150.20.11.133:2190/mesos`) instead of direct IP, which is more reliable for HA setups.
+
+## Verification steps
+
+1. **Check ZooKeeper is listening:**
+   ```bash
+   docker ps  # ensure zookeeper container is running
+   docker exec <zookeeper_container> bash -c "echo stat | nc localhost 2190"
+   ```
+   Or from the host:
+   ```bash
+   echo stat | nc 150.20.11.133 2190
+   ```
+
+2. **Check ZooKeeper logs:**
+   ```bash
+   docker logs <zookeeper_container>
+   ```
+   Look for "binding to port 0.0.0.0/0.0.0.0:2190" or similar.
+
+3. **Check if the port is actually open:**
+   ```bash
+   ss -tlnp | grep 2190
+   ```
+
+4. **Test connectivity from the Marathon container:**
+   ```bash
+   docker exec <marathon_container> bash -c "echo stat | nc 150.20.11.133 2190"
+   ```
+
+The key fix is changing `zkServer.sh restart` to `zkServer.sh start-foreground` and ensuring ZooKeeper binds to all interfaces (0.0.0.0) rather than a Docker bridge IP.

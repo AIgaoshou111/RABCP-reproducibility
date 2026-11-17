@@ -1,0 +1,118 @@
+To add Docker to a Ubuntu 14.04 qcow2 image and save it as a new base image, you need to:
+
+1. **Boot the image** (either with KVM directly or via OpenStack)
+2. **Install Docker inside the running VM**
+3. **Clean up** (remove SSH keys, logs, etc. for a clean base image)
+4. **Shut down and snapshot/save the qcow2**
+
+Here's the step-by-step:
+
+## Option A: Using KVM directly (simpler for this task)
+
+### 1. Boot the qcow2 image with KVM
+
+```bash
+# Create a copy to work with
+cp ubuntu-14.04-cloudimg.qcow2 ubuntu-14.04-docker.qcow2
+
+# Boot it with KVM (adjust RAM/CPU as needed)
+sudo qemu-system-x86_64 \
+  -drive file=ubuntu-14.04-docker.qcow2,format=qcow2 \
+  -m 2048 \
+  -net nic -net user \
+  -nographic
+```
+
+If you need SSH access, add port forwarding:
+```bash
+sudo qemu-system-x86_64 \
+  -drive file=ubuntu-14.04-docker.qcow2,format=qcow2 \
+  -m 2048 \
+  -net nic -net user,hostfwd=tcp::2222-:22 \
+  -nographic
+```
+
+### 2. Install Docker inside the VM
+
+Once booted (login with default credentials for Ubuntu cloud images: user `ubuntu`, password is typically not set — you may need to inject an SSH key or use cloud-init):
+
+```bash
+# Update package list
+sudo apt-get update
+
+# Install Docker (for Ubuntu 14.04, docker.io is the package name)
+sudo apt-get install -y docker.io
+
+# Optional: Start Docker on boot
+sudo systemctl enable docker
+
+# Verify installation
+sudo docker --version
+```
+
+### 3. Clean up for a base image
+
+```bash
+# Remove SSH host keys (they'll be regenerated on first boot)
+sudo rm -f /etc/ssh/ssh_host_*
+
+# Clear logs
+sudo find /var/log -type f -exec truncate -s 0 {} \;
+
+# Remove cloud-init instance data (if using cloud images)
+sudo rm -rf /var/lib/cloud/instances/*
+
+# Clear bash history
+history -c
+sudo rm -f /root/.bash_history
+rm -f ~/.bash_history
+
+# Shut down
+sudo shutdown -h now
+```
+
+### 4. Your image is ready
+
+The file `ubuntu-14.04-docker.qcow2` now has Docker pre-installed.
+
+## Option B: Using OpenStack
+
+If you want to do this within OpenStack:
+
+1. **Upload the image** to Glance (if not already there)
+2. **Boot an instance** from it
+3. **SSH into the instance** and install Docker (same commands as above)
+4. **Clean up** (same cleanup commands)
+5. **Create a snapshot** of the instance:
+
+```bash
+# Using OpenStack CLI
+nova image-create <instance-id> ubuntu-14.04-docker
+
+# Or using Glance directly
+glance image-create --name ubuntu-14.04-docker --disk-format qcow2 \
+  --container-format bare --file <snapshot-file>
+```
+
+6. **Download the snapshot** if you need the qcow2 file locally:
+
+```bash
+glance image-download ubuntu-14.04-docker --file ubuntu-14.04-docker.qcow2
+```
+
+## Important Notes for Ubuntu 14.04 Cloud Images
+
+- **Default user**: `ubuntu` (no password, SSH key required)
+- **Cloud-init**: The image uses cloud-init, which will run on first boot. This is fine, but make sure to clean cloud-init data before saving the image (as shown above)
+- **Docker package**: On Ubuntu 14.04, the package is `docker.io` (not `docker` which is a system tray program)
+- **Kernel requirements**: Docker requires kernel 3.10+. Ubuntu 14.04 ships with 3.13, which works fine
+
+## Verification
+
+After creating a new VM from your modified image, verify Docker is working:
+
+```bash
+sudo docker run hello-world
+```
+
+This should pull and run the hello-world container, confirming Docker is properly installed and functional.

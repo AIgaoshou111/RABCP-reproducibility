@@ -1,0 +1,53 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2018-09-11 09:09:38
+Title: How to run command using docker-compose
+Tags: <docker><docker-compose><dockerfile>
+Body:
+I had a dockerfile which tried to install nginx like following:
+
+Dockerfile
+
+FROM ubuntu:latest
+RUN apt-get update
+RUN apt-get install -y expect
+RUN apt-get -y install software-properties-common 
+RUN apt-add-repository ppa:ondrej/php
+RUN apt-get -y install php7.1 php7.1-fpm 
+RUN apt-get install php7.1-mysql
+RUN apt-get -y install nginx
+
+For some reason, I tried to run dockfile inside docker-compose:
+
+version: '3'
+
+services:
+   web:
+     build: 
+       context: .
+       dockerfile: Dockerfile
+     ports:
+       - "3011:80"
+     command: nginx
+
+After I run docker-compose up, I access 127.0.0.1:3011, but nginx is not running.
+
+Seems like nginx haven't been start. Am I doing wrong at this line?
+
+command: nginx
+
+Selected earlier-question evidence:
+[E1; H2; 2018-08-16 07:54:53] Exact excerpt from the earlier question:
+Can't run mysql inside container, which use dockerFile to build image
+I tried to build a mysql image with dockerFile.
+Following is my code:
+
+[E2; H5; 2018-09-10 12:31:16] Exact excerpt from the earlier question:
+How to answer install question in dockerfile?
+I tried to install something using dockerfile.
+But when I run the command, I have to answer the question like following:

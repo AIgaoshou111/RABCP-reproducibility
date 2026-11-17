@@ -1,0 +1,23 @@
+On modern Ubuntu images, `ifconfig` is not installed by default. It is provided by the `net-tools` package, not by a package named `ifconfig`.
+
+Install it with:
+
+```bash
+apt-get update
+apt-get install -y net-tools
+```
+
+After that, `ifconfig` should work:
+
+```bash
+ifconfig
+```
+
+If you are building an image, put this in the Dockerfile:
+
+```dockerfile
+FROM ubuntu:16.04
+RUN apt-get update && apt-get install -y net-tools
+```
+
+If `apt-get install net-tools` fails, check that you ran `apt-get update` first, because the package index in a fresh Ubuntu image is empty or stale.

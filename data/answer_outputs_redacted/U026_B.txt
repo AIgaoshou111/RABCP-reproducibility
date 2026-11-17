@@ -1,0 +1,66 @@
+The error in your nginx log shows the actual problem:
+
+```
+upstream: "http://172.22.0.4:80/favicon.ico"
+```
+
+Nginx is trying to connect to port **80** on the wiki container, but your wiki container is listening on port **3000** (as shown in your docker ps output: `0.0.0.0:3000->3000/tcp`).
+
+## The Fix
+
+Your `proxy_pass` directive needs to specify port 3000:
+
+```nginx
+proxy_pass http://wiki:3000;
+```
+
+## Why is it forwarding to port 80?
+
+When you use `proxy_pass http://wiki;` without specifying a port, nginx defaults to port 80. The `wiki` hostname resolves correctly to the container's IP (172.22.0.4), but nginx tries port 80 instead of port 3000 where the wiki application is actually listening.
+
+## Additional Issues to Address
+
+You also have a database authentication error:
+
+```
+Database Initialization Error: password authentication failed for user "wikijs"
+```
+
+In your docker-compose.yml, there's a mismatch:
+- The database password is set to `[REDACTED]` (which appears to be a placeholder)
+- But the wiki container is using `DB_PASS: quantoxrocks`
+
+You need to ensure these match. Update your docker-compose.yml:
+
+```yaml
+db:
+  image: postgres:11-alpine
+  environment:
+    POSTGRES_DB: wiki
+    POSTGRES_PASSWORD: [REDACTED]  # This must match DB_PASS
+    POSTGRES_USER: wikijs
+```
+
+## Summary of Changes Needed
+
+1. **Fix nginx proxy_pass** (in your nginx conf file):
+   ```nginx
+   proxy_pass http://wiki:3000;
+   ```
+
+2. **Fix database password** (in docker-compose.yml):
+   ```yaml
+   POSTGRES_PASSWORD: [REDACTED]  # Match this with DB_PASS
+   ```
+
+3. **Restart your containers**:
+   ```bash
+   docker-compose down
+   docker-compose up -d
+   ```
+
+Note: If you've already initialized the database with a different password, you may need to remove the database volume and start fresh:
+```bash
+docker-compose down -v  # This will delete the database data
+docker-compose up -d
+```

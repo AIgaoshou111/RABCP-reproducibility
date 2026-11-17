@@ -1,0 +1,114 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-12-07 10:36:59
+Title: Importing sqldump into docker-container
+Tags: <mysql><docker>
+Body:
+I am trying to import a sqldump into a running MySQL Docker-Container with this command: 
+
+ sudo docker exec -i a2bdd4db352a /usr/bin/mysql -u username -ppassword --max_allowed_packet=1500M --default-character-set=utf8 database < /srv/Dump.sql
+
+After a while getting these error:
+
+ERROR 2006 (HY000) at line 979: MySQL server has gone away
+read unix @->/var/run/docker.sock: read: connection reset by peer
+
+Logs: 
+
+2017-12-07T09:44:21.099302Z 3 [Note] Aborted connection 3 to db: 'database' user: 'database' host: 'localhost' (Got a packet bigger than 'max_allowed_packet' bytes)
+
+Tried to increase the max_allowed_package variable in my MySQL-Conf ---> Nothing changed - still the same error. 
+
+My Dump has a size of 16 GB. 
+
+Has anybody a idea - how to fix this?
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2017-11-08 11:06:37
+Title: How to link two containers for a Jenkins Job?
+Tags: <mysql><docker><jenkins><jenkins-pipeline>
+Body:
+I have configured my Jenkins to run our Build Jobs and functional Tests in a docker container. For example, when I click on the "Build Now"-Button - Jenkins will build the Dockerfile which is in Git and run the container so the Buildsteps (Jenkinsfile) can be done in this container. 
+
+My Question is now: How can I start another Container with MySQL-Server installed and link them to my Build-Job-Container everytime I Build my Job. 
+
+Thanks for any tips.
+
+[H2]
+Date: 2017-11-16 14:52:04
+Title: How to Install mysql-server via dockerfile
+Tags: <mysql><docker><dockerfile>
+Body:
+Does anybody knows how to install mysql-server via dockerfile? I have written a Dockerfile, but the build ends with an error: /bin/sh: 1: /usr/bin/mysqld: not found
+
+USER root
+
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server-5.7
+
+# Remove pre-installed database
+RUN rm -rf /var/lib/mysql/*
+
+RUN sed -i -e"s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/"/etc/mysql/my.cnf
+
+ENV DB_USER example
+ENV DB_PASSWORD example
+ENV DB_NAME example
+ENV VOLUME_HOME "/var/lib/mysql"
+
+EXPOSE 3306 
+
+RUN cp /etc/mysql/my.cnf /usr/share/mysql/my-default.cnf
+RUN /usr/bin/mysqld  && sleep 5 && \
+     mysql -uroot -e "CREATE USER '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}'" && \
+     mysql -uroot -e "GRANT ALL PRIVILEGES ON *.* TO '${DB_USER}'@'%' WITH GRANT OPTION" &&\
+     mysql -uroot -e "CREATE DATABASE ${DB_NAME}" && \
+     mysqladmin -uroot shutdown
+
+[H3]
+Date: 2017-11-17 10:09:34
+Title: How can I specify a startscript for my dockercontainer in Jenkins(Pipeline)?
+Tags: <docker><jenkins><dockerfile><jenkins-pipeline><docker-container>
+Body:
+I have configured my Jenkins to run our Build Jobs and functional Tests in a docker container. For example, when I click on the "Build Now"-Button - Jenkins will build the Dockerfile which is in Git and run the container so the Buildsteps (Jenkinsfile) can be done in this container. 
+
+My Question is now: How can I specify a startscript for my Container in the Jenkins-Pipeline?
+Thanks for any tips.
+
+[H4]
+Date: 2017-11-21 10:01:48
+Title: How can I run ENTRYPOINT as root user?
+Tags: <docker>
+Body:
+This is a part of my Dockerfile:
+
+COPY ./startup.sh /root/startup.sh
+RUN chmod +x /root/startup.sh
+
+ENTRYPOINT ["/root/startup.sh"]
+
+EXPOSE 3306
+CMD ["/usr/bin/mysqld_safe"]
+
+USER jenkins
+
+I have to switch in the end to user jenkins and I have to run the container as jenkins.
+
+My question is now how can I run the startup.sh as root user when the container starts?
+
+[H5]
+Date: 2017-11-24 10:43:38
+Title: When will a startscript of a parent image being executed in Dockerfile?
+Tags: <docker><dockerfile>
+Body:
+The parentimage in my Dockerfile has a startscript (ENTRYPOINT).
+And in my Dockerfile i have a ENTRYPOINT two. 
+
+My Question is now: Which startscript is beeing executed at first?

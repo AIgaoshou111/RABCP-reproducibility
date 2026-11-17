@@ -1,0 +1,85 @@
+In Docker Compose, you cannot define variables directly in the `docker-compose.yml` file itself. However, you have several options to achieve what you want:
+
+## Option 1: Use an `.env` file (Recommended)
+
+Create a `.env` file in the same directory as your `docker-compose.yml`:
+
+```bash
+# .env file
+APP_NAME=myapp
+```
+
+Then in your `docker-compose.yml`:
+
+```yaml
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${APP_NAME}
+    container_name: ${APP_NAME}
+```
+
+Docker Compose automatically reads the `.env` file and substitutes variables.
+
+## Option 2: Use environment variables from your shell
+
+Set the variable in your shell before running docker-compose:
+
+**Linux/Mac:**
+```bash
+export APP_NAME=myapp
+docker-compose up
+```
+
+**Windows (Command Prompt):**
+```cmd
+set APP_NAME=myapp
+docker-compose up
+```
+
+**Windows (PowerShell):**
+```powershell
+$env:APP_NAME = "myapp"
+docker-compose up
+```
+
+## Option 3: Use default values with variable substitution
+
+You can provide default values using the `${VARIABLE:-default}` syntax:
+
+```yaml
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${APP_NAME:-myapp}
+    container_name: ${APP_NAME:-myapp}
+```
+
+This way, if `APP_NAME` is not set, it will use "myapp" as the default.
+
+## Option 4: Use YAML anchors (for non-variable values)
+
+If you just want to avoid repeating the same value, you can use YAML anchors:
+
+```yaml
+version: '3'
+x-app-name: &app-name myapp
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: *app-name
+    container_name: *app-name
+```
+
+Note: This only works for static values, not for actual variable substitution.
+
+The most common and flexible approach is using the `.env` file (Option 1), as it keeps your configuration self-contained and version-controllable.

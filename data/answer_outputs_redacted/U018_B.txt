@@ -1,0 +1,95 @@
+To detect whether your Java application is running inside a Docker container, you have several reliable options:
+
+## 1. Check for `.dockerenv` file (simplest)
+
+Docker creates a `/.dockerenv` file at the root of the container's filesystem. You can check for its existence:
+
+```java
+public boolean isRunningInDocker() {
+    File dockerEnv = new File("/.dockerenv");
+    return dockerEnv.exists();
+}
+```
+
+## 2. Check `/proc/1/cgroup` (more robust)
+
+This method works even if the `.dockerenv` file is removed:
+
+```java
+public boolean isRunningInDocker() {
+    try {
+        String cgroup = new String(Files.readAllBytes(Paths.get("/proc/1/cgroup")));
+        return cgroup.contains("docker") || cgroup.contains("container");
+    } catch (IOException e) {
+        return false;
+    }
+}
+```
+
+## 3. Check `/proc/self/mountinfo` (most reliable)
+
+This checks the mount information for Docker-specific paths:
+
+```java
+public boolean isRunningInDocker() {
+    try {
+        String mountInfo = new String(Files.readAllBytes(Paths.get("/proc/self/mountinfo")));
+        return mountInfo.contains("/docker/") || mountInfo.contains("/containers/");
+    } catch (IOException e) {
+        return false;
+    }
+}
+```
+
+## Recommended approach for your use case
+
+Since you want to display only `/Music` when running in Docker, I'd recommend combining methods 1 and 2 for reliability:
+
+```java
+public boolean isRunningInDocker() {
+    // Method 1: Check for .dockerenv file
+    if (new File("/.dockerenv").exists()) {
+        return true;
+    }
+    
+    // Method 2: Check cgroup
+    try {
+        String cgroup = new String(Files.readAllBytes(Paths.get("/proc/1/cgroup")));
+        if (cgroup.contains("docker") || cgroup.contains("container")) {
+            return true;
+        }
+    } catch (IOException ignored) {
+        // Fall through to next check
+    }
+    
+    return false;
+}
+```
+
+Then in your filesystem traversal code:
+
+```java
+if (isRunningInDocker()) {
+    // Only show /Music directory
+    File musicDir = new File("/Music");
+    // ... display only this directory
+} else {
+    // Show full filesystem tree
+    // ... existing behavior
+}
+```
+
+## Alternative: Use environment variable
+
+You could also set an environment variable in your Dockerfile to make detection explicit:
+
+```dockerfile
+ENV RUNNING_IN_DOCKER=true
+```
+
+Then in Java:
+```java
+boolean isDocker = "true".equals(System.getenv("RUNNING_IN_DOCKER"));
+```
+
+This approach is more explicit and doesn't rely on Docker internals that might change, but requires modifying your Dockerfile.

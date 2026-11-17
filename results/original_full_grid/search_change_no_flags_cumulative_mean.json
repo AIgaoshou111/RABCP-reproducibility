@@ -1,0 +1,10 @@
+[
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "cumulative_mean",
+    "candidate_id": 0,
+    "params": {},
+    "development_MAE": 0.899450457200655
+  }
+]

@@ -1,0 +1,83 @@
+The error in your Nginx log shows the core issue:
+
+```
+upstream: "http://172.22.0.4:80/favicon.ico"
+```
+
+Nginx is trying to connect to port 80, but your Wiki.js container is listening on port 3000. The `proxy_pass http://wiki;` directive is resolving the `wiki` hostname to the container's IP but using the default HTTP port (80) instead of port 3000.
+
+## Fix the proxy_pass
+
+Change your Nginx configuration to explicitly specify port 3000:
+
+```nginx
+location / {
+    proxy_set_header X-Real-IP  $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $host;
+    proxy_redirect off;
+
+    proxy_pass http://wiki:3000;
+}
+```
+
+After making this change, reload Nginx:
+
+```bash
+docker-compose exec webserver nginx -s reload
+```
+
+## About the database error
+
+You also have a separate issue with the database connection:
+
+```
+Database Initialization Error: password authentication failed for user "wikijs"
+```
+
+Looking at your docker-compose.yml, there's a mismatch:
+- In the `db` service, you set `POSTGRES_PASSWORD: [REDACTED]
+- In the `wiki` service, you set `DB_PASS: quantoxrocks`
+
+These need to match. Update your docker-compose.yml to use the same password in both places:
+
+```yaml
+db:
+  environment:
+    POSTGRES_PASSWORD: [REDACTED]  # or whatever password you want
+
+wiki:
+  environment:
+    DB_PASS: quantoxrocks  # must match POSTGRES_PASSWORD above
+```
+
+After fixing the password, you'll need to recreate the containers:
+
+```bash
+docker-compose down
+docker-compose up -d
+```
+
+Note: If the database volume already has data with the old password, you may need to remove the volume as well:
+
+```bash
+docker-compose down -v  # This will delete the database data
+docker-compose up -d
+```
+
+## About the audit log
+
+The `res=failed` in your audit log refers to the systemd nginx service on your EC2 host failing to start. This is unrelated to your Docker containers - it's the host's nginx service, not the nginx container. Since you're running nginx in Docker, you don't need the host's nginx service running. This is likely failing because you removed the nginx user/group (as shown in the audit log with `userdel` and `delete-group` commands).
+
+You can ignore this error or disable the host nginx service:
+
+```bash
+sudo systemctl disable nginx
+sudo systemctl stop nginx
+```
+
+The key fixes are:
+1. Change `proxy_pass` to `http://wiki:3000`
+2. Ensure the database passwords match between the db and wiki services

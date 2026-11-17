@@ -1,0 +1,368 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2022-01-27 16:41:44
+Title: How to remove network with docker sdk for python?
+Tags: <python><docker><python-docker>
+Body:
+I am using docker sdk for python [链接：https://docker-py.readthedocs.io/en/stable/networks.html].
+
+I am creating a network like so
+
+    try:
+        client.networks.create(name=network_name, check_duplicate=True)
+    except docker.errors.APIError as ex:
+        print(f"not recreating existing docker network: '{network_name}'")
+        pass
+
+which works fine.
+
+I want to delete this network.
+
+I am trying like so
+
+def remove_docker_network(network_name: str, client: docker.client.DockerClient):
+    try:
+        client.networks.prune(filters={"name": network_name})
+    except docker.errors.APIError as ex:
+        print(f"not removing non existing docker network: '{network_name}'")
+        pass
+
+but network remains.
+
+Doc only shows prune. There is no rm.
+
+How to do it correctly?
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2021-11-21 16:25:55
+Title: How to ping/ssh to a running docker by name?
+Tags: <linux><docker><ssh>
+Body:
+I want to access a running docker via ssh, by name.
+
+How can I ping to the docker?
+
+How can I connect to the docker using ssh?
+
+Bonus: How can I connect to the docker, using ssh, from a different computer than the one it runs on?
+
+I am aware that it is considered better [链接：https://stackoverflow.com/a/30274222/913098] to access via docker exec, but this does not work for me, as I have to use ssh for my case [I am trying to use clion's fully remote  mode on a remote hosted docker via ssh tunneling. Their docs only support remote non-docker [链接：https://www.jetbrains.com/help/clion/remote-projects-support.html], or local docker [链接：https://blog.jetbrains.com/clion/2020/01/using-docker-with-clion/]].
+
+This is my dockerfile
+
+ARG VER=
+ARG TOOL_DOCKER=
+ARG BASE_IMAGE=
+ARG TOOL_DIR=
+FROM devsrv:5000/${TOOL_DOCKER}:${VER} AS tool_base
+
+ARG VER=
+ARG BASE_IMAGE=
+ARG TOOL_DIR=
+FROM ${BASE_IMAGE}
+ARG VER=
+ARG BASE_IMAGE=
+ARG TOOL_DOCKER=
+ARG TOOL_DIR=
+ARG UNAME=
+ARG UID=
+USER root
+
+COPY launchpad.key /tmp/launchpad.key
+
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    apt-key add /tmp/launchpad.key && \
+    add-apt-repository -y ppa:git-core/ppa && apt-get update && \
+    apt-get install -y git libxt-dev libxtst6 libnss3 libnspr4 \
+        libgbm-dev libxss-dev libasound2 libatk-bridge2.0-0 \
+        libcanberra-gtk-module libcanberra-gtk3-module valgrind sudo \
+        libx11-xcb-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /tmp/*
+
+RUN groupadd --system ${UNAME} --gid ${UID} && \
+    useradd --uid ${UID} --system --gid ${UNAME} --home-dir /home/USER_REDACTED} --create-home --comment "Docker image user" ${UNAME} && \
+    chown -R ${UNAME}:${UNAME} /home/USER_REDACTED} && \
+    usermod -aG sudo ${UNAME} && \
+    echo "${UNAME}  ALL=(ALL) NOPASSWD:[REDACTED]" | sudo tee /etc/sudoers.d/${UNAME}
+
+COPY --from=tool_base ${TOOL_DIR} ${TOOL_DIR}
+
+and this is the gist of how it is run
+
+BUILD_CMDLINE="docker build \
+    --build-arg UID=${UID} \
+    --build-arg UNAME=${USER} \
+    --build-arg VER=${VERSION} \
+    --build-arg BASE_IMAGE=${BASE_DOCKER} \
+    --build-arg TOOL_DOCKER=$(${DIR}/impl/known-tools.py docker ${TOOL}) \
+    --build-arg TOOL_DIR=$(${DIR}/impl/known-tools.py tool-dir ${TOOL}) \
+    -f ${DIR}/impl/personal-tool.dockerfile -t ${IMAGE} ${DIR}/impl"
+
+echo "Building docker using: ${BUILD_CMDLINE}"
+${BUILD_CMDLINE} || exit 1
+
+# Need to give the container access to your windowing system
+xhost +
+echo $HOME
+echo ${USER_ID}:${GROUP_ID}
+RUN_CMD="docker run --group-add ${DOCKER_GROUP_ID} \
+                --env HOME=${HOME} \
+                --env="DISPLAY" \
+                --entrypoint /bin/bash \
+                --interactive \
+                --net "host" \
+                --rm \
+                --tty \
+                --user=${USER_ID}:${GROUP_ID} \
+                --volume ${HOME}:${HOME} \
+                --volume /isilon:/isilon \
+                --volume /mnt:/mnt \
+                $(cat ${HOME}/personal-uv-docker-flags) \
+                -v "${HOME}/.Xauthority:${HOME}/.Xauthority:rw" \
+                --volume /var/run/docker.sock:/var/run/docker.sock \
+                --workdir ${HOME} \
+                --cap-add sys_ptrace \
+                -p127.0.0.1:2222:22 \
+                --name my_docker \
+                ${IMAGE} $(${DIR}/impl/known-tools.py cmd-line ${TOOL})"
+
+echo "Running docker using: ${RUN_CMD}"
+
+${RUN_CMD}
+
+When running this docker, doing docker ps gives
+
+CONTAINER ID        IMAGE                                                        COMMAND                  CREATED             STATUS              PORTS               NAMES
+a5f15b6f5e7b        clion-professional_devsrv_5000/acq-base-docker_latest:noam   "/bin/bash /opt/clio…"   18 minutes ago      Up 18 minutes                           my_docker
+
+If information is missing please say so and I will edit the question.
+
+Edit:
+
+Edited the dockerfile to
+
+COPY launchpad.key /tmp/launchpad.key
+
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    apt-get install -y openssh-client && \
+    apt-get install -y openssh-server && \
+    systemctl enable sshd && \
+    apt-key add /tmp/launchpad.key && \
+    add-apt-repository -y ppa:git-core/ppa && apt-get update && \
+    apt-get install -y git libxt-dev libxtst6 libnss3 libnspr4 \
+        libgbm-dev libxss-dev libasound2 libatk-bridge2.0-0 \
+        libcanberra-gtk-module libcanberra-gtk3-module valgrind sudo \
+        libx11-xcb-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /tmp/*
+
+RUN groupadd --system ${UNAME} --gid ${UID} && \
+    useradd --uid ${UID} --system --gid ${UNAME} --home-dir /home/USER_REDACTED} --create-home --comment "Docker image user" ${UNAME} && \
+    chown -R ${UNAME}:${UNAME} /home/USER_REDACTED} && \
+    usermod -aG sudo ${UNAME} && \
+    echo "${UNAME}  ALL=(ALL) NOPASSWD:[REDACTED]" | sudo tee /etc/sudoers.d/${UNAME}
+
+COPY --from=tool_base ${TOOL_DIR} ${TOOL_DIR}
+
+USER {UNAME}
+
+output:
+
+...
+
+Get:11 http://archive.ubuntu.com/ubuntu xenial/main amd64 ssh-import-id all 5.5-0ubuntu1 [10.2 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 1003 kB in 0s (1184 kB/s)
+Selecting previously unselected package libwrap0:amd64.
+(Reading database ... 25945 files and directories currently installed.)
+Preparing to unpack .../libwrap0_7.6.q-25_amd64.deb ...
+Unpacking libwrap0:amd64 (7.6.q-25) ...
+Selecting previously unselected package ncurses-term.
+Preparing to unpack .../ncurses-term_6.0+20160213-1ubuntu1_all.deb ...
+Unpacking ncurses-term (6.0+20160213-1ubuntu1) ...
+Selecting previously unselected package openssh-sftp-server.
+Preparing to unpack .../openssh-sftp-server_1%3a7.2p2-4ubuntu2.10_amd64.deb ...
+Unpacking openssh-sftp-server (1:7.2p2-4ubuntu2.10) ...
+Selecting previously unselected package openssh-server.
+Preparing to unpack .../openssh-server_1%3a7.2p2-4ubuntu2.10_amd64.deb ...
+Unpacking openssh-server (1:7.2p2-4ubuntu2.10) ...
+Selecting previously unselected package python3-pkg-resources.
+Preparing to unpack .../python3-pkg-resources_20.7.0-1_all.deb ...
+Unpacking python3-pkg-resources (20.7.0-1) ...
+Selecting previously unselected package python3-chardet.
+Preparing to unpack .../python3-chardet_2.3.0-2_all.deb ...
+Unpacking python3-chardet (2.3.0-2) ...
+Selecting previously unselected package python3-six.
+Preparing to unpack .../python3-six_1.10.0-3_all.deb ...
+Unpacking python3-six (1.10.0-3) ...
+Selecting previously unselected package python3-urllib3.
+Preparing to unpack .../python3-urllib3_1.13.1-2ubuntu0.16.04.4_all.deb ...
+Unpacking python3-urllib3 (1.13.1-2ubuntu0.16.04.4) ...
+Selecting previously unselected package python3-requests.
+Preparing to unpack .../python3-requests_2.9.1-3ubuntu0.1_all.deb ...
+Unpacking python3-requests (2.9.1-3ubuntu0.1) ...
+Selecting previously unselected package tcpd.
+Preparing to unpack .../tcpd_7.6.q-25_amd64.deb ...
+Unpacking tcpd (7.6.q-25) ...
+Selecting previously unselected package ssh-import-id.
+Preparing to unpack .../ssh-import-id_5.5-0ubuntu1_all.deb ...
+Unpacking ssh-import-id (5.5-0ubuntu1) ...
+Processing triggers for man-db (2.7.5-1) ...
+Processing triggers for systemd (229-4ubuntu21.16) ...
+Setting up libwrap0:amd64 (7.6.q-25) ...
+Setting up ncurses-term (6.0+20160213-1ubuntu1) ...
+Setting up openssh-sftp-server (1:7.2p2-4ubuntu2.10) ...
+Setting up openssh-server (1:7.2p2-4ubuntu2.10) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+Creating SSH2 RSA key; this may take some time ...
+2048 SHA256:Wlq9V+siHa4herOkUxo+f7Gsy+Dr5obNzd21YlvcTxw root@20cd14a69430 (RSA)
+Creating SSH2 DSA key; this may take some time ...
+1024 SHA256:PHYTyaGyXHO7N5V3VOGoFcBY23FDBydEcCdrrI01ZpU root@20cd14a69430 (DSA)
+Creating SSH2 ECDSA key; this may take some time ...
+256 SHA256:/T4agN5tch9KKW3+vp7jdFhGBGHtZ2lA7rD9BFk/vfM root@20cd14a69430 (ECDSA)
+Creating SSH2 ED25519 key; this may take some time ...
+256 SHA256:xm6KylI0biBsq1imRWYuTecinrwTAlFE+ekVlWV8G3o root@20cd14a69430 (ED25519)
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Setting up python3-pkg-resources (20.7.0-1) ...
+Setting up python3-chardet (2.3.0-2) ...
+Setting up python3-six (1.10.0-3) ...
+Setting up python3-urllib3 (1.13.1-2ubuntu0.16.04.4) ...
+Setting up python3-requests (2.9.1-3ubuntu0.1) ...
+Setting up tcpd (7.6.q-25) ...
+Setting up ssh-import-id (5.5-0ubuntu1) ...
+Processing triggers for libc-bin (2.23-0ubuntu11) ...
+Processing triggers for systemd (229-4ubuntu21.16) ...
+Operation failed: Too many levels of symbolic links
+The command '/bin/sh -c apt-get update &&     apt-get install -y software-properties-common &&     apt-get install -y openssh-client &&     apt-get install -y openssh-server &&     systemctl enable sshd &&     apt-key add /tmp/launchpad.key &&     add-apt-repository -y ppa:git-core/ppa && apt-get update &&     apt-get install -y git libxt-dev libxtst6 libnss3 libnspr4         libgbm-dev libxss-dev libasound2 libatk-bridge2.0-0         libcanberra-gtk-module libcanberra-gtk3-module valgrind sudo         libx11-xcb-dev &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     rm -rf /tmp/*' returned a non-zero code: 1
+
+With the highlighted errors being
+
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+
+and
+
+Operation failed: Too many levels of symbolic links
+
+[H2]
+Date: 2021-11-25 09:37:09
+Title: gdb exits immediately `Process finished with exit code 1` or lldb `'A packet returned error 8'` on docker. Also: How to allow c++ debugging in docker
+Tags: <c++><docker><debugging>
+Body:
+This took me full days to find, so I am posting this for future reference.
+
+I am developing C++ on a docker image. I am using clion.
+
+My code is compiled in debug mode, and runs fine in run mode, but when trying to debug, the process exits immediately with the very informative
+
+Process finished with exit code 1
+
+When switching the debugger from
+
+[图片1（人工查看原图后整理）：CLion 调试设置选中 Bundled GDB，版本 10.2。]
+
+to
+
+[图片2（人工查看原图后整理）：CLion 调试设置选中 Bundled LLDB，版本 10.0.1。]
+
+Trying to debug still exits, but yields a popup in clion
+
+'A packet returned error 8'
+
+The same code debugs fine on a local computer.
+
+The docker run command is
+
+RUN_CMD="docker run --group-add ${DOCKER_GROUP_ID} \
+                --env HOME=${HOME} \
+                --env="DISPLAY" \
+                --entrypoint /bin/bash \
+                --interactive \
+                --net "host" \
+                --rm \
+                --tty \
+                --user=${USER_ID}:${GROUP_ID} \
+                --volume ${HOME}:${HOME} \
+                --volume /mnt:/mnt \
+                $(cat ${HOME}/personal-uv-docker-flags) \
+                -v "${HOME}/.Xauthority:${HOME}/.Xauthority:rw" \
+                --volume /var/run/docker.sock:/var/run/docker.sock \
+                --workdir ${HOME} \
+                ${IMAGE} $(${DIR}/impl/known-tools.py cmd-line ${TOOL})"
+
+How to debug C++ on docker?
+
+[H3]
+Date: 2021-12-15 10:37:19
+Title: Authentication token manipulation error when trying to change use password in dockerfile
+Tags: <linux><docker><dockerfile><passwords>
+Body:
+I am trying to change a password for a user I am creating during the run of a dockerfile:
+
+RUN groupadd --system ${UNAME} --gid ${UID} && \
+    useradd --uid ${UID} --system --gid ${UNAME} --home-dir /home/USER_REDACTED} --create-home --comment "Docker image user" ${UNAME} && \
+    chown -R ${UNAME}:${UNAME} /home/USER_REDACTED} && \
+    usermod -aG sudo ${UNAME}
+
+RUN echo '${UNAME}:password' | chpasswd
+
+The second RUN command fails with
+
+Authentication token manipulation error chpasswd: [REDACTED] 1, user
+${UNAME}) password not changed ```
+
+Doing the very same like so, does work:
+
+RUN useradd pi && \
+    mkdir -p /home/USER_REDACTED && \
+    chown pi /home/USER_REDACTED && \
+    echo 'pi:password' | chpasswd
+
+I don't understand the difference. I just want to give ${UNAME} a constant password password.
+
+[H4]
+Date: 2022-01-24 16:50:42
+Title: Unable to install python3.7 on ubuntu 16.04
+Tags: <python><linux><docker><ubuntu><installation>
+Body:
+Following from this [链接：https://askubuntu.com/a/1176271/952871], I am trying to install like so (in docker, but also same error directly on host):
+
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt install -y python3.7
+
+I am getting
+
+E: Unable to locate package python3.7
+E: Couldn't find any package by glob 'python3.7'
+E: Couldn't find any package by regex 'python3.7'
+
+This was working, and one day it stopped. I don't know if I did something, or if something happened on deadsnakes or elsewhere.
+
+How to get Python3.7 in the docker, and in the host?
+
+[H5]
+Date: 2022-01-26 15:59:34
+Title: How to install python specific version on docker?
+Tags: <python><python-3.x><docker><installation><deprecated>
+Body:
+I need to install python 3.8.10 in a container running ubuntu 16.04.
+
+16.04 has no support anymore, so I need a way to install it there manually.

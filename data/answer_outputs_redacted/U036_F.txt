@@ -1,0 +1,52 @@
+The problem is that you're sending the request body as form-encoded data (`Image=registry:2`), but the Docker Remote API expects a JSON body (`{"Image": "registry:2"}`).
+
+The error `invalid character 'I' looking for beginning of value` occurs because Docker tries to parse your form-encoded body as JSON, and the first character is `I` (from `Image=...`).
+
+## Fix
+
+Replace the `UrlEncodedFormEntity` with a `StringEntity` containing proper JSON:
+
+```java
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+String containerName = "test_remote_reg";
+String imageName = "registry:2";
+String url = "http://192.168.59.103:2375/containers/create?name=" + containerName;
+
+HttpPost post = new HttpPost(url);
+post.setHeader("Content-Type", "application/json");
+
+// Build JSON body
+String jsonBody = "{\"Image\": \"" + imageName + "\"}";
+StringEntity entity = new StringEntity(jsonBody, "UTF-8");
+post.setEntity(entity);
+
+HttpClient client = new DefaultHttpClient();
+client.execute(post);
+```
+
+## Key differences from your code
+
+1. **Content-Type header**: You had a leading space (`" application/json"`). Remove it — use `"application/json"`.
+2. **Entity type**: Use `StringEntity` with a JSON string, not `UrlEncodedFormEntity`.
+3. **JSON format**: The body must be `{"Image": "registry:2"}` — note the colon and quotes.
+
+## Better approach: use a JSON library
+
+For more complex payloads, use a JSON library like Jackson or Gson to build the body:
+
+```java
+// Using Gson
+import com.google.gson.Gson;
+import java.util.HashMap;
+import java.util.Map;
+
+Map<String, String> payload = new HashMap<>();
+payload.put("Image", imageName);
+String jsonBody = new Gson().toJson(payload);
+```
+
+This avoids manual string concatenation and escaping issues.

@@ -1,0 +1,172 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-12-05 17:25:24
+Title: How should I replace a reference to an IP in Docker Swarm
+Tags: <docker><elasticsearch><docker-swarm>
+Body:
+I am trying to install ELK in Docker Swarm mode. 
+
+Then, I need to tell filebeat to send logs to logstash.
+
+Here is my filebeat config file:
+
+#=========================== Filebeat prospectors =============================
+## Each - is a prospector. Most options can be set at the prospector level, so
+## you can use different prospectors for various configurations.
+## Below are the prospector specific configurations.
+filebeat.prospectors:
+- input_type: log
+  enabled: true
+  paths:
+{% for log in in_filebeat_dict.filebeat.logs | default([]) %}
+    - {{ log }}
+{% endfor %}
+
+#================================ Outputs =====================================
+# Configure what output to use when sending the data collected by the beat.
+output.logstash:
+  hosts: ["{{ in_filebeat_dict.filebeat.output.logstash }}:{{ in_filebeat_dict.filebeat.output.port}}"]
+
+but in_filebeat_dict.filebeat.output.logstash is an IP and in Swarm mode, Swarm will not decide where to install containers, so I'm a bit stuck here...
+
+Any ideas ???
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2017-11-21 16:05:59
+Title: Use explicitly alias in shell with docker command
+Tags: <bash><shell><docker><alias>
+Body:
+I have an alias in my .bashrc that is:
+
+alias ansible-galaxy='sudo docker run --rm -it -v $PWD:[REDACTED]  myregistry.com/ansible-galaxy:2.1.0.0'
+
+In my shell, I must do:
+
+ansible-galaxy -c -r -f galaxy.yml
+
+Is it posible to write the full command in a term ?
+
+It seems that if I execute 
+
+sudo docker run --rm -it -v $PWD:[REDACTED]  myregistry.com/ansible-galaxy:2.1.0.0 -c -r -f galaxy.yml
+
+it goes in docker container and don't find anymore the galaxy.yml that is in the docker host. Any idea how should I fix it ?
+
+[H2]
+Date: 2017-11-22 12:43:18
+Title: sh 'alias' is not giving any output in Jenkinsfile
+Tags: <docker><jenkins><jenkins-pipeline><devops>
+Body:
+I have a docker container which runs Jenkins.
+
+Inside Jenkinsfile, I try to define an alias and print this alias.
+
+I tried it manually, connecting to Jenkins container, and I am able to do:
+
+alias foo='bar'
+
+and then, if I execute alias I can see the list of alias ( I have 7 preset alias, and the new one )
+
+but when I execute the same thing in Jenkinsfile, I foo command won't respond... 
+
+Here is my pipeline code:
+
+#!/bin/groovy
+
+pipeline {
+agent any
+stages {
+  stage("Use alias command"){
+    steps { 
+        sh 'alias foo="bar"'
+        sh 'foo'
+    }
+  }
+}}
+
+Any idea why ?
+
+[H3]
+Date: 2017-11-23 10:48:21
+Title: Docker not mapping folders
+Tags: <docker><jenkins><devops>
+Body:
+I am connected in a Docker container. In this container, when I execute:
+
+sudo docker run --entrypoint bash  -it -v /home/USER_REDACTED/workspace/deployment:/app  myregistry.com/ansible-shade:2.2.1.0 
+
+I can see mapping is not happening between /home/USER_REDACTED/workspace/deployment and /app
+
+In /home/USER_REDACTED/workspace/deployment, there is a lot of files, but in  /app, I can't see anything
+
+Any idea why does it happen ?
+
+[H4]
+Date: 2017-11-27 13:32:40
+Title: Docker command inside docker container
+Tags: <docker><jenkins><ansible><devops>
+Body:
+I have a Ubuntu host. In this host, I run a docker container that gives me Jenkins app. 
+
+In the pipeline, Jenkins begin to clone git repositories.
+
+Then inside Jenkins node, I run another docker container that needs as reference a file downloaded in the previous step.
+
+Thing is when I connect manually into jenkins container I can see all those files, but when I run the second docker command, instead of seeing my files, it seems that I see the host fs...
+
+Right now, I mount my volumes with ansible:
+
+jenkins-slave-docker:
+  image: "{{ registry_url }}/jenkins-slave-docker"
+  restart: unless-stopped
+  tty: true
+  privileged: true
+  stdin_open: true
+  volumes:
+    - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    - "/var/run/docker.sock:/etc/default"
+
+How should I access the git files of the Jenkins container ?
+
+[H5]
+Date: 2017-12-05 10:51:39
+Title: " are replaced with ' with ansible
+Tags: <docker><ansible>
+Body:
+In ansible, I need to generate daemon.json file with log-opts:
+
+{% if docker_log_dict is defined %}
+  "log-opts": {{ docker_log_dict.log_opts | default('[]') }},
+{% endif %}
+
+With 
+
+log_opts: |
+      {
+        "syslog-address": "tcp://{{ my_ip_run }}:514",
+        "tag": {% raw %}"{{.Name}}/{{.FullID}}"{% endraw %}
+      }
+
+But then, when I check the generated daemon.json file, I get : 
+
+...
+"log_opts": 
+      {
+        'syslog-address': 'tcp://10.10.10.10:514',
+        'tag': {% raw %}'{{.Name}}/{{.FullID}}'{% endraw %}
+      }
+
+Thing is when replacing, ansible is replacing with simple quote instead of double quotes. 
+
+When restarting Docker daemon, it will fail unless I use double quotes?
+
+I don't understand why is that happening.
+
+Anyone know how to fix it ???

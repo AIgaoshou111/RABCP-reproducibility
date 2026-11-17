@@ -1,0 +1,114 @@
+Yes. The standard way is to mount the host `tests/` directory into the container at runtime with a bind mount or Docker volume. Do not copy tests into the image.
+
+A practical layout:
+
+```text
+project/
+├── code/
+│   ├── file1.py
+│   └── file2.py
+├── tests/
+│   ├── test_file1.py
+│   └── test_file2.py
+├── pyproject.toml or requirements.txt
+└── Dockerfile
+```
+
+## Recommended approach
+
+Build the image with only the application code and dependencies. At test time, mount the host `tests/` directory into the container and run `pytest` against it.
+
+Example `Dockerfile`:
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install dependencies first for better layer caching
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy only application code into the image
+COPY code/ ./code/
+
+# Do not copy tests/ into the image
+```
+
+Build it:
+
+```bash
+docker build -t myapp:dev .
+```
+
+Run tests with a bind mount:
+
+```bash
+docker run --rm \
+  -v "$(pwd)/tests:/app/tests" \
+  myapp:dev \
+  pytest tests
+```
+
+On Windows PowerShell/CMD, replace `$(pwd)` with the full host path or use `${PWD}` in PowerShell.
+
+If your tests import the application as a package, make sure the import path works inside the container. For example, if tests do:
+
+```python
+from code.file1 import something
+```
+
+then running `pytest` from `/app` should work because `/app/code` is present.
+
+If you use Poetry, the same idea applies:
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN pip install poetry
+
+COPY pyproject.toml poetry.lock ./
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-root --no-dev
+
+COPY code/ ./code/
+```
+
+Run:
+
+```bash
+docker run --rm \
+  -v "$(pwd)/tests:/app/tests" \
+  myapp:dev \
+  pytest tests
+```
+
+## Important details
+
+- Use a bind mount for development/testing, not a `VOLUME` instruction in the Dockerfile. `VOLUME` is mainly for runtime data persistence and does not mount host files automatically.
+- The host path must be absolute. `$(pwd)/tests` is the usual way.
+- The container path should match where pytest expects to find tests, commonly `/app/tests`.
+- Tests are not baked into the image, so the image stays smaller and test changes do not require rebuilding.
+- If you need test-only dependencies, install them in the image or use a separate test image. For a simple setup, include `pytest` in the image. For stricter separation, create a `Dockerfile.test` that installs dev dependencies.
+
+## Optional: docker-compose
+
+A `docker-compose.yml` can make the command easier to repeat:
+
+```yaml
+services:
+  app:
+    build: .
+    volumes:
+      - ./tests:/app/tests
+```
+
+Then run:
+
+```bash
+docker compose run --rm app pytest tests
+```
+
+This gives you the same result: application code comes from the image, test files come from the host.

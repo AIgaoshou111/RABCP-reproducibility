@@ -1,0 +1,71 @@
+The core issue is that your Docker MongoDB container is listening on port **27017** inside the container, but you're mapping it to port **27018** on your host. RoboMongo (now Robo 3T) connects to the host port, so you need to connect to `localhost:27018`.
+
+## Fix your docker-compose.yml
+
+Change the port mapping from:
+```yaml
+ports:
+  - "27018:27018"
+```
+to:
+```yaml
+ports:
+  - "27018:27017"
+```
+
+This maps host port 27018 → container port 27017 (where MongoDB actually listens).
+
+## Connect with RoboMongo
+
+1. Open RoboMongo/Robo 3T
+2. Create a new connection
+3. Set:
+   - **Address**: `localhost`
+   - **Port**: `27018`
+4. Connect (no authentication needed since the container has no access control enabled)
+
+## About your second error
+
+The error `failed to connect to server [mongo:27017]` is from your **web container** trying to connect to the MongoDB container. This is actually correct behavior — inside the Docker network, your web app should connect to `mongo:27017` (the container's internal port), not `mongo:27018`.
+
+The error suggests either:
+1. The MongoDB container isn't ready when the web container tries to connect (timing issue)
+2. The MongoDB container crashed or isn't running
+
+**Check if MongoDB container is running:**
+```bash
+docker-compose ps
+```
+
+**Check MongoDB container logs:**
+```bash
+docker-compose logs mongo
+```
+
+**If MongoDB is running but web can't connect, add a health check and dependency:**
+```yaml
+version: "2"
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    links:
+      - mongo
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo
+    volumes:
+      - /data/mongodb/db:/data/db
+    ports:
+      - "27018:27017"
+```
+
+Note: `depends_on` only waits for the container to start, not for MongoDB to be ready. If you still have connection issues, add a retry mechanism in your Node.js app or use a wait script.
+
+## Summary
+
+- **Host → Container**: Use `27018:27017` mapping
+- **RoboMongo**: Connect to `localhost:27018`
+- **Web app → MongoDB**: Use `mongo:27017` (internal Docker network)

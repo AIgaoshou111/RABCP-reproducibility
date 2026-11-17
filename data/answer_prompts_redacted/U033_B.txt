@@ -1,0 +1,365 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2018-05-04 07:00:36
+Title: Docker Compose Nginx Link containers
+Tags: <docker><nginx><proxy><docker-compose>
+Body:
+I have a docker compose container that runs Nginx.  The site hosted is just a .test domain, like example.test.
+
+Also in the container Nginx runs a location proxy and redirects it to example.test:8000.  But it's not able to connect to that because that's actually being hosted from a different container on the same system (all bridged networks).
+
+How can I let the containers communicate using example.test domain?
+
+Or if I can't get them to communicate via example.test then how can I link them so they can use their docker-compose service name such as api or frontend?
+
+Docker compose:
+
+version: '3'
+
+services:
+    db:
+        image: postgres
+        ports:
+         - "5432:5432"
+    django:
+        build: ./api
+        command: ["./docker_up.sh"]
+        restart: always
+        volumes:
+          - ./api:/app/api
+          - api-static:/app/api/staticfiles
+        ports:
+          - "8000:8000"
+        depends_on:
+          - db
+        environment:
+          - MODE=DEV
+
+volumes:
+  frontend-build:
+  api-static:
+  certificates:
+
+2nd compose file (run together):
+
+version: '3'
+
+services:
+    django:
+        environment:
+          - MODE=PROD
+        #links:
+        #  - hosting
+    hosting:
+        build: ./hosting
+        restart: always
+        network_mode: bridge
+        volumes:
+           - frontend-build:/var/www
+        ports:
+          - "80:80"
+          - "443:443"
+        environment:
+          - MODE=PROD
+        #links:
+        #  - django
+
+volumes:
+    frontend-build:
+
+With these current settings I get an error when I run it
+
+ERROR: for 92b89f848637_opensrd_hosting_1  Cannot start service hosting: Cannot link to /opensrd_django_1, as it does not belong to the default network
+
+Edit:  Altered docker-compose.prod.yml:
+
+networks:
+    app_net:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+              -
+                subnet: 172.16.238.0/24
+
+services:
+    django:
+        environment:
+          - MODE=PROD
+        networks:
+            app_net:
+            ipv4_address: 172.16.238.10    
+
+But this gives me an error.
+
+ERROR: The Compose file './docker-compose.prod.yml' is invalid because:
+
+networks.app_net value Additional properties are not allowed ('config' was unexpected)
+
+networks.app_net.ipam contains an invalid type, it should be an object
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2018-04-19 19:56:30
+Title: Docker Compose Could not open file build: No such file or directory
+Tags: <docker><docker-compose>
+Body:
+After moving my docker project on my disc I can no longer run it.  Whenever I try to run docker-compose build or docker-compose up I get an error 
+
+Could not open file build: No such file or directory
+
+I've tried purging all docker resources but am still receiving this error.
+
+docker kill $(docker ps -q)
+docker rm $(docker ps -a -q)
+docker rmi $(docker images -q -f dangling=true)
+docker rmi $(docker images -q)
+
+How can I either purge all docker data entirely, or fix the issue after moving my project?
+
+My docker-compose.yml is unedited from this project's dc file [链接：https://github.com/18F/docker-compose-django-react].
+
+[H2]
+Date: 2018-04-30 03:12:24
+Title: Load Template outside Django Project Directory
+Tags: <django><reactjs><docker>
+Body:
+I have a Django project that is going to use React as the frontend.  The project structure is as follows:
+
+ProjectName/
+├── api/
+│   └── otherapp1/
+│   └── otherapp2/
+│   └── api/
+│      └── views.py (will contain the method for loading react page)
+│      └── settings.py
+│   └── manage.py
+└── frontend/
+    └── public/
+        └── index.html (react root page)
+
+How can I load the index.html page with Django so I can use django for authentication and cookie/session management?  I can't figure out how to configure the template/template dirs properly since it's outside the root folder for the django part of the project.
+
+The boilerplate I was using is here [链接：https://github.com/18F/docker-compose-django-react]
+
+It might be relevant to note that since it is a docker project, there are 3 containers.  One for the database, one for django, and one for the frontend.  BASE_DIR in my django project resolves to /app/api.  It might be that I need to access a directory in another container, but if I can't do that, then how should I go about linking Django to my React app?
+
+[H3]
+Date: 2018-05-02 04:41:32
+Title: Separate processes for Dockerfile for dev and prod?
+Tags: <django><docker><nginx><docker-compose><gunicorn>
+Body:
+I have a project with the following structure.
+
+ProjectName/
+├── Dockerfile
+├── api/
+│   ├── Dockerfile
+│   └── manage.py
+├── docker-compose.yml
+├── frontend/
+│   ├── Dockerfile
+│   ├── build/
+│   └── src/
+└── manifests/
+    ├── development.yml
+    └── production.yml
+
+docker-compose.yml has a database image that's common between both environments, and the dev.yml and prod.yml have similar but slightly different images for production and dev.  
+
+Example:  The api dev uses django and just runs python manage.py runserver, but in prod it will run gunicorn api.wsgi.  
+
+And the frontend runs npm start but in prod I want it to be based off a different image.  Currently the dockerfile only works with one or the other, since the npm command is only found when I use FROM node and the nginx command only shows up when I use FROM kyma/docker-nginx.
+
+So how can I separate these out when in different environments?
+
+./frontend/Dockerfile: 
+
+FROM node
+
+WORKDIR /app/frontend
+COPY package.json /app/frontend
+
+RUN npm install
+
+EXPOSE 3000
+CMD ["npm", "start"]
+
+# Only run this bit in production environment, and not anything above this line.
+#FROM kyma/docker-nginx
+#COPY build/ /var/www
+#CMD 'nginx'
+
+./api/Dockerfile:
+
+FROM python:3.5
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app/api
+COPY requirements.txt /app/api
+RUN pip install -r requirements.txt
+
+EXPOSE 8000
+
+# Run this command in dev
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Run this command in prod
+#CMD ["gunicorn", "api.wsgi", "-b 0.0.0.0:8000"]
+
+./docker-compose.yml: 
+
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+  - "5432:5432"
+
+volumes:
+  node-modules:
+
+./manifests/production.yml:
+
+version: '3'
+
+services:
+  gunicorn:
+    build: ./api
+    command: ["gunicorn", "api.wsgi", "-b", "0.0.0.0:8000"]
+    restart: always
+    volumes:
+      - ./api:/app/api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  nginx:
+    build: ./frontend
+    command: ["nginx"]
+    restart: always
+    volumes:
+      - ./frontend:/app/frontend
+      - ./frontend:/var/www
+      - node-modules:/app/frontend/node_modules
+    ports:
+      - "80:80"
+
+volumes:
+  node-modules:
+
+./manifests/development.yml:
+
+version: '3'
+
+services:
+  django:
+    build: ./api
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    restart: always
+    volumes:
+      - ./api:/app/api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  frontend:
+    build: ./frontend
+    command: ["npm", "start"]
+    restart: always
+    volumes:
+      - ./frontend:/app/frontend
+      - node-modules:/app/frontend/node_modules
+    ports:
+      - "3000:3000"
+
+volumes:
+  node-modules:
+
+[H4]
+Date: 2018-05-03 05:58:07
+Title: Dockerfile hide output of RUN command
+Tags: <docker><dockerfile>
+Body:
+If I have a few RUN commands in my Dockerfile, how can I have it not print any output from a specific command, such as ignoring the printed statements from an apt-get update?
+
+[H5]
+Date: 2018-05-03 07:04:52
+Title: Node serve command returns empty response
+Tags: <node.js><docker><npm>
+Body:
+I'm building and hosting a react app and the script to run it is as follows: 
+
+npm run build;
+npm install -g serve
+serve -s build
+
+But when I run, it says it's running on localhost:5000, but when I go to it it returns an empty response.
+
+I'm running this from inside a docker container that inherits from node image.
+
+docker-compose.yml:
+
+version: '3'
+
+services:
+    frontend:
+        build: ./frontend
+        command: ["./docker_up.sh"]
+        restart: always
+        volumes:
+           - ./frontend:/app/frontend
+           - node-modules:/app/frontend/node_modules
+        ports:
+          - "3000:3000"
+          - "5000:5000"
+          - "80:80"
+          - "443:443"
+        environment:
+          - MODE=PROD
+volumes:
+  node-modules:
+
+Dockerfile:
+
+FROM node
+
+WORKDIR /app/frontend
+COPY package.json /app/frontend
+COPY build/* /usr/share/nginx/html/
+
+RUN npm install
+
+EXPOSE 3000
+EXPOSE 5000
+EXPOSE 80
+EXPOSE 443
+CMD ["docker_up.sh"]
+
+docker_up.sh:
+
+#!/bin/bash
+
+if [ $MODE == "PROD" ]; then
+    echo "Using production settings.";
+    apt-get update;
+    apt-get install xsel;
+    npm run build;
+
+    npm install -g serve
+    serve -s build
+else
+    echo "Using development settings."
+    npm start;
+fi;

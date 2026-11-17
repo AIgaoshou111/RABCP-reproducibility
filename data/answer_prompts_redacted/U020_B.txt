@@ -1,0 +1,88 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2014-03-29 23:05:03
+Title: backports/lzma/_lzmamodule.c:115:18: fatal error: lzma.h: No such file or directory
+Tags: <python><pip><docker>
+Body:
+I'm trying to install docker-registry. I got stuck after this:
+
+$ apt-get install python-pip python-dev
+$ pip install -r requirements.txt
+[...]
+backports/lzma/_lzmamodule.c:115:18: fatal error: lzma.h: No such file or directory
+
+The docker-registry I downloaded is v0.6.7
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2014-03-14 23:43:55
+Title: How to deploy a full (web) application using Docker, if each process must be a container?
+Tags: <docker>
+Body:
+I'm trying to understand how Docker is supposed to be used.
+
+It's not clear whether I should put everything I need in a single Dockerfile. I've read some people saying that the current best practice is to have one container per process, eg: web server, database, and language interpreter would make 3 containers.
+
+But how do I pack all those containers together? Does that responsibility belong to Docker, or do I have to use something else? To get started I could write a simple bash script that installs all the containers I need. Is that the way to go?
+
+Another question (maybe I should open a separate thread for this): What's the most common practice? To use the default server for "docker push", or to host your own?
+
+[H2]
+Date: 2014-03-17 00:24:06
+Title: How to run the latest docker container I created?
+Tags: <docker>
+Body:
+When I'm debugging my Dockerfile, y constantly need to run these two commands:
+
+$ docker build -t myuser/myapp:mytag - < myapp.docker # to create the container
+$ docker run -i -t myuser/myapp:mytag /bin/bash       # to enter the container and see what's going on when something went wrong
+
+("mytag" is usually something like "production", "testing", or "development". Not sure if I'm supposed to use tags this way)
+
+But now the second command doesn't seem to work anymore: it's starting an old container. If I list all the containers with $ docker images, I see my tagged container in the 3rd place, and other untagged containers before it. If I use the ID of the 1st container it works fine, but it will be annoying to do it that way, I will have to search for its ID every time.
+
+What am I doing wrong?
+
+[H3]
+Date: 2014-03-17 23:27:47
+Title: How can I copy a config file within a Dockerfile?
+Tags: <docker>
+Body:
+I'm trying to install and configure nginx among other things, but I need to copy an entire config file. I tried simply adding it to the Dockerfile since it's just a few lines, but Dockerfile doesn't seem to have good support for multiline commands. I mean I need to copy my config file as is, I can't pollute it with 'sed', 'cat', or '\' on every line.
+
+Some people suggested placing the config file in a public git repository, and I guess I can do that if it turns out there is no other way. But I don't like it at all because it doesn't make sense. I don't want to have and manage version control repositories for these files (let alone make them public), I just want to copy/paste them. They are very simple!
+
+Any ideas?
+
+[H4]
+Date: 2014-03-20 22:31:45
+Title: Problems when executing services within cron in a Docker container?
+Tags: <linux><shell><cron><sh><docker>
+Body:
+I have some cronjobs that I always used and worked fine. But now, trying to move everything to Docker containers, I'm running into these errors:
+
+/usr/bin/service: 127: /usr/bin/service: stop: not found
+/usr/bin/service: 128: exec: start: not found
+
+They occur when executing things like "service restart nginx" these cronjobs. Note that the same commands work fine outside the cronjobs.
+
+The PATH is correctly set in /etc/crontab . Adding it to the individual cronfiles in /etc/cron.d doesn't work either. I also tried changing SHELL=/bin/sh to SHELL=/bin/bash (even though it's insecure, but wanted to try) in /etc/crontab, didn't work.
+
+Any ideas?
+
+[H5]
+Date: 2014-03-28 13:57:28
+Title: How to use setfacl within a Docker container?
+Tags: <permissions><docker>
+Body:
+It seems like within the container the filesystem is mounted without 'acl', therefore 'setfacl' won't work. And it won't let me remount it either, and I can't even run 'df -h'.
+
+I need setfacl because I make root own all the files from my websites, and I give the webserver user write permissions to only a few directories like cache, logs, etc.
+
+What can I do?

@@ -1,0 +1,56 @@
+The issue is that `command: nginx` runs nginx in the foreground, but nginx by default runs as a daemon (background process). When the main process exits, Docker considers the container stopped.
+
+## The Fix
+
+You have two options:
+
+### Option 1: Run nginx in the foreground (recommended)
+
+```yaml
+version: '3'
+
+services:
+   web:
+     build: 
+       context: .
+       dockerfile: Dockerfile
+     ports:
+       - "3011:80"
+     command: nginx -g "daemon off;"
+```
+
+### Option 2: Use the default CMD from the nginx image
+
+If you're building from the official nginx image, you don't need to specify a command at all:
+
+```yaml
+version: '3'
+
+services:
+   web:
+     build: 
+       context: .
+       dockerfile: Dockerfile
+     ports:
+       - "3011:80"
+     # No command needed - uses the image's default CMD
+```
+
+## Why This Happens
+
+When you run `nginx` without arguments, it starts as a daemon and returns control to the shell. In a Docker container, this means:
+
+1. The `nginx` command starts nginx in the background
+2. The command exits immediately
+3. Docker sees the main process has exited
+4. The container stops
+
+## Additional Checks
+
+If nginx still doesn't work after this fix, check:
+
+1. **Container status**: `docker-compose ps` to see if the container is running
+2. **Logs**: `docker-compose logs web` to see any error messages
+3. **Port binding**: Verify nginx is listening on port 80 inside the container with `docker-compose exec web netstat -tulpn | grep :80`
+
+The `daemon off;` directive tells nginx to stay in the foreground, which is required for Docker containers to keep running.

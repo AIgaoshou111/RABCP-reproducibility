@@ -1,0 +1,85 @@
+The error `no matching manifest for windows/amd64 10.0.14393 in the manifest list entries` means Docker cannot find a Windows container image compatible with your specific Windows Server 2016 build (10.0.14393).
+
+This is **not** an experimental mode issue. It’s a compatibility issue between the image manifest and your Windows version.
+
+## Why this happens
+
+- `hello-world` is a multi-arch image, but the Windows variant is built for newer Windows versions (e.g., Windows Server 2019 / 1809+).
+- Windows Server 2016 (build 14393) uses an older container base image (`microsoft/windowsservercore:ltsc2016` or `microsoft/nanoserver:sac2016`).
+- Docker on Windows requires the container base image OS build to match the host OS build (or be compatible via Hyper-V isolation, but that still needs the right manifest).
+
+## What to do
+
+### 1. Check your Docker version and OS build
+
+```powershell
+docker version
+[System.Environment]::OSVersion.Version
+```
+
+You should see `10.0.14393` as the build.
+
+### 2. Use a compatible test image
+
+Instead of `hello-world`, try a Windows-specific image built for 2016:
+
+```powershell
+docker run microsoft/nanoserver:sac2016 cmd /c echo Hello World
+```
+
+Or:
+
+```powershell
+docker run microsoft/windowsservercore:ltsc2016 cmd /c echo Hello World
+```
+
+These images are tagged for the 2016 (14393) build.
+
+### 3. If you need `hello-world` specifically
+
+There is no official `hello-world` Windows image for 14393. You can create your own test image:
+
+```dockerfile
+# Dockerfile
+FROM microsoft/nanoserver:sac2016
+CMD ["cmd", "/c", "echo Hello from Windows Server 2016"]
+```
+
+Build and run:
+
+```powershell
+docker build -t my-hello .
+docker run my-hello
+```
+
+### 4. Verify your Docker daemon is running correctly
+
+```powershell
+docker info
+```
+
+Check that `OSType: windows` and the `Server Version` are correct.
+
+### 5. About `dockerd --experimental`
+
+Running `dockerd --experimental` manually is not recommended on Windows. The Docker service is already running. If you need experimental features, enable them in the Docker daemon configuration file (`C:\ProgramData\docker\config\daemon.json`):
+
+```json
+{
+  "experimental": true
+}
+```
+
+Then restart the Docker service:
+
+```powershell
+Restart-Service docker
+```
+
+But again, experimental mode will **not** fix the manifest error.
+
+## Summary
+
+- The error is due to OS build mismatch (14393 vs newer Windows images).
+- Use `microsoft/nanoserver:sac2016` or `microsoft/windowsservercore:ltsc2016` for testing.
+- Don’t run `dockerd --experimental` manually; configure it via `daemon.json` if needed.

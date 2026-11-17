@@ -1,0 +1,590 @@
+[
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 0,
+    "params": {
+      "window": 1,
+      "sigma": 0.25,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.8407432854246868
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 1,
+    "params": {
+      "window": 1,
+      "sigma": 0.4,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.8406868935098548
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 2,
+    "params": {
+      "window": 1,
+      "sigma": 0.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.8405768942658034
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 3,
+    "params": {
+      "window": 1,
+      "sigma": 0.8,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.8409456433128832
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 4,
+    "params": {
+      "window": 1,
+      "sigma": 1.0,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.8424274497987988
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 5,
+    "params": {
+      "window": 1,
+      "sigma": 1.2,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.8455044758942465
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 6,
+    "params": {
+      "window": 1,
+      "sigma": 1.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.8562497326594312
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 7,
+    "params": {
+      "window": 3,
+      "sigma": 0.25,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.9467683548728036
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 8,
+    "params": {
+      "window": 3,
+      "sigma": 0.4,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.9481522668371879
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 9,
+    "params": {
+      "window": 3,
+      "sigma": 0.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.9576893054293466
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 10,
+    "params": {
+      "window": 3,
+      "sigma": 0.8,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.9670008831018991
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 11,
+    "params": {
+      "window": 3,
+      "sigma": 1.0,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.9626639091865177
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 12,
+    "params": {
+      "window": 3,
+      "sigma": 1.2,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.9516881836484704
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 13,
+    "params": {
+      "window": 3,
+      "sigma": 1.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.9348380406749983
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 14,
+    "params": {
+      "window": 5,
+      "sigma": 0.25,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0233556945760274
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 15,
+    "params": {
+      "window": 5,
+      "sigma": 0.4,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0231773062310667
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 16,
+    "params": {
+      "window": 5,
+      "sigma": 0.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0243210054060896
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 17,
+    "params": {
+      "window": 5,
+      "sigma": 0.8,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0211689411448153
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 18,
+    "params": {
+      "window": 5,
+      "sigma": 1.0,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.010286465258947
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 19,
+    "params": {
+      "window": 5,
+      "sigma": 1.2,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.996026937076934
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 20,
+    "params": {
+      "window": 5,
+      "sigma": 1.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 0.9732420536110217
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 21,
+    "params": {
+      "window": 7,
+      "sigma": 0.25,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.105392678313453
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 22,
+    "params": {
+      "window": 7,
+      "sigma": 0.4,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0959869623686698
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 23,
+    "params": {
+      "window": 7,
+      "sigma": 0.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0828583374471117
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 24,
+    "params": {
+      "window": 7,
+      "sigma": 0.8,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0671863276882223
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 25,
+    "params": {
+      "window": 7,
+      "sigma": 1.0,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.049086876700173
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 26,
+    "params": {
+      "window": 7,
+      "sigma": 1.2,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0312957333665345
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 27,
+    "params": {
+      "window": 7,
+      "sigma": 1.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0040250332469909
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 28,
+    "params": {
+      "window": 10,
+      "sigma": 0.25,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.1937741425378412
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 29,
+    "params": {
+      "window": 10,
+      "sigma": 0.4,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.1731310519197955
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 30,
+    "params": {
+      "window": 10,
+      "sigma": 0.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.1482386169326477
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 31,
+    "params": {
+      "window": 10,
+      "sigma": 0.8,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.1209699293994453
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 32,
+    "params": {
+      "window": 10,
+      "sigma": 1.0,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0985148278594874
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 33,
+    "params": {
+      "window": 10,
+      "sigma": 1.2,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0771092340186996
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 34,
+    "params": {
+      "window": 10,
+      "sigma": 1.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.043599114474265
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 35,
+    "params": {
+      "window": 15,
+      "sigma": 0.25,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.2572268388366004
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 36,
+    "params": {
+      "window": 15,
+      "sigma": 0.4,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.2218853522292665
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 37,
+    "params": {
+      "window": 15,
+      "sigma": 0.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.2031507307288476
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 38,
+    "params": {
+      "window": 15,
+      "sigma": 0.8,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.1815155846831658
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 39,
+    "params": {
+      "window": 15,
+      "sigma": 1.0,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.1618026521960687
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 40,
+    "params": {
+      "window": 15,
+      "sigma": 1.2,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.1400492922290582
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 41,
+    "params": {
+      "window": 15,
+      "sigma": 1.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.0988404812156478
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 42,
+    "params": {
+      "window": 40,
+      "sigma": 0.25,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.2782107330172474
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 43,
+    "params": {
+      "window": 40,
+      "sigma": 0.4,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.2390876478471542
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 44,
+    "params": {
+      "window": 40,
+      "sigma": 0.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.235094596501029
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 45,
+    "params": {
+      "window": 40,
+      "sigma": 0.8,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.233507885046553
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 46,
+    "params": {
+      "window": 40,
+      "sigma": 1.0,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.230233921700257
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 47,
+    "params": {
+      "window": 40,
+      "sigma": 1.2,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.2241559149469927
+  },
+  {
+    "suite": "change",
+    "regime": "no_flags",
+    "method": "rabcp_no_forgetting",
+    "candidate_id": 48,
+    "params": {
+      "window": 40,
+      "sigma": 1.6,
+      "gamma": 0.0
+    },
+    "development_MAE": 1.191476658399528
+  }
+]

@@ -1,0 +1,91 @@
+The "Maximum call stack size exceeded" error with `Recursive process.nextTick detected` in a Docker container (but not locally) is almost always caused by **file watching hitting a limit** — specifically, `grunt-contrib-watch` trying to watch too many files, or watching a filesystem that behaves differently inside the container (like a mounted volume or overlay filesystem).
+
+## Most likely causes and fixes
+
+### 1. **File watcher limit (inotify)**
+Docker containers often have a lower `fs.inotify.max_user_watches` limit than your host. When `grunt watch` tries to watch more files than the limit allows, it can cause recursive `process.nextTick` errors.
+
+**Fix:** Increase the inotify limit inside the container:
+```bash
+# Run this inside the container, or add to your Dockerfile
+sysctl -w fs.inotify.max_user_watches=524288
+```
+
+Or in your Dockerfile:
+```dockerfile
+RUN echo "fs.inotify.max_user_watches=524288" >> /etc/sysctl.conf
+```
+
+### 2. **Watching node_modules or .git**
+If your `grunt watch` is inadvertently watching `node_modules`, `.git`, or other large directories, it can overwhelm the watcher. Check your watch configuration — it should only watch your source files, not dependencies.
+
+**Fix:** Make sure your watch tasks only target specific directories:
+```javascript
+watch: {
+  js: {
+    files: ['<%= yeoman.app %>/scripts/**/*.js'],  // NOT '**/*.js'
+    // ...
+  }
+}
+```
+
+### 3. **Volume mount issues**
+If you're using a mounted volume (especially on macOS or Windows with Docker Desktop), the filesystem events may not propagate correctly, causing the watcher to behave erratically.
+
+**Fix:** Try using a polling-based watcher instead of the default inotify-based one. Add this to your Gruntfile:
+```javascript
+watch: {
+  options: {
+    livereload: true,
+    // Use polling instead of native file watching
+    interval: 5007,  // Poll every ~5 seconds
+    // Or use a different watcher
+    spawn: false
+  },
+  // ... rest of your watch config
+}
+```
+
+### 4. **Node version mismatch**
+Check if your container is running a different Node.js version than your local machine. The error message mentions "This will break in the next version of node" — if you're running Node 0.10.x locally but 0.12.x or newer in the container, this could be the issue.
+
+**Fix:** Ensure your Dockerfile uses the same Node version as your local environment:
+```dockerfile
+FROM node:0.10  # or whatever version you use locally
+```
+
+## Debugging steps
+
+1. **Check the inotify limit:**
+   ```bash
+   docker exec -it <container_id> cat /proc/sys/fs/inotify/max_user_watches
+   ```
+
+2. **Run grunt with verbose logging:**
+   ```bash
+   grunt serve --verbose --stack
+   ```
+   This will show you exactly which task is failing.
+
+3. **Test without watch:**
+   Temporarily modify your serve task to skip `watch` and see if the error persists:
+   ```javascript
+   grunt.task.run([
+     'clean:server',
+     'wiredep',
+     'concurrent:server',
+     'autoprefixer',
+     'connect:livereload'
+     // 'watch'  // Comment this out temporarily
+   ]);
+   ```
+
+4. **Check what's being watched:**
+   Add a debug task to list all files being watched:
+   ```javascript
+   grunt.event.on('watch', function(action, filepath) {
+     grunt.log.writeln(filepath + ' has ' + action);
+   });
+   ```
+
+The most common culprit in Docker is the **inotify limit** — start there.

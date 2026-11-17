@@ -1,0 +1,21 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2017-10-01 20:26:56
+Title: Docker - check if postgres is ready
+Tags: <postgresql><docker><centos><kong>
+Body:
+I have a Kong API Gateway [链接：https://hub.docker.com/_/kong/] container and a postgres [链接：https://hub.docker.com/_/postgres/] container and I need to check whether postgres has started up and ready from the Kong container before running the migrations. I was thinking of installing the postgres client utilities into a custom image based on the official Kong image using RUN yum install postgresql -y && yum clean all in my Dockerfile and using either psql or pg_isready to achieve this. I've created a postgres user called polling with an empty password specifically for checking the status of the server by these two utilities. Neither of them work. 
+
+I tried to execute these commands from the custom Kong image:
+
+psql. The command psql -h postgres -U polling -w -c '\l' fails with the error psql: fe_sendauth: no password supplied. But the user has no password. What am I doing wrong? The full shell script checking whether the server is ready using psql is described here [链接：https://docs.docker.com/compose/startup-order/].
+
+pg_isready. I don't get how to install this utility separately into a custom image based on the official Kong image which in turn based on the centos:7 image, the postgresql package doesn't include pg_isready. Only these utilities are installed and can be found in /usr/bin: pg_config, pg_dump, pg_dumpall, pg_restore, psql. How to install pg_isready? I don't want to have the full server installation in the Kong image.
+
+Selected earlier-question evidence:
+No relevant historical evidence selected.

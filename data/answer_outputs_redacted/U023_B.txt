@@ -1,0 +1,77 @@
+In your `docker-compose.yml`, you can specify images from your own private registry, and Docker Compose will automatically pull them when you run `docker-compose up -d`. You don't need to manually pull them first.
+
+Here's how to set it up:
+
+## 1. Configure your docker-compose.yml
+
+```yaml
+version: '2'
+services:
+  redis:
+    image: redis:latest
+    # ... other redis config
+    
+  couchdb:
+    image: couchdb:latest
+    # ... other couchdb config
+    
+  nodejs-app:
+    image: your-registry.com:5000/your-nodejs-app:latest
+    # ... other nodejs app config
+```
+
+The key is to use the full registry URL in the image name for your private images (e.g., `your-registry.com:5000/your-nodejs-app:latest`).
+
+## 2. Login to your private registry on the remote system
+
+Before running `docker-compose up -d`, you need to authenticate with your private registry:
+
+```bash
+docker login your-registry.com:5000
+```
+
+Enter your username and password when prompted.
+
+## 3. Deploy
+
+Now you can simply run:
+
+```bash
+docker-compose up -d
+```
+
+Docker Compose will:
+- Pull public images (redis, couchdb) from Docker Hub
+- Pull your private images from your registry
+- Start all containers
+
+## Alternative: Use environment variables for registry URL
+
+If you want to make your compose file more portable, you can use environment variables:
+
+```yaml
+version: '2'
+services:
+  nodejs-app:
+    image: ${REGISTRY_URL:-your-registry.com:5000}/your-nodejs-app:latest
+```
+
+Then on the remote system:
+
+```bash
+export REGISTRY_URL=your-registry.com:5000
+docker-compose up -d
+```
+
+## Important notes:
+
+1. **Registry authentication**: Make sure your remote system has the credentials to access your private registry. You can either:
+   - Run `docker login` manually
+   - Copy the `~/.docker/config.json` file from a system that's already logged in
+   - Use Docker's credential helpers
+
+2. **Registry accessibility**: Your private registry must be accessible from the remote system (check firewall rules, network connectivity).
+
+3. **Image tags**: Always use specific tags (not just `latest`) for production deployments to ensure consistency.
+
+This approach gives you the simplest deployment - just copy your `docker-compose.yml` to the remote system, login to your registry, and run `docker-compose up -d`.

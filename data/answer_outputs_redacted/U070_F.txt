@@ -1,0 +1,96 @@
+The actual issue is in your logs:
+
+```
+=> Starting app on port 3000...
+MongoError: failed to connect to server [mongo:27017] on first connect
+```
+
+Your Meteor app is **not actually starting** because it cannot connect to MongoDB. The port mapping `0.0.0.0:3003->3003/tcp` is fine — the problem is the app crashes before it ever listens on port 3003.
+
+## Two problems to fix
+
+### 1. The app is listening on port 3000, not 3003
+
+The log says `Starting app on port 3000...`. Your image `jeromevi/controlcontainersapp` is built to listen on port 3000 internally. So you need to map host port 3003 to **container port 3000**:
+
+```yaml
+app:
+  image: jeromevi/controlcontainersapp
+  ports:
+    - "3003:3000"
+  environment:
+    - ROOT_URL=http://localhost:3003
+    - MONGO_URL=mongodb://mongo:27017/meteor
+```
+
+### 2. The app cannot reach the `mongo` service
+
+The `MongoError: failed to connect to server [mongo:27017]` means either:
+
+- The `mongo` container wasn't running yet when `app` tried to connect (race condition at startup), or
+- The two containers are not on the same Docker network.
+
+**Fix the race condition** by adding `depends_on` and a retry/wait. Meteor's bundled Node app doesn't retry MongoDB connections by default, so you need to ensure Mongo is ready first:
+
+```yaml
+app:
+  image: jeromevi/controlcontainersapp
+  ports:
+    - "3003:3000"
+  environment:
+    - ROOT_URL=http://localhost:3003
+    - MONGO_URL=mongodb://mongo:27017/meteor
+  depends_on:
+    - mongo
+  command: sh -c "sleep 10 && node main.js"
+```
+
+But a cleaner approach is to use a wait script. If you don't want to modify the image, the `sleep` approach works for testing.
+
+**Check the network**: By default, `docker-compose` creates a network and puts both services on it, so `mongo` should resolve. Verify with:
+
+```bash
+docker-compose exec app ping mongo
+```
+
+If that fails, explicitly define a network:
+
+```yaml
+version: '2'
+services:
+  app:
+    image: jeromevi/controlcontainersapp
+    ports:
+      - "3003:3000"
+    environment:
+      - ROOT_URL=http://localhost:3003
+      - MONGO_URL=mongodb://mongo:27017/meteor
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+  mongo:
+    image: mongo:latest
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+```
+
+## Summary
+
+1. Change the port mapping to `"3003:3000"` because the app listens on 3000 inside the container.
+2. Ensure `mongo` is up before the app tries to connect (use `depends_on` plus a wait, or restart the app container after mongo is fully running).
+3. Verify both containers are on the same Docker network.
+
+After making these changes, run:
+
+```bash
+docker-compose down
+docker-compose up -d
+docker-compose logs -f app
+```
+
+You should see the app start successfully and then be reachable at `http://localhost:3003`.

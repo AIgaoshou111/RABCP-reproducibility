@@ -1,0 +1,191 @@
+To deploy a Dockerized Django app to an EC2 instance using Bitbucket Pipelines, you need a pipeline that:
+
+1. Builds and pushes your Docker image to a registry (Docker Hub, AWS ECR, etc.)
+2. Connects to your EC2 instance over SSH
+3. Pulls the new image and restarts the containers on the EC2 instance
+
+Here is a complete, actionable setup.
+
+---
+
+## 1. Prepare your EC2 instance
+
+Install Docker and Docker Compose on the EC2 instance:
+
+```bash
+sudo yum update -y   # or apt-get update -y on Ubuntu
+sudo amazon-linux-extras install docker -y   # Amazon Linux 2
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+Create a deployment directory on the EC2 instance:
+
+```bash
+mkdir -p ~/app
+```
+
+Place your `docker-compose.yml` and `dev.env` on the EC2 instance (you can copy them manually the first time, or use `scp`). The pipeline will only update the `app` image — the compose file and env file stay on the server.
+
+---
+
+## 2. Create an SSH key pair for Bitbucket
+
+On your local machine (or on the EC2 instance), generate a dedicated key pair for Bitbucket:
+
+```bash
+ssh-keygen -t rsa -b 4096 -f bitbucket-deploy -C "bitbucket-deploy"
+```
+
+Add the **public key** to the EC2 instance:
+
+```bash
+cat bitbucket-deploy.pub >> ~/.ssh/authorized_keys
+```
+
+You will store the **private key** in Bitbucket as a repository variable.
+
+---
+
+## 3. Add Bitbucket repository variables
+
+Go to **Repository Settings → Pipelines → Repository variables** and add:
+
+| Variable | Value |
+|----------|-------|
+| `EC2_HOST` | Your EC2 public IP or DNS (e.g., `ec2-3-15-22-10.us-east-2.compute.amazonaws.com`) |
+| `EC2_USER` | `ec2-user` (Amazon Linux) or `ubuntu` (Ubuntu) |
+| `EC2_SSH_KEY` | The **entire contents** of the private key file (`bitbucket-deploy`), including `[PRIVATE_KEY_REDACTED]` |
+| `DOCKER_HUB_USERNAME` | Your Docker Hub username |
+| `DOCKER_HUB_PASSWORD` | Your Docker Hub password or access token |
+
+> **Important:** When pasting the SSH key into Bitbucket, make sure there are no extra spaces or missing newlines. Bitbucket variables preserve newlines correctly if you paste the full key.
+
+---
+
+## 4. Create the Bitbucket pipeline
+
+Create a `bitbucket-pipelines.yml` file in the root of your repository:
+
+```yaml
+image: atlassian/default-image:3
+
+pipelines:
+  branches:
+    main:   # or master, depending on your default branch
+      - step:
+          name: Build and push Docker image
+          services:
+            - docker
+          script:
+            # Build the app image
+            - docker build -t your-dockerhub-username/your-app:latest .
+            
+            # Log in to Docker Hub
+            - echo "$DOCKER_HUB_PASSWORD" | docker login --username "$DOCKER_HUB_USERNAME" --password-stdin
+            
+            # Push the image
+            - docker push your-dockerhub-username/your-app:latest
+
+      - step:
+          name: Deploy to EC2
+          script:
+            # Write the SSH key to a file
+            - mkdir -p ~/.ssh
+            - echo "$EC2_SSH_KEY" > ~/.ssh/deploy_key
+            - chmod 600 ~/.ssh/deploy_key
+            
+            # SSH into EC2 and deploy
+            - ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+                cd ~/app
+                docker-compose pull app
+                docker-compose up -d --no-deps app
+                docker image prune -f
+              EOF
+```
+
+---
+
+## 5. Adjust your docker-compose.yml for production
+
+Your current `docker-compose.yml` builds the `app` image from source. On the EC2 instance, you want to **pull** the pre-built image instead of building it. Update the `app` service on the EC2 instance's `docker-compose.yml`:
+
+```yaml
+services:
+  db:
+    container_name: db
+    image: "postgres"
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - dev.env
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=POSTGRES_DB
+      - POSTGRES_USER=POSTGRES_USER
+      - POSTGRES_PASSWORD=[REDACTED]
+
+  app:
+    container_name: app
+    image: your-dockerhub-username/your-app:latest   # <-- pull from registry
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./core:/app
+      - ./data/web:/vol/web
+    env_file:
+      - dev.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+```
+
+> **Note:** The `build:` section is removed from the `app` service on the EC2 instance. The pipeline builds the image in Bitbucket and pushes it to Docker Hub; the EC2 instance only pulls it.
+
+---
+
+## 6. Run migrations on deploy (recommended)
+
+Your current setup runs `python manage.py runserver` directly. For production, you should run migrations during deployment. Add this to the SSH deploy script:
+
+```bash
+ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+  cd ~/app
+  docker-compose pull app
+  docker-compose up -d --no-deps app
+  docker-compose exec app python manage.py migrate
+  docker image prune -f
+EOF
+```
+
+---
+
+## 7. Security considerations
+
+- **Don't use `runserver` in production.** Use Gunicorn or uWSGI behind Nginx. Update your `run.sh` script accordingly.
+- **Don't expose PostgreSQL port 5432 publicly.** In your EC2 security group, only allow port 8000 (or 80/443) from the internet. Port 5432 should only be accessible from the EC2 instance itself.
+- **Use AWS ECR instead of Docker Hub** if you want to keep everything within AWS. The pipeline steps are similar: build, tag, push to ECR, then SSH and pull from ECR.
+- **Store secrets in AWS Secrets Manager or SSM Parameter Store** rather than in `dev.env` on the server.
+
+---
+
+## 8. Troubleshooting checklist
+
+If the pipeline fails:
+
+| Symptom | Check |
+|---------|-------|
+| SSH connection refused | EC2 security group allows port 22 from Bitbucket's IP range (or 0.0.0.0/0 for testing) |
+| Permission denied (publickey) | The private key in `EC2_SSH_KEY` matches the public key in `~/.ssh/authorized_keys` on EC2 |
+| Docker login fails | Docker Hub credentials are correct; use an access token instead of password |
+| `docker-compose pull` fails | The image name in `docker-compose.yml` on EC2 matches the one pushed in the pipeline |
+| App container exits immediately | Check logs with `docker-compose logs app` on EC2 — likely a missing env var or migration issue |

@@ -1,0 +1,96 @@
+The "Maximum call stack size exceeded" error with `grunt serve` in Docker is almost certainly caused by **file watching hitting its inotify limit** inside the container, not by port mappings or live reload itself.
+
+## Why this happens
+
+When `grunt serve` runs the `watch` task, it recursively watches your project files. Inside a Docker container, the default inotify watch limit is often too low, or the filesystem events behave differently (especially on OS X with boot2docker/VirtualBox shared folders). This causes the watcher to go into a recursive loop, leading to the `process.nextTick` recursion warning and stack overflow.
+
+## Fixes to try
+
+### 1. Increase inotify limits in the container
+
+Add this to your Dockerfile:
+
+```dockerfile
+RUN echo "fs.inotify.max_user_watches=524288" >> /etc/sysctl.conf
+```
+
+Or run it at container start:
+
+```bash
+docker run --sysctl fs.inotify.max_user_watches=524288 ...
+```
+
+If you're using `docker run` interactively:
+
+```bash
+docker run -it --sysctl fs.inotify.max_user_watches=524288 your-image
+```
+
+### 2. Disable file watching for the serve task
+
+If you don't need live reload during development in the container, modify your Gruntfile to skip the watch task:
+
+```javascript
+grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
+  if (target === 'dist') {
+    return grunt.task.run(['build', 'connect:dist:keepalive']);
+  }
+
+  // Check if we're in Docker (or just skip watch)
+  var tasks = [
+    'clean:server',
+    'wiredep',
+    'concurrent:server',
+    'autoprefixer',
+    'connect:livereload'
+  ];
+  
+  // Only add watch if not in Docker
+  if (!process.env.DOCKER) {
+    tasks.push('watch');
+  }
+  
+  grunt.task.run(tasks);
+});
+```
+
+Then run with:
+
+```bash
+docker run -e DOCKER=true ...
+```
+
+### 3. Use polling instead of native file watching
+
+Some Grunt watch configurations support polling. Add this to your watch task options:
+
+```javascript
+watch: {
+  options: {
+    livereload: true,
+    interval: 5007, // Poll every 5 seconds
+    // Or use:
+    // spawn: false
+  },
+  // ... rest of your watch config
+}
+```
+
+### 4. Check your shared folder setup
+
+If you're using boot2docker on Windows/OS X, the shared folder (VirtualBox shared folders) can cause file watching issues. Try:
+
+- Copy your project into the container instead of using a shared volume
+- Use `rsync` or `docker cp` to sync files
+- Use a volume container with a native filesystem
+
+## Debugging steps
+
+To confirm this is the issue:
+
+1. Run `grunt serve` without the watch task (comment it out temporarily)
+2. Check if the error still occurs
+3. Run `grunt watch` alone to see if it crashes
+4. Check available inotify watches: `cat /proc/sys/fs/inotify/max_user_watches`
+
+The fact that it works locally but not in Docker strongly suggests the filesystem event system is the culprit, especially given your earlier boot2docker issues on Windows.

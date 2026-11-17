@@ -1,0 +1,38 @@
+The error is straightforward: you're missing the development headers for `liblzma` (XZ Utils), which are required to compile the `backports.lzma` Python package from source.
+
+## Fix
+
+Install the `liblzma-dev` package (on Debian/Ubuntu):
+
+```bash
+apt-get install liblzma-dev
+```
+
+Then retry:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Why this happens
+
+`backports.lzma` is a C extension that wraps the system `liblzma` library. The compiler needs `lzma.h` (provided by `liblzma-dev`) to build it. The runtime library (`liblzma5`) is usually already installed, but the headers are not.
+
+## If you're building a Docker image
+
+Add it to your Dockerfile before the `pip install` step:
+
+```dockerfile
+RUN apt-get update && apt-get install -y \
+    python-pip \
+    python-dev \
+    liblzma-dev \
+    && rm -rf /var/lib/apt/lists/*
+```
+
+## Additional note
+
+Since you're installing `docker-registry` v0.6.7 from 2014, you may also encounter other missing build dependencies. If you hit similar errors for other packages, the general pattern is:
+
+- `fatal error: X.h: No such file` → install the corresponding `-dev` package
+- Common ones for Python packages: `libffi-dev`, `libssl-dev`, `libxml2-dev`, `libxslt1-dev`, `zlib1g-dev`

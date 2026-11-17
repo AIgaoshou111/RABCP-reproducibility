@@ -1,0 +1,57 @@
+The error message is telling you that `app` is not being recognized as a valid service name in your docker-compose.yml file. This is likely due to a YAML formatting issue.
+
+Looking at your docker-compose.yml:
+
+```yaml
+services:
+
+ db:
+  container_name: djangy-db
+  image: postgres
+
+ app:
+  container_name: djangy-app
+  build:
+   context: ./
+  command: python manage.py runserver 0.0.0.0:8000
+  volumes:
+   - ./app:/app
+  ports:
+   - "8000:8000"
+  links:
+   - db
+```
+
+The issue is with the indentation. In YAML, indentation is crucial for defining the structure. Your `db` and `app` services need to be properly indented under the `services:` key.
+
+Here's the corrected version:
+
+```yaml
+version: '3'
+
+services:
+  db:
+    container_name: djangy-db
+    image: postgres
+
+  app:
+    container_name: djangy-app
+    build:
+      context: ./
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    links:
+      - db
+```
+
+Key changes:
+1. Added `version: '3'` at the top (optional but recommended)
+2. Properly indented `db` and `app` under `services:` (2 spaces)
+3. Properly indented all configuration options under each service (4 spaces)
+
+The original file had inconsistent indentation where `db` and `app` were at the same level as `services:`, which made docker-compose interpret `app` as an unsupported top-level option rather than a service definition.
+
+After fixing the indentation, run `docker-compose up` again and it should work properly.

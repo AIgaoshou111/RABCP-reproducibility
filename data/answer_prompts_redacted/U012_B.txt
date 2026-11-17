@@ -1,0 +1,100 @@
+Answer the current historical technical question in English. Address the actual request first. Give a correct, actionable explanation or steps, using code only when it helps. Respect the question's date and stated software versions. When the supplied facts do not establish a cause, identify the most useful checks rather than inventing one.
+
+Optional background is evidence from the same user's earlier questions. Use it only when relevant to the current question. Earlier questions do not establish that the user solved them, mastered a topic, or still uses the same environment. A profile, when provided, is an uncertain estimate from those earlier questions. Do not mention a profile, numerical level, or experimental group in the answer.
+
+Write as much as the question needs, without padding. Keep the answer focused on solving the current problem.
+
+Current question:
+Date: 2019-08-05 16:10:41
+Title: Error when trying to run a docker images with Docker Enterprise in Windows Server 2016
+Tags: <docker><windows-server><windows-server-2016>
+Body:
+I recently installed Docker Enterprise on my Windows Server 2016 machine. 
+
+However, when I try to do a docker run hello-world, I get this error
+
+  
+docker: no matching manifest for windows/amd64 10.0.14393 in the
+  manifest list entries.
+
+I think it may be because it's not in experimental mode, but doing the dockerd --experimental command causes it to hang.
+
+Earlier questions, in chronological order:
+
+[H1]
+Date: 2019-06-10 15:11:26
+Title: How to persist state of a Jetbrains Teamcity server instance in a docker image to deploy to others without my local directory volume
+Tags: <docker><docker-compose><containers><teamcity><jetbrains-ide>
+Body:
+I am trying to create an image of a docker container of my teamcity server instance so that if I were to run that image, all of the build configurations and everything would be automatically on it.
+
+Currently I am using the command line from the docker hub and using volumes to connect to my local machine directory which works. However, this uses my local file directory and I am trying to have it so I can deploy it to other users and have all of the configurations saved in the container image so they don't need to download the files locally.
+
+I have done docker commit of what seemed like it should work as I docker exec inside the container and saw the files that needed to be saved, but when I run it, they're gone.
+
+I've also tried to docker cp the files over which worked fine, but again committing it and running the new container image results in a blank directory.
+
+I have a docker-compose like this:
+
+version: "2.1"
+services:
+  server:
+    image: jetbrains/teamcity-server
+    ports:
+      - "8111:8111"
+    volumes:
+      - C:/ProgramData/JetBrains/TeamCity:C:/ProgramData/JetBrains/TeamCity
+      - C:/TeamCity/logs:C:/TeamCity/logs
+    mem_limit: 2g
+
+That works fine and loads the configs and what not perfectly fine. But then I do:
+
+docker stop [container_name]
+
+then:
+
+docker commit [container_name] [image]
+
+then then when I try to run it, Teamcity comes up as if I had left the volumes blank. When I exec into it, there are no folders like in the original container that I committed.
+
+[H2]
+Date: 2019-06-11 14:11:56
+Title: Docker committed image doesn't retain the changes I make
+Tags: <docker><docker-compose><containers><dockerfile><teamcity>
+Body:
+I am using Teamcity server to hopefully do continuous integration. So I want to be able to have different images of servers that has the build steps and other data save inside the container, NOT stored locally on a machine volume.
+
+I make the changes in the UI and perform a docker exec on the container and I see the configs and all the other new files there.
+
+However, when I do a docker commit of that container and then run that new image, the files aren't there and the server runs as if it was a clean start.
+
+How can I get it to have an image of persistent state of the server?
+
+[H3]
+Date: 2019-06-13 15:50:31
+Title: How can I get a container (NOT an image) to restart on system startup
+Tags: <docker><docker-compose><containers><dockerfile>
+Body:
+I want to be able to make changes in a container and if I were to restart my computer, the CONTAINER would restart so it wouldn't be a fresh image in a new container like docker run restart=always does.
+
+Is there an easy way to do this through docker commands similar to the one mentioned above, or do I have to make a script that does a docker start command everytime my system starts?
+
+[H4]
+Date: 2019-06-17 17:26:12
+Title: Docker Windows Local Registry: received unexpected HTTP status: 500 Internal Server Error
+Tags: <docker><containers><docker-registry><docker-for-windows>
+Body:
+I am attempting to push an image of a windows container to a "local" repository on a Windows VM, which has it's own IP address.
+
+So when I create the registry on my VM, I can view the repository list on my local machine by going to the ipaddress:5000 just fine. 
+
+However, when I try to push an image to the registry it shows the layers to be pushed but at the bottom it says received unexpected HTTP status: 500 Internal Server Error. 
+
+This isn't a problem when I switch to Linux containers. I can push and pull from the registry no problem.
+
+[H5]
+Date: 2019-06-19 15:57:22
+Title: TeamCity server in a Linux container, but Build Agent in a Windows container
+Tags: <docker><containers><dockerfile><teamcity><docker-for-windows>
+Body:
+Is it possible to run a TeamCity server instance in a Linux container, and then run a Build Agent in a Windows container and have it connect?

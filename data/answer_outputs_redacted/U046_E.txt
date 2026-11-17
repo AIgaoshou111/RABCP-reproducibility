@@ -1,0 +1,88 @@
+The core issue is that `RUN` instructions execute **at image build time**, while `docker run -e` environment variables are only available **at container runtime**. You cannot use runtime environment variables inside a `RUN` command in the Dockerfile.
+
+## Solution: Move the command to container startup
+
+Instead of running the Magento setup during the build, run it when the container starts. You have two main options:
+
+### Option 1: Use `CMD` with a shell script
+
+Create an entrypoint script that runs the Magento command when the container starts:
+
+**Dockerfile:**
+```dockerfile
+FROM docker-php
+
+# Copy the entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+```
+
+**entrypoint.sh:**
+```bash
+#!/bin/bash
+set -e
+
+# Run Magento setup with runtime environment variables
+cd /usr/html/bin
+./magento setup:config:set \
+  --db-host="$DB_HOST" \
+  --db-name="$DB_NAME" \
+  --db-user="$DB_USER" \
+  --db-password="[REDACTED]"
+
+# Execute the main command (if any)
+exec "$@"
+```
+
+Now you can run:
+```bash
+docker run -e DB_HOST="172.17.0.2" -e DB_NAME="mydb1" -e DB_USER="prakash" -e DB_PASSWORD="[REDACTED]" <image-id>
+```
+
+### Option 2: Use `CMD` directly in Dockerfile
+
+If you don't need a separate script file:
+
+**Dockerfile:**
+```dockerfile
+FROM docker-php
+
+CMD cd /usr/html/bin && \
+    ./magento setup:config:set \
+    --db-host="$DB_HOST" \
+    --db-name="$DB_NAME" \
+    --db-user="$DB_USER" \
+    --db-password="[REDACTED]"
+```
+
+This will execute the command when the container starts, and the environment variables passed via `docker run -e` will be available.
+
+## Important Notes:
+
+1. **Build-time vs Runtime**: `ENV` in Dockerfile sets default values that can be overridden at runtime. `RUN` executes during build and cannot access runtime variables.
+
+2. **Default values**: You can still set defaults in the Dockerfile that will be used if not overridden:
+```dockerfile
+ENV DB_HOST=172.17.0.2
+ENV DB_NAME=mydb1
+ENV DB_USER=prakash
+ENV DB_PASSWORD=[REDACTED]
+```
+
+3. **Container lifecycle**: With this approach, the Magento setup runs every time the container starts. If you need it to run only once, you'll need to add logic to check if the configuration already exists.
+
+4. **Alternative approach**: If you must run the setup during build time, you can use build arguments (`ARG` and `--build-arg`), but these are different from runtime environment variables:
+```dockerfile
+ARG DB_HOST
+ARG DB_NAME
+ARG DB_USER
+ARG DB_PASSWORD
+RUN cd /usr/html/bin && \
+    ./magento setup:config:set --db-host=$DB_HOST --db-name=$DB_NAME --db-user=$DB_USER --db-password=[REDACTED]
+```
+Then build with: `docker build --build-arg DB_HOST=172.17.0.2 --build-arg DB_NAME=mydb1 ...`
+
+The entrypoint script approach (Option 1) is generally the most flexible and is the recommended pattern for this use case.
