@@ -28,11 +28,19 @@ def main():
     assert len(rows) == len({r["question_id"] for r in rows}) == 200
     assert {r["question_id"] for r in rows} <= {str(q["question_id"]) for q in questions}
     print("Real questions: 870; sampled users: 87; reviewed L/C/G: 200")
-    for dimension in "LCG":
-        a = [int(row[f"archived_{dimension}"]) for row in rows]
-        b = [int(row[f"human_reviewed_{dimension}"]) for row in rows]
-        agreement, value = kappa(a, b)
-        print(f"Archived versus human-reviewed {dimension}: agreement={agreement:.3f}, Cohen_kappa={value:.3f}")
+    for scorer in ("archived", "revised"):
+        differences = Counter()
+        for dimension in "LCG":
+            automatic = [int(row[f"{scorer}_{dimension}"]) for row in rows]
+            reviewed = [int(row[f"human_reviewed_{dimension}"]) for row in rows]
+            assert set(automatic + reviewed) <= {0, 1, 2}
+            differences.update(abs(a - b) for a, b in zip(automatic, reviewed))
+            agreement, value = kappa(automatic, reviewed)
+            print(f"{scorer.title()} versus human-reviewed {dimension}: "
+                  f"agreement={agreement:.3f}, Cohen_kappa={value:.3f}")
+        print(f"{scorer.title()} across {sum(differences.values())} dimension scores: "
+              f"{differences[0]} exact, {differences[1]} one point apart, "
+              f"{differences[2]} two points apart")
     for directory in ("answer_prompts_redacted", "answer_outputs_redacted"):
         files = list((ROOT / "data" / directory).glob("U*_?.txt"))
         counts = Counter(p.stem.rsplit("_", 1)[-1] for p in files)
