@@ -120,8 +120,8 @@ outline [链接：https://app.getoutline.com/share/770a97da-13e5-401e-9f8a-37949
 
 Relevant part of docker.env
 
-DATABASE_URL=postgres://user:pass@localhost:5432/outline
-DATABASE_URL_TEST=postgres://user:pass@localhost:5432/outline-test
+DATABASE_URL=postgres://[REDACTED]@localhost:5432/outline
+DATABASE_URL_TEST=postgres://[REDACTED]@localhost:5432/outline-test
 DATABASE_CONNECTION_POOL_MIN=1
 DATABASE_CONNECTION_POOL_MAX=100
 # Uncomment this to disable SSL for connecting to Postgres

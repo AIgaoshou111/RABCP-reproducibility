@@ -23,7 +23,7 @@ Even though you passed `--max_allowed_packet=1500M` on the command line, the ser
 First, verify what the server actually has:
 
 ```bash
-sudo docker exec -i a2bdd4db352a mysql -u username -ppassword -e "SHOW VARIABLES LIKE 'max_allowed_packet';"
+sudo docker exec -i a2bdd4db352a mysql -u username -p[REDACTED] -e "SHOW VARIABLES LIKE 'max_allowed_packet';"
 ```
 
 If this shows something like `4194304` (4MB) or `16777216` (16MB), that’s your problem.
@@ -85,7 +85,7 @@ sudo docker restart a2bdd4db352a
 ### Step 4: Verify the setting took effect
 
 ```bash
-sudo docker exec -i a2bdd4db352a mysql -u username -ppassword -e "SHOW VARIABLES LIKE 'max_allowed_packet';"
+sudo docker exec -i a2bdd4db352a mysql -u username -p[REDACTED] -e "SHOW VARIABLES LIKE 'max_allowed_packet';"
 ```
 
 It should now show `1572864000` (1500MB).
@@ -93,7 +93,7 @@ It should now show `1572864000` (1500MB).
 ### Step 5: Run your import again
 
 ```bash
-sudo docker exec -i a2bdd4db352a /usr/bin/mysql -u username -ppassword --default-character-set=utf8 database < /srv/Dump.sql
+sudo docker exec -i a2bdd4db352a /usr/bin/mysql -u username -p[REDACTED] --default-character-set=utf8 database < /srv/Dump.sql
 ```
 
 ## Additional considerations for a 16GB dump

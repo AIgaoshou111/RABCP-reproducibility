@@ -11,7 +11,7 @@ Tags: <mysql><docker>
 Body:
 I am trying to import a sqldump into a running MySQL Docker-Container with this command: 
 
- sudo docker exec -i a2bdd4db352a /usr/bin/mysql -u username -ppassword --max_allowed_packet=1500M --default-character-set=utf8 database < /srv/Dump.sql
+ sudo docker exec -i a2bdd4db352a /usr/bin/mysql -u username -p[REDACTED] --max_allowed_packet=1500M --default-character-set=utf8 database < /srv/Dump.sql
 
 After a while getting these error:
 

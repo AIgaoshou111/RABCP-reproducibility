@@ -1,11 +1,9 @@
-# 自动审计结果
+# Release checks
 
-清单覆盖文件数：330（不含 `MANIFEST.csv`）。自动规则命中：0 类文件问题。
+The manifest enumerates 360 files, excluding the manifest itself. Run `python3 code/verify_release.py` first on an extracted release.
 
-自动扫描不能替代发布前逐项人工审核。
+Source data uses public post IDs and study pseudonyms. Redaction is applied after generation, so published text hashes and lengths may change while original API token counts stay fixed. Text examples were checked for personal home paths, private keys, common API-key formats, password-bearing URI userinfo and inline MySQL password arguments. Hiding a value from this snapshot does not revise earlier Git history.
 
-姓名、用户主目录路径、API 密钥形态和邮箱正则未命中。
+The 50-seed mixed-noise, stationary and recovery analyses are distinct from the fixed cohort used for Figure 2. The released Table 7 script retains the number recovered and the total recovery delay among those sequences. The Table 8 inputs preserve the scalar indicators before redaction and the user-block sampling order. The withdrawn historical preference tally is identified at both its original location and the README.
 
-## Complete finite-grid study update
-
-Added the original-generator complete-grid source and verified output records. All 10,126 declared configurations are present; all 36 selections match development minima. Replaying selected configurations changes aggregate MAE by at most 2.22e-16. Added source/JSON files were checked for home-directory paths and API-key patterns. The interrupted numerical-library-warning run is excluded.
+The original scoring request logs for all 200 cases were checked against the scorer system prompt hash, archived score triples and the original input hashes. The subset indicator identifies H001–H025 as the prompt-development cases. Raw account credentials and API responses are not needed for these offline checks.

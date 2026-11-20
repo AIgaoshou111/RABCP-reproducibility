@@ -1,0 +1,5 @@
+{
+  "guided": "Guided depth: give the direct answer first; add at most one brief explanation of the key operation, then give ordered executable steps. Do not add a general tutorial.",
+  "compact": "Compact depth: focus on the specific configuration, log, or command; skip generic Docker definitions. Keep every step and condition required to solve this question.",
+  "standard": "Standard depth: give the solution first, then explain only the reason directly relevant to this question."
+}

@@ -99,6 +99,8 @@ def first_recovery(estimates, targets, start, tolerance=0.5, streak=3):
     for index in range(start, len(estimates) - streak + 1):
         if all(abs(estimates[j] - targets[j]) <= tolerance for j in range(index, index + streak)):
             return index - start + 1
+    # The sentinel belongs to the original penalized timing metric.
+    # conditional_recovery.py excludes this sentinel when computing Table 7 delays.
     return len(estimates) - start + 1
 
 

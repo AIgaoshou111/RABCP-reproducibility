@@ -1,3 +1,7 @@
+# Withdrawn historical preference tally
+
+The original vote counts below were withdrawn after a rationale for U048 was traced to U038. The final Table 13 uses a retrospective comparison of one explanatory point per pair. See [the per-target data and reviewed points](table13_cases.csv). The original record follows for provenance.
+
 # 正式回答实验：研究团队共识评阅记录
 
 ## 记录来源

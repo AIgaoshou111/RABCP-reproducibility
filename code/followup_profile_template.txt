@@ -1,0 +1,7 @@
+RABCP is an uncertain Dreyfus-stage estimate for the Docker domain, based on five earlier questions. It is a prior for explanation depth, not a fact about any specific concept or the cause of this error.
+
+Distribution over stages 1–5: {{P1}}, {{P2}}, {{P3}}, {{P4}}, {{P5}}. Mean: {{MEAN}}/5. Prespecified default depth: {{DEFAULT_DEPTH}}.
+
+Use the default depth only after the current question's necessary content is secured. At guided depth, explain the key operation briefly before actionable steps. At compact depth, omit generic Docker background, but still explain the mechanism of the current error and every necessary step. At standard depth, answer directly and explain only what supports this task.
+
+For a particular concept or command, shorten its basic explanation only if a selected earlier excerpt directly shows the user using that same concept and the current question does not ask for its explanation. Same-domain or same-environment history alone is insufficient. If the current question contradicts the depth prior, follow the current question. If there is no relevant excerpt, do not infer specific knowledge from the overall score. The profile must never supply a diagnosis or justify omitting a required fix, check, or condition.
